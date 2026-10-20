@@ -1,6 +1,6 @@
 # ExamX — FIT2014 practice-paper generator and grader
 
-A free, locally-run system that
+A free system that runs locally (with an optional cloud AI model) and
 
 1. **generates new FIT2014 Theory of Computation practice papers** with full worked solutions and marking
    rubrics, in the style and topic mix of the past papers, and
@@ -13,14 +13,17 @@ There are only five past papers (two with solutions), far too few to train a mod
   Turing machines, CNF formulas and decidability classifications;
 - **real past questions with their official solutions** for proof and explanation slots (undecidability,
   NP-completeness, induction, ...), placed by a blueprint that follows the past papers' topic mix;
-- a **local open LLM (via Ollama)** to write pumping-lemma proofs and to mark proofs and explanations
-  against the model solution and rubric. LLM-invented questions are available but experimental: see
+- an **AI model** to write pumping-lemma proofs and to mark proofs and explanations against the model solution
+  and rubric. It can be a local open model via Ollama (the default), **Google Gemini** or **Anthropic Claude**,
+  switchable in the web UI or with `--model`. AI-invented questions are available but experimental: see
   "Known limitations".
 
 ## Setup
 
-Requirements: Python ≥ 3.10 and [Ollama](https://ollama.com) (both free). Everything else installs into a
-virtual environment inside the repo (`.venv/`, git-ignored).
+Requirements: Python ≥ 3.10, plus at least one AI back end: [Ollama](https://ollama.com) (free, local), a
+Gemini API key (free tier) or an Anthropic API key (paid). Without any of them, `--no-llm` still generates and
+exactly marks procedural papers. Everything else installs into a virtual environment inside the repo (`.venv/`,
+git-ignored).
 
 ```bash
 python3 -m venv .venv
@@ -28,6 +31,15 @@ python3 -m venv .venv
 ollama pull qwen3:8b            # default model
 ollama pull qwen3:14b           # proof marker (optional but recommended)
 ollama pull qwen3:4b-instruct   # optional faster model
+```
+
+For the cloud models, put the key in your shell environment (never in a file in the repo; ExamX only reads it
+from the environment and never writes it anywhere):
+
+```bash
+export GEMINI_API_KEY=...       # free key from https://aistudio.google.com/apikey
+export ANTHROPIC_API_KEY=...    # from https://console.anthropic.com
+examx models                    # shows which back ends are ready
 ```
 
 Activate with `source .venv/bin/activate`, or call `.venv/bin/examx` directly.
@@ -42,15 +54,44 @@ examx generate --seed 42          # new paper + solutions in output/ (.md, .pdf,
 examx generate --prose llm        # EXPERIMENTAL: LLM writes new proof/explanation questions (see limitations)
 examx generate --prose llm --review   # ... plus an LLM self-review pass
 examx generate --no-llm           # procedural-only paper in about a second (no Ollama needed)
-examx generate --model qwen3:4b-instruct   # faster, lower-quality LLM
+examx generate --model gemini --prose llm  # Gemini writes new proof/explanation questions
+examx generate --model claude:claude-opus-5-5   # a specific cloud model
+examx generate --model qwen3:4b-instruct   # faster, lower-quality local LLM
 examx grade output/practice-42.json my-attempt.md     # marks + feedback -> my-attempt.report.md/.json
 examx grade exam-2013 my-attempt.md                   # grade an attempt at a past paper
 examx check regex '(a∪b)*ab' '(a∪b)*a(a∪b)'           # quick exact comparison
-examx bench                       # time the installed Ollama models
+examx bench                       # time the installed Ollama models (or: examx bench gemini claude)
+examx models                      # which AI back ends are ready
 examx serve                       # web UI at http://127.0.0.1:8014
 ```
 
-Set `EXAMX_MODEL` to change the default model, and `OLLAMA_HOST` if Ollama is not on `localhost:11434`.
+### Choosing the AI model
+
+A model is named `provider:model`; a bare name is an Ollama model.
+
+| spec | back end |
+|---|---|
+| `qwen3:8b` (default), `qwen3:14b`, ... | local Ollama |
+| `gemini`, `gemini:gemini-2.5-pro` | Google Gemini (default `gemini-2.5-flash`, which has the largest free-tier quota) |
+| `claude`, `claude:claude-opus-5-5` | Anthropic Claude (default `claude-sonnet-5-5`) |
+
+Set `EXAMX_MODEL` to change the default, `EXAMX_GEMINI_MODEL` / `EXAMX_CLAUDE_MODEL` to change the provider
+defaults, and `OLLAMA_HOST` if Ollama is not on `localhost:11434`. With a local model, proofs are marked by
+`EXAMX_GRADER_MODEL` (default `qwen3:14b`); with a cloud model, the selected model marks them too. Rate limits
+(HTTP 429) are retried with back-off; the Gemini free tier allows only a few requests per minute, so an LLM-mode
+paper takes a few minutes. Note that a cloud model receives the question text and the student's answers, and
+Google may use free-tier prompts to improve its products.
+
+### Web UI
+
+`examx serve` opens a front end at http://127.0.0.1:8014:
+
+- **AI model** page: choose Local / Gemini / Claude and the model (installed or offered models are suggested),
+  see whether each back end is ready (Ollama running, key set), and choose whether proof slots use real past
+  questions or new AI-written ones. The choice is saved in `output/settings.json` (no keys).
+- **Papers**: generate a paper (with or without the AI), open it, view solutions and earlier reports.
+- **Paper**: answer each part in the browser (drafts are kept in the browser as you type) and submit for
+  marking; the report shows marks and feedback per part.
 
 ### Writing an attempt
 
