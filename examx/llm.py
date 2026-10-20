@@ -1,8 +1,17 @@
-"""Minimal client for a local Ollama server.
+"""LLM client with three interchangeable back ends: a local Ollama server, Google Gemini and Anthropic Claude.
 
-The model is chosen with EXAMX_MODEL (default qwen3:8b: it runs split between
-the GTX 1650 and system RAM at ~8 tok/s but writes markedly better proofs than
-the 4B models, see README) and the server with OLLAMA_HOST (default localhost:11434).
+A model is named by a spec string "provider:model", where the provider is ollama, gemini or claude:
+
+    qwen3:8b                  local Ollama model (a bare name means Ollama)
+    ollama:qwen3:14b          the same, explicitly
+    gemini                    Gemini with the default model ($EXAMX_GEMINI_MODEL or gemini-2.5-flash)
+    gemini:gemini-2.5-pro     a specific Gemini model
+    claude                    Claude with the default model ($EXAMX_CLAUDE_MODEL or claude-sonnet-5-5)
+    claude:claude-opus-5-5    a specific Claude model
+
+The default spec is $EXAMX_MODEL (default qwen3:8b). API keys are read only from the environment
+(GEMINI_API_KEY or GOOGLE_API_KEY, and ANTHROPIC_API_KEY) and are never written anywhere.
+The Ollama server is $OLLAMA_HOST (default localhost:11434).
 """
 from __future__ import annotations
 
@@ -13,20 +22,50 @@ import time
 
 import requests
 
+PROVIDERS = ("ollama", "gemini", "claude")
 DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:8b")
-# Marking proofs needs more careful reasoning than writing questions, and is a smaller job.
+CLOUD_DEFAULTS = {
+    # Flash has the most generous free-tier limits; gemini-2.5-pro is stronger but has a small daily quota.
+    "gemini": os.environ.get("EXAMX_GEMINI_MODEL", "gemini-2.5-flash"),
+    "claude": os.environ.get("EXAMX_CLAUDE_MODEL", "claude-sonnet-5-5"),
+}
+# Marking proofs locally needs more careful reasoning than writing questions, and is a smaller job.
 # qwen3:14b runs mostly on CPU (~2 min per proof) but, unlike the 8B model, did not invent errors in a
 # correct proof and still gave 0 to a bogus one (see README). Falls back to DEFAULT_MODEL if not pulled.
+# Cloud models mark with the same model that is selected for generation.
 GRADER_MODEL = os.environ.get("EXAMX_GRADER_MODEL", "qwen3:14b")
-
-
-def grader_model() -> str:
-    if "EXAMX_GRADER_MODEL" in os.environ or GRADER_MODEL in available_models():
-        return GRADER_MODEL
-    return DEFAULT_MODEL
 HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 if not HOST.startswith("http"):
     HOST = "http://" + HOST
+GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta"
+CLAUDE_URL = "https://api.anthropic.com/v1"
+
+
+def split(spec: str | None) -> tuple[str, str]:
+    """"gemini:gemini-2.5-pro" -> ("gemini", "gemini-2.5-pro"); "qwen3:8b" -> ("ollama", "qwen3:8b")."""
+    spec = (spec or DEFAULT_MODEL).strip()
+    provider, _, name = spec.partition(":")
+    if provider not in PROVIDERS:
+        return "ollama", spec
+    return provider, name or CLOUD_DEFAULTS.get(provider, "qwen3:8b")
+
+
+def is_cloud(spec: str | None) -> bool:
+    return split(spec)[0] != "ollama"
+
+
+def grader_model(spec: str | None = None) -> str:
+    spec = spec or DEFAULT_MODEL
+    if is_cloud(spec):
+        return spec
+    if "EXAMX_GRADER_MODEL" in os.environ or GRADER_MODEL in available_models():
+        return GRADER_MODEL
+    return spec
+
+
+def api_key(provider: str) -> str | None:
+    names = {"gemini": ("GEMINI_API_KEY", "GOOGLE_API_KEY"), "claude": ("ANTHROPIC_API_KEY",)}[provider]
+    return next((os.environ[n] for n in names if os.environ.get(n)), None)
 
 
 class LLMError(RuntimeError):
@@ -35,8 +74,22 @@ class LLMError(RuntimeError):
 
 def chat(messages: list[dict], model: str | None = None, temperature: float = 0.7, json_mode: bool = False,
          num_ctx: int = 8192, num_predict: int = 2048, think: bool = False, timeout: int = 900) -> str:
+    """Send OpenAI-style messages (system/user/assistant) to the provider named by the model spec."""
+    provider, name = split(model)
+    t0 = time.time()
+    if provider == "gemini":
+        out = _gemini(messages, name, temperature, json_mode, num_predict, timeout)
+    elif provider == "claude":
+        out = _claude(messages, name, temperature, num_predict, timeout)
+    else:
+        return _ollama(messages, name, temperature, json_mode, num_ctx, num_predict, think, timeout)
+    chat.last_stats.setdefault("eval_duration", (time.time() - t0) * 1e9)
+    return out
+
+
+def _ollama(messages, model, temperature, json_mode, num_ctx, num_predict, think, timeout) -> str:
     body = {
-        "model": model or DEFAULT_MODEL,
+        "model": model,
         "messages": messages,
         "stream": False,
         "think": think,
@@ -53,6 +106,78 @@ def chat(messages: list[dict], model: str | None = None, temperature: float = 0.
     data = r.json()
     chat.last_stats = {k: data.get(k) for k in ("eval_count", "eval_duration", "prompt_eval_count", "total_duration")}
     return strip_think(data["message"]["content"])
+
+
+def _post(name: str, url: str, headers: dict, body: dict, timeout: int, retries: int = 4) -> dict:
+    """POST to a cloud API, waiting and retrying on rate limits and transient overloads."""
+    for attempt in range(retries + 1):
+        try:
+            r = requests.post(url, headers=headers, json=body, timeout=timeout)
+        except requests.RequestException as e:
+            if attempt == retries:
+                raise LLMError(f"cannot reach the {name} API: {e}") from e
+            time.sleep(5 * (attempt + 1))
+            continue
+        if r.status_code == 200:
+            return r.json()
+        if r.status_code in (429, 500, 502, 503, 504, 529) and attempt < retries:
+            wait = r.headers.get("retry-after", "")
+            time.sleep(min(float(wait), 90) if wait.replace(".", "", 1).isdigit() else 15 * (attempt + 1))
+            continue
+        hint = " (free-tier quota exhausted? try a smaller model or wait)" if r.status_code == 429 else ""
+        raise LLMError(f"{name} API error {r.status_code}{hint}: {r.text[:300]}")
+    raise LLMError(f"{name} API: too many retries")
+
+
+def _gemini(messages, model, temperature, json_mode, num_predict, timeout) -> str:
+    key = api_key("gemini")
+    if not key:
+        raise LLMError("GEMINI_API_KEY is not set (get a free key at https://aistudio.google.com/apikey)")
+    system = "\n\n".join(m["content"] for m in messages if m["role"] == "system")
+    contents = [{"role": "model" if m["role"] == "assistant" else "user", "parts": [{"text": m["content"]}]}
+                for m in messages if m["role"] != "system"]
+    # Gemini 2.5 models think before answering, and thinking tokens count towards maxOutputTokens.
+    config = {"temperature": temperature, "maxOutputTokens": num_predict + 8192}
+    if json_mode:
+        config["responseMimeType"] = "application/json"
+    body = {"contents": contents, "generationConfig": config}
+    if system:
+        body["systemInstruction"] = {"parts": [{"text": system}]}
+    data = _post("Gemini", f"{GEMINI_URL}/models/{model}:generateContent", {"x-goog-api-key": key}, body, timeout)
+    usage = data.get("usageMetadata", {})
+    chat.last_stats = {"eval_count": usage.get("candidatesTokenCount"), "prompt_eval_count": usage.get("promptTokenCount")}
+    cands = data.get("candidates") or []
+    if not cands:
+        raise LLMError(f"Gemini returned no answer: {json.dumps(data.get('promptFeedback', data))[:300]}")
+    text = "".join(p.get("text", "") for p in cands[0].get("content", {}).get("parts", []) if not p.get("thought"))
+    if not text:
+        raise LLMError(f"Gemini returned an empty answer (finishReason {cands[0].get('finishReason')})")
+    return text.strip()
+
+
+def _claude(messages, model, temperature, num_predict, timeout) -> str:
+    key = api_key("claude")
+    if not key:
+        raise LLMError("ANTHROPIC_API_KEY is not set (create a key at https://console.anthropic.com)")
+    system = "\n\n".join(m["content"] for m in messages if m["role"] == "system")
+    body = {"model": model, "max_tokens": max(num_predict, 4096), "temperature": temperature,
+            "messages": [m for m in messages if m["role"] != "system"]}
+    if system:
+        body["system"] = system
+    headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
+    try:
+        data = _post("Claude", f"{CLAUDE_URL}/messages", headers, body, timeout)
+    except LLMError as e:
+        if "temperature" not in str(e):
+            raise
+        body.pop("temperature")  # some models only accept their default sampling settings
+        data = _post("Claude", f"{CLAUDE_URL}/messages", headers, body, timeout)
+    usage = data.get("usage", {})
+    chat.last_stats = {"eval_count": usage.get("output_tokens"), "prompt_eval_count": usage.get("input_tokens")}
+    text = "".join(b.get("text", "") for b in data.get("content", []) if b.get("type") == "text")
+    if not text:
+        raise LLMError(f"Claude returned an empty answer (stop_reason {data.get('stop_reason')})")
+    return text.strip()
 
 
 chat.last_stats = {}
@@ -95,12 +220,37 @@ def parse_json(text: str) -> dict:
     return obj
 
 
-def available_models() -> list[str]:
+def available_models(provider: str = "ollama") -> list[str]:
+    """Model names the provider offers (Ollama: pulled models). Empty if unreachable or no key is set."""
     try:
-        r = requests.get(f"{HOST}/api/tags", timeout=10)
-        return [m["name"] for m in r.json().get("models", [])]
-    except requests.RequestException:
+        if provider == "ollama":
+            r = requests.get(f"{HOST}/api/tags", timeout=10)
+            return [m["name"] for m in r.json().get("models", [])]
+        key = api_key(provider)
+        if not key:
+            return []
+        if provider == "gemini":
+            r = requests.get(f"{GEMINI_URL}/models", headers={"x-goog-api-key": key},
+                             params={"pageSize": 200}, timeout=10)
+            return sorted(m["name"].removeprefix("models/") for m in r.json().get("models", [])
+                          if "generateContent" in m.get("supportedGenerationMethods", [])
+                          and m["name"].startswith("models/gemini"))
+        r = requests.get(f"{CLAUDE_URL}/models", headers={"x-api-key": key, "anthropic-version": "2023-06-01"},
+                         params={"limit": 100}, timeout=10)
+        return [m["id"] for m in r.json().get("data", [])]
+    except (requests.RequestException, ValueError, KeyError):
         return []
+
+
+def status() -> dict:
+    """Which back ends are usable right now, for the CLI and web UI (never includes key values)."""
+    out = {}
+    for p in PROVIDERS:
+        models = available_models(p)
+        ready = bool(models) if p == "ollama" else bool(api_key(p))
+        out[p] = {"ready": ready, "models": models,
+                  "default": CLOUD_DEFAULTS.get(p) or (DEFAULT_MODEL if not is_cloud(DEFAULT_MODEL) else "qwen3:8b")}
+    return out
 
 
 def benchmark(models: list[str], prompt: str) -> list[dict]:
@@ -114,7 +264,7 @@ def benchmark(models: list[str], prompt: str) -> list[dict]:
         out = chat([{"role": "user", "content": prompt}], model=m, temperature=0.2, num_predict=700)
         wall = time.time() - t0
         st = chat.last_stats
-        tps = st["eval_count"] / (st["eval_duration"] / 1e9) if st.get("eval_duration") else 0
+        tps = st["eval_count"] / (st["eval_duration"] / 1e9) if st.get("eval_duration") and st.get("eval_count") else 0
         rows.append({"model": m, "load_s": round(load, 1), "wall_s": round(wall, 1), "tokens": st.get("eval_count"),
                      "tok_per_s": round(tps, 1), "output": out})
     return rows

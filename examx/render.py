@@ -28,7 +28,7 @@ def render_markdown(paper: dict, solutions: bool = False) -> str:
             out.append(f"*Topic: {TOPIC_NAMES.get(q['topic'], q['topic'])} · source: {q['source']}"
                        + (f" · modelled on {q['inspired_by']}" if q.get("inspired_by") else "") + "*")
             if q["source"] == "llm":
-                out += ["", "> ⚠ Question and solution written by the local LLM: check them before relying on them."]
+                out += ["", f"> ⚠ Question and solution written by an LLM ({paper.get('model', '?')}): check them before relying on them."]
                 if q.get("review"):
                     out.append("> Self-review corrected: " + "; ".join(q["review"])[:400])
         out.append("")

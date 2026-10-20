@@ -1,4 +1,4 @@
-"""Command-line interface: examx ingest | stats | generate | grade | check | bench | serve."""
+"""Command-line interface: examx ingest | stats | generate | grade | check | bench | models | serve."""
 from __future__ import annotations
 
 import argparse
@@ -9,6 +9,8 @@ from pathlib import Path
 
 from .ingest import DATA_DIR, ROOT
 
+MODEL_HELP = ("AI model: an Ollama name (qwen3:8b), gemini[:<model>] or claude[:<model>] "
+              "(default: $EXAMX_MODEL or qwen3:8b)")
 log = functools.partial(print, flush=True)  # progress lines appear promptly even when piped
 
 
@@ -84,13 +86,25 @@ def cmd_bench(args):
         print(f"{r['model']:<22} load {r['load_s']:>5}s  generate {r['wall_s']:>6}s  {r['tok_per_s']:>5} tok/s")
 
 
+def cmd_models(args):
+    from .llm import DEFAULT_MODEL, grader_model, status
+    labels = {"ollama": "local (Ollama)", "gemini": "Gemini", "claude": "Claude"}
+    for p, st in status().items():
+        state = "ready" if st["ready"] else ("not running" if p == "ollama" else "no API key in environment")
+        print(f"{labels[p]:<15} {state:<26} default {st['default']}")
+        if st["models"]:
+            print("  " + ", ".join(st["models"][:12]) + (" ..." if len(st["models"]) > 12 else ""))
+    print(f"\nSelected: {DEFAULT_MODEL} (EXAMX_MODEL); proofs marked by {grader_model()}")
+    print("Pick another with --model, e.g. --model gemini, --model claude:claude-opus-5-5, --model qwen3:14b")
+
+
 def cmd_serve(args):
     from .web import serve
     serve(args.host, args.port, model=args.model)
 
 
 def main(argv=None):
-    ap = argparse.ArgumentParser(prog="examx", description="FIT2014 practice-paper generator and grader (local LLM)")
+    ap = argparse.ArgumentParser(prog="examx", description="FIT2014 practice-paper generator and grader")
     sub = ap.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("ingest", help="parse papers/ and solution/ PDFs into data/").set_defaults(func=cmd_ingest)
@@ -98,7 +112,7 @@ def main(argv=None):
 
     g = sub.add_parser("generate", help="generate a practice paper with solutions")
     g.add_argument("--seed", type=int)
-    g.add_argument("--model", help="Ollama model (default: $EXAMX_MODEL or qwen3:8b)")
+    g.add_argument("--model", help=MODEL_HELP)
     g.add_argument("--no-llm", action="store_true", help="procedural questions only (fast, no Ollama needed)")
     g.add_argument("--variation", type=float, default=0.35, help="fraction of slots swapped from other papers")
     g.add_argument("--prose", choices=["past", "llm"], default="past",
@@ -112,7 +126,7 @@ def main(argv=None):
     r = sub.add_parser("grade", help="grade a student attempt")
     r.add_argument("paper", help="generated paper JSON, or a past paper id such as exam-2013")
     r.add_argument("attempt", help="attempt file (Markdown or JSON)")
-    r.add_argument("--model")
+    r.add_argument("--model", help=MODEL_HELP)
     r.add_argument("--no-llm", action="store_true", help="exact checks only")
     r.add_argument("--out", help="report path (default: <attempt>.report.md)")
     r.add_argument("--pdf", action="store_true", help="also write a PDF report")
@@ -124,14 +138,16 @@ def main(argv=None):
     c.add_argument("b", help="regex/formula, file (fa) or string to test (cfg)")
     c.set_defaults(func=cmd_check)
 
-    b = sub.add_parser("bench", help="benchmark installed Ollama models")
-    b.add_argument("models", nargs="*")
+    b = sub.add_parser("bench", help="benchmark models (default: the installed Ollama models)")
+    b.add_argument("models", nargs="*", help="model specs, e.g. qwen3:8b gemini claude")
     b.set_defaults(func=cmd_bench)
+
+    sub.add_parser("models", help="show which AI back ends are ready").set_defaults(func=cmd_models)
 
     s = sub.add_parser("serve", help="run the local web UI")
     s.add_argument("--host", default="127.0.0.1")
     s.add_argument("--port", type=int, default=8014)
-    s.add_argument("--model")
+    s.add_argument("--model", help=MODEL_HELP)
     s.set_defaults(func=cmd_serve)
 
     args = ap.parse_args(argv)
