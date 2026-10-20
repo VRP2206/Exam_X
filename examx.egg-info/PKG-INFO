@@ -1,0 +1,10 @@
+Metadata-Version: 2.4
+Name: examx
+Version: 0.1.0
+Summary: FIT2014 practice-paper generator and grader using a local LLM
+Requires-Python: >=3.10
+Requires-Dist: pymupdf>=1.24
+Requires-Dist: requests>=2.31
+Requires-Dist: markdown>=3.5
+Provides-Extra: dev
+Requires-Dist: pytest>=8; extra == "dev"

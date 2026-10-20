@@ -1,0 +1,2 @@
+[console_scripts]
+examx = examx.cli:main
