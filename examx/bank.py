@@ -220,6 +220,27 @@ DECISION_PROBLEMS = [
     ("Input: a Pushdown Automaton P and a string w.\nQuestion: Does P accept w?", "Decidable"),
 ]
 
+CLASSES = ["Finite", "Regular", "Context-Free", "P", "NP", "Decidable", "r.e.", "None"]
+
+# (description, smallest class it is known to belong to, assuming P ≠ NP)
+CLASS_ITEMS = [
+    ("The set of all strings over {a,b} of length at most 3.", "Finite"),
+    ("The language {a, ab, abb, abbb}.", "Finite"),
+    ("The set of all correctly formed arithmetic expressions using positive integers, +, − and parentheses.",
+     "Context-Free"),
+    ("The set of all graphs containing a Hamiltonian circuit.", "NP"),
+    ("The set of all satisfiable Boolean expressions in Conjunctive Normal Form.", "NP"),
+    ("The set of all graphs that can be properly coloured with 3 colours.", "NP"),
+    ("The set of all graphs containing no circuit.", "P"),
+    ("The set of all connected graphs.", "P"),
+    ("The set of binary representations of prime numbers.", "P"),
+    ("The set of all Context-Free Grammars that generate the empty language.", "P"),
+    ("The set of all (encodings of) Turing machines that halt when given the empty string as input.", "r.e."),
+    ("The set of all (encodings of) Turing machines that eventually halt, when given themselves as input.", "r.e."),
+    ("The set of all (encodings of) Turing machines that loop forever, when given themselves as input.", "None"),
+    ("The set of all (encodings of) Turing machines that accept every string.", "None"),
+]
+
 PROP_SCENARIOS = [
     ("You are choosing toppings for a pizza", "You choose {}.", ["mushroom", "olives", "pineapple", "capsicum"]),
     ("Four students are being considered for two scholarships", "{} receives a scholarship.", ["Ada", "Grace", "Kurt", "Emmy"]),

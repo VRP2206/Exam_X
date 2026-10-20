@@ -20,7 +20,7 @@ def model_answer(part):
 
 
 GENS = [P.gen_string_list, P.gen_nfa_to_dfa, P.gen_minimise, P.gen_prop_cnf, P.gen_regex, P.gen_fa, P.gen_cfg,
-        P.gen_derivation, P.gen_tm, P.gen_decidability]
+        P.gen_derivation, P.gen_tm, P.gen_decidability, P.gen_language_classes]
 
 
 @pytest.mark.parametrize("gen", GENS, ids=lambda g: g.__name__)
@@ -51,6 +51,17 @@ def test_wrong_answers_lose_marks_with_feedback():
     q = P.gen_tm(random.Random(2), 6)
     r = grade.grade_part(q, q["parts"][0], "start: 1\n1 a -> 1 a R", use_llm=False)
     assert r["awarded"] < 6 and "test inputs" in r["feedback"]
+
+
+def test_choice_matching():
+    spec = {"kind": "choice", "answer": "NP", "options": ["Finite", "Regular", "Context-Free", "P", "NP",
+                                                          "Decidable", "r.e.", "None"]}
+    assert grade.check_choice(spec, "NP", 1)[0] == 1
+    assert grade.check_choice(spec, "None", 1)[0] == 0
+    assert grade.check_choice({**spec, "answer": "r.e."}, "recursively enumerable", 1)[0] == 1
+    assert grade.check_choice({**spec, "answer": "Context-Free"}, "CF", 1)[0] == 1
+    dec = {"kind": "choice", "answer": "Undecidable", "options": ["Decidable", "Undecidable"]}
+    assert grade.check_choice(dec, "undecidable", 1)[0] == 1 and grade.check_choice(dec, "Decidable", 1)[0] == 0
 
 
 def test_unparseable_answer_defers_to_llm():

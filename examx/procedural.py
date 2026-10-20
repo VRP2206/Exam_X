@@ -437,6 +437,22 @@ def gen_decidability(rng: random.Random, marks: int = 4) -> dict:
                      for i, (_, ans) in enumerate(probs)])
 
 
+def gen_language_classes(rng: random.Random, marks: int = 10) -> dict:
+    """The past papers' Venn-diagram question, asked as 'smallest class' since we cannot draw the diagram."""
+    items = [(f"{lang_phrase(l)[0].upper()}{lang_phrase(l)[1:]}",
+              "Regular" if l.regular else "Context-Free" if l.context_free else "P") for l in bank.LANGUAGES]
+    items += bank.CLASS_ITEMS
+    chosen = rng.sample(items, min(marks, len(items)))
+    rows = "\n".join(f"**({chr(97 + i)})** {d}  " for i, (d, _) in enumerate(chosen))
+    text = ("Consider the classes of languages Finite ⊂ Regular ⊂ Context-Free ⊂ P ⊆ NP ⊂ Decidable ⊂ "
+            "Recursively Enumerable (r.e.). For each language below, state the **smallest** of these classes "
+            "that it is known to belong to, or **None** if it is not r.e. (Assume P ≠ NP.)\n\n" + rows)
+    return question("language_classes", "language_classes", text,
+                    [part(chr(97 + i), "", 1, ans, [{"criterion": "Correct class", "marks": 1}],
+                          {"kind": "choice", "answer": ans, "options": bank.CLASSES}, "mcq")
+                     for i, (_, ans) in enumerate(chosen)])
+
+
 def gen_pumping(rng: random.Random, marks: int = 6) -> dict:
     """Question text only; the LLM writes the proof (see generate.solve_with_llm)."""
     lang = rng.choice([l for l in bank.LANGUAGES if l.context_free and not l.regular])
@@ -460,18 +476,21 @@ def gen_pumping_cfl(rng: random.Random, marks: int = 6) -> dict:
 BY_ANSWER_TYPE = {
     "string_list": gen_string_list, "fa_table": gen_nfa_to_dfa, "fa_minimise": gen_minimise,
     "prop_formula": gen_prop_cnf, "regex": gen_regex, "fa": gen_fa, "cfg": gen_cfg, "derivation": gen_derivation,
-    "tm": gen_tm, "mcq": gen_decidability,
+    "tm": gen_tm, "mcq": gen_decidability, "language_classes": gen_language_classes,
 }
 BY_TOPIC = {
     "minimisation": gen_minimise, "kleenes_theorem": gen_nfa_to_dfa, "pumping_lemma_regular": gen_pumping,
     "pumping_lemma_cfl": gen_pumping_cfl, "propositional_logic": gen_prop_cnf,
+    "language_classes": gen_language_classes,
 }
 # Topics a generator legitimately covers, so a slot is only filled procedurally if topics agree.
 GEN_TOPICS = {
     gen_string_list: {"regular_expressions", "nfa"}, gen_nfa_to_dfa: {"kleenes_theorem", "nfa", "finite_automata"},
     gen_minimise: {"minimisation", "finite_automata"}, gen_prop_cnf: {"propositional_logic"},
     gen_regex: {"regular_expressions", "finite_automata"}, gen_fa: {"finite_automata", "regular_expressions"},
-    gen_cfg: {"cfg"}, gen_derivation: {"cfg"}, gen_tm: {"turing_machines"}, gen_decidability: {"decidability"},
+    gen_cfg: {"cfg"}, gen_derivation: {"cfg"}, gen_tm: {"turing_machines"},
+    gen_decidability: {"decidability", "turing_machines", "language_classes"},
+    gen_language_classes: {"decidability", "turing_machines", "language_classes", "np_completeness"},
     gen_pumping: {"pumping_lemma_regular"}, gen_pumping_cfl: {"pumping_lemma_cfl"},
 }
 

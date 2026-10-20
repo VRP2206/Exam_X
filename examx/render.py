@@ -27,13 +27,17 @@ def render_markdown(paper: dict, solutions: bool = False) -> str:
         if solutions:
             out.append(f"*Topic: {TOPIC_NAMES.get(q['topic'], q['topic'])} · source: {q['source']}"
                        + (f" · modelled on {q['inspired_by']}" if q.get("inspired_by") else "") + "*")
+            if q["source"] == "llm":
+                out += ["", "> ⚠ Question and solution written by the local LLM: check them before relying on them."]
+                if q.get("review"):
+                    out.append("> Self-review corrected: " + "; ".join(q["review"])[:400])
         out.append("")
         if q["text"]:
             out += [q["text"], ""]
         for p in q["parts"]:
             label = f"**({p['label']})** " if p["label"] else ""
             pm = f" *[{p['marks']} marks]*" if len(q["parts"]) > 1 and p["text"] else ""
-            if p["text"] or label:
+            if p["text"] or (label and solutions):
                 out += [f"{label}{p['text']}{pm}", ""]
             if p.get("answer_format") and not solutions:
                 out += [f"> {p['answer_format']}", ""]

@@ -222,9 +222,20 @@ def check_prop(spec, ans, marks):
         f"Not equivalent to the required proposition: it gives the wrong truth value when {assign}."
 
 
+def _norm(s: str) -> str:
+    return re.sub(r"[^a-z]", "", s.lower())
+
+
+ALIASES = {"cf": "contextfree", "cfl": "contextfree", "re": "re", "recursivelyenumerable": "re",
+           "notre": "none", "decidable": "decidable", "recursive": "decidable"}
+
+
 def check_choice(spec, ans, marks):
-    a = ans.strip().lower()
-    chosen = [o for o in spec["options"] if a.startswith(o.lower()) or a == o.lower()[0]]
+    a = _norm(ans.strip().splitlines()[0] if ans.strip() else "")
+    a = ALIASES.get(a, a)
+    opts = {_norm(o): o for o in spec["options"]}
+    chosen = [opts[a]] if a in opts else [o for n, o in opts.items() if a.startswith(n) and n]
+    chosen.sort(key=len, reverse=True)  # "undecidable..." must not match "decidable" first
     if not chosen:
         return 0, f"No recognisable choice (expected one of: {', '.join(spec['options'])})."
     return (marks, "Correct.") if chosen[0] == spec["answer"] else (0, f"Incorrect: the answer is {spec['answer']}.")

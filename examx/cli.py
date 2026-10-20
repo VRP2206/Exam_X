@@ -34,7 +34,8 @@ def cmd_stats(args):
 
 def cmd_generate(args):
     from .generate import generate_paper, save_paper
-    paper = generate_paper(seed=args.seed, model=args.model, use_llm=not args.no_llm, variation=args.variation, log=log)
+    paper = generate_paper(seed=args.seed, model=args.model, use_llm=not args.no_llm, variation=args.variation,
+                           prose=args.prose, review=not args.no_review, log=log)
     paths = save_paper(paper, Path(args.out))
     print(f"\nTotal marks: {paper['total_marks']}")
     for k, p in paths.items():
@@ -100,6 +101,9 @@ def main(argv=None):
     g.add_argument("--model", help="Ollama model (default: $EXAMX_MODEL or qwen3:8b)")
     g.add_argument("--no-llm", action="store_true", help="procedural questions only (fast, no Ollama needed)")
     g.add_argument("--variation", type=float, default=0.35, help="fraction of slots swapped from other papers")
+    g.add_argument("--prose", choices=["llm", "past"], default="llm",
+                   help="fill proof/explanation slots with new LLM questions (default) or real past questions")
+    g.add_argument("--no-review", action="store_true", help="skip the LLM self-review pass (about 2x faster)")
     g.add_argument("--out", default="output")
     g.set_defaults(func=cmd_generate)
 

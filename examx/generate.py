@@ -4,14 +4,17 @@
    topic order and the 120-mark total) and swap some slots for same-marks
    questions from other papers at a similar position.
 2. Each slot is filled procedurally when a generator exists for its topic and
-   answer type (exact solutions), otherwise by the LLM with retrieved past
-   questions as few-shot exemplars.
+   answer type (exact solutions). Otherwise either the LLM writes a new question
+   from retrieved past questions as few-shot exemplars (rejecting near-duplicates
+   and running a self-review pass), or, with prose="past", a real past question
+   with its official solution is used.
 3. Pumping-lemma style procedural questions get their proofs from the LLM.
 """
 from __future__ import annotations
 
 import json
 import random
+import re
 import sys
 from pathlib import Path
 
@@ -142,6 +145,86 @@ def _rescale(items: list[dict], total: int) -> None:
         i["marks"] = m
 
 
+def _words(s: str) -> set[str]:
+    return set(re.findall(r"[a-z0-9]+", s.lower()))
+
+
+def similarity(a: str, b: str) -> float:
+    """Jaccard similarity of word sets; used to reject near-duplicate LLM questions."""
+    wa, wb = _words(a), _words(b)
+    return len(wa & wb) / max(len(wa | wb), 1)
+
+
+def question_text(q: dict) -> str:
+    return q["text"] + " " + " ".join(p["text"] for p in q["parts"])
+
+
+REVIEW_SCHEMA = """Return JSON: {"problems": ["..."], "fixed": <null if there are no problems, otherwise the
+corrected question in the same JSON schema as the draft: {"text": ..., "parts": [...]}>}"""
+
+
+def review_with_llm(q: dict, model: str | None) -> list[str]:
+    """Ask the model to check its own question and solution, applying any fixes it proposes.
+
+    Small local models make real mistakes (false statements to prove, wrong decidability answers,
+    invalid derivations); a second, low-temperature pass catches some of them.
+    """
+    draft = {"text": q["text"], "parts": [{k: p[k] for k in ("label", "text", "marks", "solution", "rubric")}
+                                          for p in q["parts"]]}
+    user = ("Check this draft FIT2014 exam question and model solution very carefully, as a second examiner.\n"
+            "Look for: statements that are false or unprovable; wrong answers (e.g. decidability, complexity "
+            "classes, which option is correct); invalid derivations or calculations; missing information needed to "
+            "answer (such as a list of items that is referred to but not given, or a diagram); parts that repeat "
+            "the stem; solutions that do not answer the question.\n\n"
+            f"DRAFT ({q['marks']} marks):\n{json.dumps(draft, ensure_ascii=False, indent=1)}\n\n{REVIEW_SCHEMA}")
+    data = llm.chat_json([{"role": "system", "content": SYSTEM}, {"role": "user", "content": user}],
+                         model=model, temperature=0.1, num_predict=3000)
+    problems = [str(p) for p in data.get("problems", []) if str(p).strip()]
+    fixed = data.get("fixed")
+    if problems and isinstance(fixed, dict) and fixed.get("parts"):
+        new = normalise_llm_question(fixed, {"marks": q["marks"], "topic": q["topic"], "answer_type": q["answer_type"]})
+        q["text"], q["parts"] = new["text"], new["parts"]
+    return problems
+
+
+def tidy(q: dict) -> dict:
+    """Drop a stem that merely repeats the (single) part's text, a common small-model habit."""
+    if q["parts"] and q["text"] and any(similarity(q["text"], p["text"]) > 0.8 for p in q["parts"]):
+        if len(q["parts"]) == 1:
+            q["parts"][0]["text"] = q["text"] if len(q["text"]) >= len(q["parts"][0]["text"]) else q["parts"][0]["text"]
+            q["text"] = ""
+    return q
+
+
+def past_question(slot: dict, corpus: list[dict], rng: random.Random, used: set[str]) -> dict:
+    """A real past question for the slot's topic, preferring ones with official solutions and no diagrams."""
+    cands = [c for c in corpus if c["primary_topic"] == slot["topic"] and c["id"] not in used] or \
+            [c for c in corpus if c["id"] not in used]
+    best = max(cands, key=lambda c: (bool(c["solution"]), not c["has_figure"], c["marks"] == slot["marks"],
+                                     rng.random()))
+    used.add(best["id"])
+    parts = best["parts"] or [{"label": "", "text": "", "marks": None, "solution": best["solution"], "comments": ""}]
+    sol_missing = "(no official solution available for this past question)"
+    out = []
+    for p in parts:
+        sol = p.get("solution") or (best["solution"] if not best["parts"] else "") or sol_missing
+        if p.get("comments"):
+            sol += "\n\n*Marker comments:* " + p["comments"]
+        out.append({"label": p["label"], "text": p.get("text", ""), "marks": p.get("marks") or 1,
+                    "answer_type": best["answer_type"], "solution": sol,
+                    "rubric": [{"criterion": "Correct answer (compare with the official solution)", "marks": 1}],
+                    "check": None, "answer_format": None})
+    _rescale(out, slot["marks"])
+    for p in out:
+        p["rubric"][0]["marks"] = p["marks"]
+    stem = best["stem"] if best["parts"] else best["text"]
+    if best["has_figure"]:
+        stem += "\n\n*(This question has a diagram in the original paper: see " + ", ".join(
+            f"data/figures/{f}" for f in best["figures"]) + ".)*"
+    return {"topic": slot["topic"], "answer_type": best["answer_type"], "text": stem, "parts": out,
+            "marks": slot["marks"], "source": f"past:{best['id']}"}
+
+
 def solve_with_llm(q: dict, index: Index, model: str | None) -> None:
     """Fill in model solutions and rubrics for procedurally-worded questions."""
     for p in q["parts"]:
@@ -164,14 +247,17 @@ def solve_with_llm(q: dict, index: Index, model: str | None) -> None:
 
 
 def generate_paper(seed: int | None = None, model: str | None = None, use_llm: bool = True,
-                   procedural_only: bool = False, variation: float = 0.35, log=print) -> dict:
+                   procedural_only: bool = False, variation: float = 0.35, prose: str = "llm",
+                   review: bool = True, log=print) -> dict:
+    """prose: how to fill slots with no procedural generator — "llm" (new questions written by the local
+    model, then self-reviewed if review=True) or "past" (real past questions with official solutions)."""
     seed = seed if seed is not None else random.randrange(10**6)
     rng = random.Random(seed)
     corpus = load_corpus()
     by_id = {q["id"]: q for q in corpus}
     index = Index(corpus)
     slots = blueprint(rng, corpus, variation)
-    questions, avoid, seen = [], [], set()
+    questions, avoid, seen, used_past = [], [], set(), set()
 
     def fresh(gen, marks):
         """Call a procedural generator, retrying so the paper never repeats a question."""
@@ -183,17 +269,44 @@ def generate_paper(seed: int | None = None, model: str | None = None, use_llm: b
         seen.add(key)
         return q
 
+    usage: dict = {}
     for n, slot in enumerate(slots, 1):
         gen = procedural.generator_for(slot["topic"], slot["answer_type"])
+        if gen and usage.get(gen, 0) >= 2:
+            # Avoid e.g. four decidability tables in one paper: use another generator for the topic, or prose.
+            alts = [g for g, ts in procedural.GEN_TOPICS.items() if slot["topic"] in ts and usage.get(g, 0) < 2]
+            gen = rng.choice(alts) if alts else (gen if procedural_only or not use_llm and prose != "past" else None)
+        if gen:
+            usage[gen] = usage.get(gen, 0) + 1
         if procedural_only and not gen:
             gen = _closest_generator(slot)
         if gen:
             q = fresh(gen, slot["marks"])
             log(f"Q{n:>2} ({slot['marks']:>2} marks) procedural  {gen.__name__}")
+        elif prose == "past":
+            q = past_question(slot, corpus, rng, used_past)
+            log(f"Q{n:>2} ({slot['marks']:>2} marks) past paper  {q['source'][5:]}")
         elif use_llm:
             log(f"Q{n:>2} ({slot['marks']:>2} marks) LLM         {slot['topic']} / {slot['answer_type']} ...")
             try:
-                q = llm_question(slot, index, by_id, model, avoid)
+                q = None
+                for attempt in range(3):
+                    cand = tidy(llm_question(slot, index, by_id, model, avoid))
+                    dup = max((similarity(question_text(cand), question_text(o)) for o in questions), default=0)
+                    copy = similarity(question_text(cand), by_id[slot["inspired_by"]]["text"])
+                    if dup < 0.5 and copy < 0.8:
+                        q = cand
+                        break
+                    log(f"     rejected draft (too similar: {max(dup, copy):.2f}), retrying")
+                    avoid.append(question_text(cand)[:120])
+                q = q or cand
+                if review:
+                    log("     self-review ...")
+                    problems = review_with_llm(q, model)
+                    q["review"] = problems
+                    if problems:
+                        log(f"     review fixed {len(problems)} problem(s)")
+                    tidy(q)
             except llm.LLMError as e:
                 log(f"     LLM failed ({e}); falling back to a procedural question")
                 q = fresh(_closest_generator(slot), slot["marks"])
@@ -229,7 +342,7 @@ def _closest_generator(slot: dict):
                 "turing_machines": procedural.gen_tm, "church_turing": procedural.gen_decidability,
                 "decidability": procedural.gen_decidability, "mapping_reductions": procedural.gen_decidability,
                 "complexity_p": procedural.gen_decidability, "np_completeness": procedural.gen_decidability,
-                "language_classes": procedural.gen_decidability}
+                "language_classes": procedural.gen_language_classes}
     return fallback.get(slot["topic"] or "", procedural.gen_regex)
 
 
