@@ -1,0 +1,1361 @@
+{
+ "title": "FIT2014 Practice Exam (seed 42)",
+ "seed": 42,
+ "model": "qwen3:8b",
+ "total_marks": 120,
+ "questions": [
+  {
+   "topic": "propositional_logic",
+   "answer_type": "prop_formula",
+   "text": "Your phone is somewhere in your house. Suppose we have propositions B, G, C, L with the following meanings.\n\n- B: Your phone is in the bedroom.\n- G: Your phone is in the garage.\n- C: Your phone is in the bathroom.\n- L: Your phone is in the laundry.\n\nUse B, G, C, L to write a proposition, in Conjunctive Normal Form, that is True precisely when at least one of these 4 propositions is True.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 4,
+     "answer_type": "prop_formula",
+     "solution": "(B ∨ G ∨ C ∨ L)\n\nHere the clauses of size 4 ensure at least 1 are true.",
+     "rubric": [
+      {
+       "criterion": "Logically correct (same truth table)",
+       "marks": 3
+      },
+      {
+       "criterion": "In Conjunctive Normal Form",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "prop",
+      "reference": "(B ∨ G ∨ C ∨ L)",
+      "require_cnf": true
+     },
+     "answer_format": "Answer format for automatic marking: use ∧ ∨ ¬ (or & | ~) and parentheses."
+    }
+   ],
+   "marks": 4,
+   "source": "procedural",
+   "number": 1,
+   "inspired_by": "exam-2014-q1"
+  },
+  {
+   "topic": "regular_expressions",
+   "answer_type": "string_list",
+   "text": "Consider the regular expression (ba∪a*)(ba∪ε) over the alphabet {a,b}.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Write down all strings of at most 6 letters that match this regular expression.",
+     "marks": 2,
+     "answer_type": "string_list",
+     "solution": "ε, a, aa, ba, aaa, aba, aaaa, aaba, baba, aaaaa, aaaba, aaaaaa, aaaaba",
+     "rubric": [
+      {
+       "criterion": "All strings listed, no extras",
+       "marks": 2
+      }
+     ],
+     "check": {
+      "kind": "string_list",
+      "regex": "(ba∪a*)(ba∪ε)",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "max_len": 6
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "Give an NFA that recognises the language described by this regular expression.",
+     "marks": 2,
+     "answer_type": "nfa",
+     "solution": "One possibility (Thompson construction, simplified forms are equally acceptable):\n```\nstart: 1\nfinal: 1 2 5 7\n1 a 2\n1 b 3\n2 a 2\n2 b 4\n3 a 5\n4 a 7\n5 b 4\n```\n",
+     "rubric": [
+      {
+       "criterion": "NFA accepts exactly the language of the regular expression",
+       "marks": 2
+      }
+     ],
+     "check": {
+      "kind": "language",
+      "reference_regex": "(ba∪a*)(ba∪ε)",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "answer": "automaton"
+     },
+     "answer_format": "Answer format for automatic marking: an edge list — `start: 1`, `final: 3`, then one transition per line such as `1 a 2` or `2 ε 3` (several letters may be comma-separated: `1 a,b 2`)."
+    }
+   ],
+   "marks": 4,
+   "source": "procedural",
+   "number": 2,
+   "inspired_by": "sampleexam2013-q4"
+  },
+  {
+   "topic": "regular_expressions",
+   "answer_type": "string_list",
+   "text": "Consider the regular expression ((ab)*∪(bab))* over the alphabet {a,b}.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Write down all strings of at most 6 letters that match this regular expression.",
+     "marks": 2,
+     "answer_type": "string_list",
+     "solution": "ε, ab, bab, abab, abbab, babab, ababab, babbab",
+     "rubric": [
+      {
+       "criterion": "All strings listed, no extras",
+       "marks": 2
+      }
+     ],
+     "check": {
+      "kind": "string_list",
+      "regex": "((ab)*∪(bab))*",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "max_len": 6
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "Give an NFA that recognises the language described by this regular expression.",
+     "marks": 2,
+     "answer_type": "nfa",
+     "solution": "One possibility (Thompson construction, simplified forms are equally acceptable):\n```\nstart: 1\nfinal: 1\n1 a 2\n1 b 3\n2 b 1\n3 a 2\n```\n",
+     "rubric": [
+      {
+       "criterion": "NFA accepts exactly the language of the regular expression",
+       "marks": 2
+      }
+     ],
+     "check": {
+      "kind": "language",
+      "reference_regex": "((ab)*∪(bab))*",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "answer": "automaton"
+     },
+     "answer_format": "Answer format for automatic marking: an edge list — `start: 1`, `final: 3`, then one transition per line such as `1 a 2` or `2 ε 3` (several letters may be comma-separated: `1 a,b 2`)."
+    }
+   ],
+   "marks": 4,
+   "source": "procedural",
+   "number": 3,
+   "inspired_by": "exam-2013-q3"
+  },
+  {
+   "topic": "regular_closure",
+   "answer_type": "proof",
+   "text": "A language over alphabet {a,b} is said to be cofinite if it contains all strings over that\nalphabet except for some finite number of strings. Prove that every cofinite language is\nregular.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 3,
+     "answer_type": "proof",
+     "solution": "A cofinite language has a finite complement.\nAny finite language is regular.\nRegular languages are closed under complement.\nSo any cofinite language (being the complement of a regular language) is regular.\nLet L be any cofinite language.\nIts complement, L, is finite.\nTherefore L is regular, since every finite language is regular.\nTherefore, L is recognised by a Finite Automaton, by Kleene’s Theorem.\nIf we change that FA so that every Final state becomes Non-Final, and every Non-Final\nstate becomes Final, then we obtain an FA that accepts precisely those strings not in L —\nin other words, this FA recognises L.\nTherefore L is regular, by Kleene’s Theorem.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 3
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 3,
+   "source": "past:exam-2013-q4",
+   "number": 4,
+   "inspired_by": "exam-2013-q4"
+  },
+  {
+   "topic": "kleenes_theorem",
+   "answer_type": "fa_table",
+   "text": "The following table describes an NFA with ε-transitions (each cell lists the set of possible next states). Convert it to a Finite Automaton that recognises the same language, using the subset construction. Represent your FA as a transition table.\n```\n       state  a      b    ε\nStart  1      {3,5}  ∅    ∅\n       2      ∅      {3}  ∅\n       3      ∅      {4}  {2}\nFinal  4      {4}    ∅    ∅\n       5      {5}    {5}  ∅\n```\n",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 7,
+     "answer_type": "fa_table",
+     "solution": "Subset construction (each FA state is the ε-closure of a set of NFA states):\n```\n       state      a        b\nStart  {1}        {2,3,5}  ∅\n       {2,3,5}    {5}      {2,3,4,5}\n       ∅          ∅        ∅\n       {5}        {5}      {5}\nFinal  {2,3,4,5}  {4,5}    {2,3,4,5}\nFinal  {4,5}      {4,5}    {5}\n```\nMerging equivalent states (state minimisation) is also acceptable.",
+     "rubric": [
+      {
+       "criterion": "Correct Start state (ε-closure of the NFA start state)",
+       "marks": 1
+      },
+      {
+       "criterion": "Correct transitions for every state",
+       "marks": 5
+      },
+      {
+       "criterion": "Correct Final states",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "language",
+      "reference_automaton": "start: 1\nfinal: 4\n1 a 3\n1 a 5\n2 b 3\n3 ε 2\n3 b 4\n4 a 4\n5 a 5\n5 b 5",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "answer": "automaton",
+      "deterministic": true
+     },
+     "answer_format": "Answer format for automatic marking: a transition table whose first row is `state a b`, one row per state, rows prefixed by `Start` and/or `Final`, cells holding a state name (use `∅` for none). Alternatively an edge list: `start: 1`, `final: 2 3`, then lines like `1 a 2`."
+    }
+   ],
+   "marks": 7,
+   "source": "procedural",
+   "number": 5,
+   "inspired_by": "exam-2013-q5"
+  },
+  {
+   "topic": "regular_expressions",
+   "answer_type": "regex",
+   "text": "",
+   "parts": [
+    {
+     "label": "",
+     "text": "Give a regular expression for the language of all strings over {a,b} that contain aba as a substring.",
+     "marks": 3,
+     "answer_type": "regex",
+     "solution": "(a∪b)*aba(a∪b)*",
+     "rubric": [
+      {
+       "criterion": "Correct answer",
+       "marks": 3
+      }
+     ],
+     "check": {
+      "kind": "language",
+      "reference_regex": "(a∪b)*aba(a∪b)*",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "answer": "regex"
+     },
+     "answer_format": "Answer format for automatic marking: use `∪` (or `|`) for union, `*` for Kleene star, `ε` for the empty string."
+    }
+   ],
+   "marks": 3,
+   "source": "procedural",
+   "number": 6,
+   "inspired_by": "exam-2014-q3"
+  },
+  {
+   "topic": "cfg",
+   "answer_type": "regex",
+   "text": "Consider the following Regular grammar:\nS → ε | aT | bU (1)\nT → aT | bS (2)\nU → aS (3)",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Give (i) a derivation, and (ii) a parse tree, for the string baab .",
+     "marks": 2,
+     "answer_type": "regex",
+     "solution": "b U\na S\nS ⇒ bU by (1c)\n⇒ baS by (3)\na T\n⇒ baaT by (1b)\n⇒ baabS by (2b)\nb S\n⇒ baab by (1a)\nε",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "Find the Finite Automaton for the language defined by the above grammar.",
+     "marks": 2,
+     "answer_type": "regex",
+     "solution": "a a\nT T\na a\nb b\nS S\na,b\na a\nb\nb b\nU U\n\n*Marker comments:* The FA on the left is obtained by direct conversion of the regular grammar to a FA. Strictly speaking, it is not\ndeterministic since state U does not have a transition for the letter b. This is easily fixed: see the FA on the right. (In\na sense, omitting transitions is a less “serious” form of nondeterminism than empty transitions or multiple transitions\nfor the same letter, since the former does not lead to ambiguity as to how to proceed, provided a missing transition is\ntaken to give rejection if it is attempted. That’s not how we’ve defined rejection by FAs in this unit, though.)",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "Give a regular expression for the language defined by the above grammar.",
+     "marks": 2,
+     "answer_type": "regex",
+     "solution": "((aa^{∗}b) ∪ (ba))^{∗}",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 6,
+   "source": "past:sampleexam2013-q10",
+   "number": 7,
+   "inspired_by": "sampleexam2013-q10"
+  },
+  {
+   "topic": "cfg",
+   "answer_type": "cfg",
+   "text": "",
+   "parts": [
+    {
+     "label": "",
+     "text": "Give a Context-Free Grammar for the language { a^m b^n : m < n }.",
+     "marks": 2,
+     "answer_type": "cfg",
+     "solution": "S → aSb | Sb | b",
+     "rubric": [
+      {
+       "criterion": "Generates every string in the language",
+       "marks": 1
+      },
+      {
+       "criterion": "Generates no strings outside the language",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "cfg",
+      "language": "am_lt_bn",
+      "alphabet": [
+       "a",
+       "b"
+      ],
+      "max_len": 8
+     },
+     "answer_format": "Answer format for automatic marking: one production per line, e.g. `S → aSb | ε`; non-terminals are capital letters and S is the start symbol."
+    }
+   ],
+   "marks": 2,
+   "source": "procedural",
+   "number": 8,
+   "inspired_by": "exam-2013-q8"
+  },
+  {
+   "topic": "induction",
+   "answer_type": "proof",
+   "text": "Consider the following Context-Free Grammar\nS → a S (1)\nS → S b (2)\nS → ε (3)\nProve by induction that every string of the form a^{m}b^{n}, where m ≥ 0 and n ≥ 0, can be\ngenerated by this grammar.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 6,
+     "answer_type": "proof",
+     "solution": "We prove this by induction on the length of the string (i.e., on m + n).\nInductive basis: if the length is 0, then the string is empty, and is generated by (3).\nInductive step: Suppose the result holds for all strings of length < ℓ, where ℓ> 0.\nNow suppose we have a string w = a^{m}b^{n} of length ℓ.\nEither the string starts with a, or ends with b, or both. (This uses ℓ> 0.)\nIf it starts with a, then it can be written w = aw^{′}, where |w^{′}| = |w| − 1 = ℓ − 1 < ℓ. The\nfact that w^{′} has length < ℓ means we can use the inductive hypothesis to conclude that w^{′}\ncan be generated by the grammar. So we have a derivation\nS ⇒· · · ⇒ w^{′}.\nBy prefixing each string in this derivation by a, we can form another derivation:\naS ⇒· · · ⇒ aw^{′} = w.\nPrepending this derivation with the production S ⇒ aS gives a derivation of w:\nS ⇒ aS ⇒· · · ⇒ aw^{′} = w.\nSo w is generated by the grammar.\nA similar argument applies if the string w ends with b. This completes the inductive step.\nThe result follows, by the Principle of Mathematical Induction.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 6
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 6,
+   "source": "past:exam-2013-q9",
+   "number": 9,
+   "inspired_by": "exam-2013-q9"
+  },
+  {
+   "topic": "cfg",
+   "answer_type": "derivation",
+   "text": "Consider the following Context-Free Grammar.\nS → aBa (1)\nB → BB (2)\nB → Q (3)\nB → R (4)\nQ → q (5)\nR → r (6)\nGive",
+   "parts": [
+    {
+     "label": "a",
+     "text": "a derivation, and",
+     "marks": 3,
+     "answer_type": "derivation",
+     "solution": "(no official solution available for this past question)",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 3
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "a parse tree,\nfor the string aqrqa, labelling each step in the derivation on its right by the number of the\nrule used. Use the spaces below for your answers.\n(a) Derivation:\n(b) Parse tree:",
+     "marks": 2,
+     "answer_type": "derivation",
+     "solution": "S ⇒ aBa by (1)\n⇒ aBBa by (2)\n⇒ aBBBa by (2)\n⇒ aQBBa by (3)\n⇒ aQRBa by (4)\n⇒ aQRQa by (3)\n⇒ aqRQa by (5)\n⇒ aqrQa by (6)\n⇒ aqrqa by (5).\nS S\na B a a B a\nB B B\nB\nB\nB B B\nQ\nQ\nQ\nR R Q\nq\nq\nq\nr r q\n\n*Marker comments:* Some variation in the order is possible.\nDoesn’t have to be leftmost or rightmost derivation.\nOR",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 5,
+   "source": "past:exam-2013-q10",
+   "number": 10,
+   "inspired_by": "sampleexam2013-q13"
+  },
+  {
+   "topic": "cfg",
+   "answer_type": "cfg",
+   "text": "A string over the alphabet {0,+,−} is said to be balanced if it satisfies both the following:\n• (i) for any i, the first i characters in the string contain at least as many + as −;\n• (ii) the whole string has the same number of + as −.\nGive a Context-Free Grammar for the language.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 5,
+     "answer_type": "cfg",
+     "solution": "S → 0\nS → SS\nS → +S −\nS → ε",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 5
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 5,
+   "source": "past:sampleexam2013-q11",
+   "number": 11,
+   "inspired_by": "exam-2013-q11"
+  },
+  {
+   "topic": "cfg",
+   "answer_type": "short_answer",
+   "text": "State two important results that can be proved using the Chomsky Normal Form for Context-\nFree Grammars.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 4,
+     "answer_type": "short_answer",
+     "solution": "1. The CYK algorithm, which determines, for any CFG and any string, whether the string\nis generated by the CFG.\n2. The Pumping Lemma for CFLs: for any context-free language L and any sufficiently\nlong string w ∈ L, there exist u, v, x, y, z such that w = uvxyz, v and y are not both\nempty, |vxy| is small enough, and for all i, uv^{i}xy^{i}z ∈ L.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 4
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 4,
+   "source": "past:exam-2013-q12",
+   "number": 12,
+   "inspired_by": "exam-2013-q12"
+  },
+  {
+   "topic": "turing_machines",
+   "answer_type": "tm",
+   "text": "Draw a Turing machine that adds 1 to a binary number (most significant bit first). If the input is all 1s, the output is one bit longer, e.g. 111 becomes 1000. The input is a string over {0,1}, starting in the leftmost cell with the head on it. For example, on input 1011 the output is 1100.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 6,
+     "answer_type": "tm",
+     "solution": "One possible machine:\n```\nstart: 0\nhalt: H\n# mark the first cell (X = 0, Y = 1) so the left end can be recognised\n0 0 -> 1 X R\n0 1 -> 1 Y R\n0 Δ -> H 1 R\n1 0 -> 1 0 R\n1 1 -> 1 1 R\n1 Δ -> 2 Δ L\n2 1 -> 2 0 L\n2 0 -> 5 1 L\n2 X -> H 1 R\n2 Y -> 4 1 R\n4 0 -> 4 0 R\n4 Δ -> H 0 R\n5 0 -> 5 0 L\n5 1 -> 5 1 L\n5 X -> H 0 R\n5 Y -> H 1 R\n```\n",
+     "rubric": [
+      {
+       "criterion": "Produces the correct output on all inputs",
+       "marks": 5
+      },
+      {
+       "criterion": "Halts properly (does not crash or loop)",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "tm_function",
+      "function": "increment",
+      "alphabet": [
+       "0",
+       "1"
+      ],
+      "max_len": 6
+     },
+     "answer_format": "Answer format for automatic marking: `start: 1`, `halt: H`, then one transition per line written `state read -> next write move` (move is L, R or S; Δ is the blank), e.g. `1 a -> 2 b R`."
+    }
+   ],
+   "marks": 6,
+   "source": "procedural",
+   "number": 13,
+   "inspired_by": "exam-2013-q13"
+  },
+  {
+   "topic": "church_turing",
+   "answer_type": "short_answer",
+   "text": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "State the Church-Turing thesis.",
+     "marks": 2,
+     "answer_type": "short_answer",
+     "solution": "Any function which can defined by an algorithm can be represented by a Turing Machine.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "Give two reasons why the Church-Turing thesis is widely accepted.",
+     "marks": 2,
+     "answer_type": "short_answer",
+     "solution": "Any two of the following:\n• different approaches to defining computability end up being equivalent\n• long experience, that algorithms can be implemented as programs, and therefore on\nTuring machines\n• no known counterexamples, i.e., no algorithms which seem to be unimplementable",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 4,
+   "source": "past:exam-2013-q14",
+   "number": 14,
+   "inspired_by": "exam-2013-q14"
+  },
+  {
+   "topic": "decidability",
+   "answer_type": "mcq",
+   "text": "For each of the following decision problems, indicate whether it is Decidable or Undecidable.\n\n**(a)** Input: a Turing machine M.  \nQuestion: Does M ever write the symbol a on its tape, when run on the empty string, within its first 1000 steps?\n\n**(b)** Input: a Turing machine M and a string w.  \nQuestion: If M is run on w, does it halt within 100 steps?\n\n**(c)** Input: a Turing machine M.  \nQuestion: Is the language accepted by M finite?\n\n**(d)** Input: a Turing machine M.  \nQuestion: Does M halt when given the empty string as input?",
+   "parts": [
+    {
+     "label": "a",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Decidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Decidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Decidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Decidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Undecidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Undecidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "d",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Undecidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Undecidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    }
+   ],
+   "marks": 4,
+   "source": "procedural",
+   "number": 15,
+   "inspired_by": "sampleexam2013-q18"
+  },
+  {
+   "topic": "language_classes",
+   "answer_type": "language_classes",
+   "text": "Consider the classes of languages Finite ⊂ Regular ⊂ Context-Free ⊂ P ⊆ NP ⊂ Decidable ⊂ Recursively Enumerable (r.e.). For each language below, state the **smallest** of these classes that it is known to belong to, or **None** if it is not r.e. (Assume P ≠ NP.)\n\n**(a)** The set of all graphs containing no circuit.  \n**(b)** The set of all correctly formed arithmetic expressions using positive integers, +, − and parentheses.  \n**(c)** The set of all (encodings of) Turing machines that accept every string.  \n**(d)** The set of binary representations of prime numbers.  \n**(e)** The language of all strings over {a,b} that do not contain bb as a substring  \n**(f)** The language of positive integers in binary with leading bit 1  \n**(g)** The language of binary strings (possibly with leading zeros) that represent a multiple of 3  \n**(h)** The set of all connected graphs.  \n**(i)** The language { ww : w ∈ {a,b}^* }  \n**(j)** The language of strings over {a,b} with more a's than b's  ",
+   "parts": [
+    {
+     "label": "a",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "P",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "P",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Context-Free",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Context-Free",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "None",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "None",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "d",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "P",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "P",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "e",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "f",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "g",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "h",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "P",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "P",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "i",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "P",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "P",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "j",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Context-Free",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Context-Free",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    }
+   ],
+   "marks": 10,
+   "source": "procedural",
+   "number": 16,
+   "inspired_by": "exam-2013-q16"
+  },
+  {
+   "topic": "pumping_lemma_cfl",
+   "answer_type": "proof",
+   "text": "",
+   "parts": [
+    {
+     "label": "",
+     "text": "Use the Pumping Lemma for Context-Free Languages to prove that the language { a^n b^n c^n : n ≥ 0 } is not context-free.",
+     "marks": 7,
+     "answer_type": "proof",
+     "solution": "Suppose that the language L = { a^n b^n c^n : n ≥ 0 } is context-free. Then there exists a context-free grammar that generates L, or equivalently, there exists a pushdown automaton (PDA) that accepts L. Let N be the number of states in this PDA. Let w = a^N b^N c^N, which is a string in L and has length 3N ≥ N. By the Pumping Lemma for context-free languages, w can be written as w = uvxyz, where:\n\n1. |vxy| ≤ N,\n2. |vy| ≥ 1,\n3. For all i ≥ 0, uv^ixy^iz ∈ L.\n\nWe consider the possible cases for the substring vxy:\n\nCase 1: vxy contains only a's. Then, pumping v or y increases the number of a's without affecting the number of b's or c's. For example, uv^2xy^iz would have more a's than b's or c's, which is not in L.\n\nCase 2: vxy contains only b's. Then, pumping v or y increases the number of b's without affecting the number of a's or c's. For example, uv^ixy^2z would have more b's than a's or c's, which is not in L.\n\nCase 3: vxy contains only c's. Then, pumping v or y increases the number of c's without affecting the number of a's or b's. For example, uv^ixy^iz would have more c's than a's or b's, which is not in L.\n\nCase 4: vxy contains a mix of a's and b's. Then, pumping v or y increases the number of a's or b's without affecting the number of c's. For example, uv^ixy^iz would have more a's than b's or more b's than c's, which is not in L.\n\nCase 5: vxy contains a mix of b's and c's. Then, pumping v or y increases the number of b's or c's without affecting the number of a's. For example, uv^ixy^iz would have more b's than c's or more c's than a's, which is not in L.\n\nCase 6: vxy contains a mix of a's and c's. Then, pumping v or y increases the number of a's or c's without affecting the number of b's. For example, uv^ixy^iz would have more a's than c's or more c's than b's, which is not in L.\n\nIn all cases, pumping leads to a string not in L, which contradicts the Pumping Lemma. Hence, our assumption that L is context-free is false. Therefore, L is not context-free.",
+     "rubric": [
+      {
+       "criterion": "State the Pumping Lemma for context-free languages",
+       "marks": 2
+      },
+      {
+       "criterion": "Choose a suitable string w = a^N b^N c^N and justify its length",
+       "marks": 1
+      },
+      {
+       "criterion": "Apply the Pumping Lemma and consider all possible cases for vxy",
+       "marks": 3
+      },
+      {
+       "criterion": "Show that pumping leads to a string not in L in all cases",
+       "marks": 1
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 7,
+   "source": "procedural",
+   "number": 17,
+   "inspired_by": "exam-2014-q12"
+  },
+  {
+   "topic": "decidability",
+   "answer_type": "mcq",
+   "text": "For each of the following decision problems, indicate whether it is Decidable or Undecidable.\n\n**(a)** Input: two Turing machines M1 and M2.  \nQuestion: Do M1 and M2 accept the same language?\n\n**(b)** Input: a Turing machine M.  \nQuestion: Does M ever move its head left, when run on the empty string, during its first 50 steps?\n\n**(c)** Input: a Context-Free Grammar G and a string w.  \nQuestion: Does G generate w?\n\n**(d)** Input: two Finite Automata A and B.  \nQuestion: Do A and B accept the same language?\n\n**(e)** Input: a Turing machine M.  \nQuestion: Is the language accepted by M finite?",
+   "parts": [
+    {
+     "label": "a",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Undecidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Undecidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Decidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Decidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Decidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Decidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "d",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Decidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Decidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "e",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Undecidable",
+     "rubric": [
+      {
+       "criterion": "Correct classification",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Undecidable",
+      "options": [
+       "Decidable",
+       "Undecidable"
+      ]
+     },
+     "answer_format": null
+    }
+   ],
+   "marks": 5,
+   "source": "procedural",
+   "number": 18,
+   "inspired_by": "exam-2014-q14"
+  },
+  {
+   "topic": "language_classes",
+   "answer_type": "language_classes",
+   "text": "Consider the classes of languages Finite ⊂ Regular ⊂ Context-Free ⊂ P ⊆ NP ⊂ Decidable ⊂ Recursively Enumerable (r.e.). For each language below, state the **smallest** of these classes that it is known to belong to, or **None** if it is not r.e. (Assume P ≠ NP.)\n\n**(a)** The set of all Context-Free Grammars that generate the empty language.  \n**(b)** The language of binary strings (possibly with leading zeros) that represent a multiple of 3  \n**(c)** The language of all strings over {a,b} that do not contain bb as a substring  \n**(d)** The language of all strings over {a,b} whose first and last letters are different  ",
+   "parts": [
+    {
+     "label": "a",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "P",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "P",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    },
+    {
+     "label": "d",
+     "text": "",
+     "marks": 1,
+     "answer_type": "mcq",
+     "solution": "Regular",
+     "rubric": [
+      {
+       "criterion": "Correct class",
+       "marks": 1
+      }
+     ],
+     "check": {
+      "kind": "choice",
+      "answer": "Regular",
+      "options": [
+       "Finite",
+       "Regular",
+       "Context-Free",
+       "P",
+       "NP",
+       "Decidable",
+       "r.e.",
+       "None"
+      ]
+     },
+     "answer_format": null
+    }
+   ],
+   "marks": 4,
+   "source": "procedural",
+   "number": 19,
+   "inspired_by": "exam-2017-q13"
+  },
+  {
+   "topic": "decidability",
+   "answer_type": "mcq",
+   "text": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: Turing machines M and N.\nQuestion: Are the encoded forms of M and N identical?\nDecidable Undecidable\nInput: Turing machines M and N.\nQuestion: Do M and N have the same time complexity?\nDecidable Undecidable\nInput: a Turing machine M.\nQuestion: Does M correctly determine whether or not\nits input string is a palindrome? Decidable Undecidable\nInput: a Turing machine M, and a string w.\nQuestion: Does M ever change any letter of w on the\ntape? Decidable Undecidable",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 4,
+     "answer_type": "mcq",
+     "solution": "✓\n✓\n✓\n✓",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 4
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 4,
+   "source": "past:sampleexam2013-q18",
+   "number": 20,
+   "inspired_by": "sampleexam2013-q18"
+  },
+  {
+   "topic": "complexity_p",
+   "answer_type": "proof",
+   "text": "Prove that the class of regular languages is a subset of the class P.",
+   "parts": [
+    {
+     "label": "",
+     "text": "",
+     "marks": 2,
+     "answer_type": "proof",
+     "solution": "Let L be a regular language. Then, by Kleene’s Theorem, there is a FA which recognises L.\nWe can turn this into a Turing machine (or a computer program) that keeps track of which\nstate the FA is in, at any time, and depending on that state, and what the next letter is,\ndetermines what the next state is. This TM (or program) looks at each letter of the input\nstring, in turn, and the work it does for that letter — checking what it is and changing its\nrecord of the current state accordingly — can be done in only a few steps (constant time\nor linear time, depending on how the information is organised and managed). Multiply this\nby the number of letters in the string, and you get an overall time complexity of quadratic\ntime or better. So it takes polynomial time, so L is in P. Hence every regular language is in P.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 2,
+   "source": "past:exam-2013-q20",
+   "number": 21,
+   "inspired_by": "exam-2013-q21"
+  },
+  {
+   "topic": "np_completeness",
+   "answer_type": "prop_formula",
+   "text": "Consider the language NO MONOCHROMATIC TRIANGLE, which consists of all\ngraphs G such that we can assign colours to the edges of the graph so that (i) each edge is\neither Black or White, and (ii) there is no triangle (i.e., cycle of length 3) in the graph which\nis monochromatic (i.e., all its edges have the same colour).",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that the language NO MONOCHROMATIC TRIANGLE is in NP.\nNow, let W be the following graph.\nb\ny y\n\nc\na e\n\ny y\nd",
+     "marks": 4.0,
+     "answer_type": "prop_formula",
+     "solution": "Here is a verifier:\nInput: graph G.\nCertificate: a 2-colouring of the edges of G.\nVerification:\nFor each triangle of G:\n{\nif the three edges of the triangle all have the same colour, Reject and Stop.\n}\nAccept and Stop.\n[If we reach this point, each triangle must have been non-monochromatic.]\nIt should be clear from the construction of the verifier that it will accept if and only if the\ninput graph belongs to NO MONOCHROMATIC TRIANGLE.\nIt remains to show that this verifier runs in polynomial time. To see this, observe that\na graph on n vertices has O(n^{3}) triangles, so the number of outer-loop iterations is O(n^{3}).\nFor each such triangle, we must check that the three edges do not all receive the same colour.\nThe exact amount of time taken by this depends on the details of the implementation (what\ndata structure is used for the graph, etc.), but in any case takes polynomial time, and should\ntake constant or linear time. Multiplying this by O(n^{3}) gives a total time which is polynomial\nin the input size. So the verifier is a polynomial-time verifier. So NO MONOCHROMATIC\nTRIANGLE has a polynomial-time verifier, hence it is in NP.\n\n*Marker comments:* [This can be described in various ways. E.g., as an assignment of either Black or White to each\nedge of G, or a list of colours, Black/White, one colour for each edge, or a partition of the set\nof edges into two parts, etc.]",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 4.0
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "b",
+     "text": "Construct a Boolean expression E_{W} in Conjunctive Normal Form such that the satis-\nfying truth assignments for E_{W} correspond to solutions to the NO MONOCHROMATIC\nTRIANGLE problem on the above graph W (i.e., they correspond to colourings of the edges\nof W which have no monochromatic triangle).",
+     "marks": 6.0,
+     "answer_type": "prop_formula",
+     "solution": "Using variables a, b, c, d, e, with True meaning Black and False meaning White (or the other\nway round):\n(a ∨ b ∨ c) ∧ (¬a ∨¬b ∨¬c) ∧ (c ∨ d ∨ e) ∧ (¬c ∨¬d ∨¬e)\nAn alternative approach is to use variables B_{a}, W_{a}, B_{b}, W_{b}, B_{c}, W_{c}, B_{d}, W_{d}, B_{e}, W_{e}, with\nthe interpretation that, for any edge x in the graph,\nB_{x} = True if edge x is Black, and False otherwise;\nW_{x} = True if edge x is White, and False otherwise.\nThis is more cumbersome. The expression should then be:\n(B_{a} ∨ B_{b} ∨ B_{c}) ∧ (W_{a} ∨ W_{b} ∨ W_{c}) ∧ (B_{c} ∨ B_{d} ∨ B_{e}) ∧ (W_{c} ∨ W_{d} ∨ W_{e}) ∧\n(Ba ∨ Wa) ∧ (¬Ba ∨¬Wa) ∧ (Bb ∨ Wb) ∧ (¬Bb ∨¬Wb) ∧ (Bc ∨ Wc) ∧ (¬Bc ∨¬Wc) ∧\n(Bd ∨ Wd) ∧ (¬Bd ∨¬Wd) ∧ (Be ∨ We) ∧ (¬Be ∨¬We)\nThe first four clauses are clearly analogous to the four clauses of the earlier expression. The\nlast ten clauses are to ensure that each edge gets precisely one colour.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 6.0
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "c",
+     "text": "Give a polynomial-time reduction from NO MONOCHROMATIC TRIANGLE to SAT-\nISFIABILITY.",
+     "marks": 7.0,
+     "answer_type": "prop_formula",
+     "solution": "Input: Graph G.\nFor each edge of G, create a new variable.\nFor each triangle T of G:\n{\nLet a, b, c be the edges of T.\nCreate two new clauses: a ∨ b ∨ c, ¬a ∨¬b ∨¬c.\n}\nOutput: the conjunction of all the clauses created so far.\n\n*Marker comments:* [Some might use the more cumbersome set of clauses,\nbut that’s fine if done right.]",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 7.0
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "d",
+     "text": "State the Cook-Levin Theorem.",
+     "marks": 2.0,
+     "answer_type": "prop_formula",
+     "solution": "SATISFIABILITY is NP-complete.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2.0
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    },
+    {
+     "label": "e",
+     "text": "Given the facts stated so far in this question:\nWhat else, if anything, would you need to prove, in order to show that NO MONOCHRO-\nMATIC TRIANGLE is NP-complete?",
+     "marks": 2.0,
+     "answer_type": "prop_formula",
+     "solution": "SAT ≤_{P} NO MONOCHROMATIC TRIANGLE.\n\n*Marker comments:* Reasoning, though the question doesn’t ask for it:\nWe know SAT is NP-complete, and we know NO MONOCHROMATIC TRIANGLE is in\nNP. So, if we show that SAT ≤_{P} NO MONOCHROMATIC TRIANGLE, then we have\ncompleted the proof that NO MONOCHROMATIC TRIANGLE is NP-complete.",
+     "rubric": [
+      {
+       "criterion": "Correct answer (compare with the official solution)",
+       "marks": 2.0
+      }
+     ],
+     "check": null,
+     "answer_format": null
+    }
+   ],
+   "marks": 21,
+   "source": "past:exam-2013-q22",
+   "number": 22,
+   "inspired_by": "exam-2013-q22"
+  }
+ ]
+}

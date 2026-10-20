@@ -14,6 +14,8 @@ import time
 import requests
 
 DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:8b")
+# Marking proofs needs more careful reasoning than writing questions, and is a smaller job.
+GRADER_MODEL = os.environ.get("EXAMX_GRADER_MODEL", DEFAULT_MODEL)
 HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 if not HOST.startswith("http"):
     HOST = "http://" + HOST

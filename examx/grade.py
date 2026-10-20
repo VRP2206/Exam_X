@@ -250,6 +250,9 @@ CHECKERS = {"string_list": check_string_list, "language": check_language, "cfg":
 GRADER_SYSTEM = """You are a fair, careful FIT2014 Theory of Computation marker. Mark the student's answer
 against the model solution and rubric. Award marks for correct reasoning even if it differs from the
 model solution; do not award marks for statements that are wrong, vague, or missing key steps.
+Before deducting marks because a student's claim is wrong, check the claim yourself step by step: the
+model solution may itself be imperfect, and a concise argument that is correct deserves the marks.
+Do not deduct for not restating a standard theorem in full unless the rubric asks for it.
 Be concise and specific in feedback: say what is right, what is wrong, and how to fix it."""
 
 
@@ -263,7 +266,7 @@ def llm_grade(question: dict, part: dict, answer: str, model: str | None, note: 
             'Return JSON: {"criteria": [{"criterion": "...", "awarded": <number>, "comment": "..."}], '
             '"feedback": "2-4 sentences for the student"}')
     data = llm.chat_json([{"role": "system", "content": GRADER_SYSTEM}, {"role": "user", "content": user}],
-                         model=model, temperature=0.0, num_predict=1200)
+                         model=model or llm.GRADER_MODEL, temperature=0.0, num_predict=1200)
     crit = [c for c in data.get("criteria", []) if isinstance(c, dict)]
     total = 0.0
     for c in crit:

@@ -145,7 +145,7 @@ def gen_string_list(rng: random.Random, marks: int = 4) -> dict:
                           strings_, [{"criterion": "All strings listed, no extras", "marks": m1}],
                           {"kind": "string_list", "regex": r, "alphabet": ["a", "b"], "max_len": n}, "string_list"),
                      part("b", "Give an NFA that recognises the language described by this regular expression.", m2,
-                          "One possibility (Thompson construction, simplified forms are equally acceptable):" +
+                          "One possibility (any NFA for the same language is equally acceptable):" +
                           code(nfa_edges_text(_compact_nfa(nfa))),
                           [{"criterion": "NFA accepts exactly the language of the regular expression", "marks": m2}],
                           {"kind": "language", "reference_regex": r, "alphabet": ["a", "b"], "answer": "automaton"},

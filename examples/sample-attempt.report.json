@@ -1,0 +1,518 @@
+{
+ "paper_title": "FIT2014 Practice Exam (seed 42)",
+ "total": 23.5,
+ "max_total": 120,
+ "questions": [
+  {
+   "number": 1,
+   "marks": 4,
+   "awarded": 4.0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 4,
+     "awarded": 4.0,
+     "method": "exact",
+     "feedback": "Correct."
+    }
+   ]
+  },
+  {
+   "number": 2,
+   "marks": 4,
+   "awarded": 2.5,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 2,
+     "awarded": 1.5,
+     "method": "exact",
+     "feedback": "Missing: 'aaaba', 'aaaaba' Should not be listed: 'bab'"
+    },
+    {
+     "label": "b",
+     "marks": 2,
+     "awarded": 1.0,
+     "method": "exact",
+     "feedback": "Not equivalent to the required language: your answer rejects 'baba', which should be accepted. It agrees with the correct language on 100% of strings up to length 7."
+    }
+   ]
+  },
+  {
+   "number": 3,
+   "marks": 4,
+   "awarded": 1.5,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 2,
+     "awarded": 1.5,
+     "method": "exact",
+     "feedback": "Missing: 'abbab', 'babbab'"
+    },
+    {
+     "label": "b",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 4,
+   "marks": 3,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 3,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 5,
+   "marks": 7,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 7,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 6,
+   "marks": 3,
+   "awarded": 3.0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 3,
+     "awarded": 3.0,
+     "method": "exact",
+     "feedback": "Correct: your answer recognises exactly the required language."
+    }
+   ]
+  },
+  {
+   "number": 7,
+   "marks": 6,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "c",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 8,
+   "marks": 2,
+   "awarded": 1.0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 2,
+     "awarded": 1.0,
+     "method": "exact",
+     "feedback": "Your grammar cannot generate 'bb' (and 15 more short strings in the language)."
+    }
+   ]
+  },
+  {
+   "number": 9,
+   "marks": 6,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 6,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 10,
+   "marks": 5,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 3,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 11,
+   "marks": 5,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 5,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 12,
+   "marks": 4,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 4,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 13,
+   "marks": 6,
+   "awarded": 4.5,
+   "parts": [
+    {
+     "label": "",
+     "marks": 6,
+     "awarded": 4.5,
+     "method": "exact",
+     "feedback": "Wrong on 7 of 127 test inputs. For input ε (the empty string) the output should be '1' but your machine crashed off the left end with tape ''."
+    }
+   ]
+  },
+  {
+   "number": 14,
+   "marks": 4,
+   "awarded": 2.0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 2,
+     "awarded": 2.0,
+     "method": "llm-rubric",
+     "feedback": "Your answer is correct and captures the essence of the Church-Turing thesis. The model solution states it as 'Any function which can defined by an algorithm can be represented by a Turing Machine,' while your version says 'Anything that can be computed by an algorithm can be computed by a Turing machine.' Both are valid formulations. Well done!\n\n_Rubric:_ Correct answer (compare with the official solution): 2 — The student's answer is essentially equivalent to the model solution, with slightly different wording. Both convey the core idea of the Church-Turing thesis."
+    },
+    {
+     "label": "b",
+     "marks": 2,
+     "awarded": 0.0,
+     "method": "llm-rubric",
+     "feedback": "Your answer is incorrect. The Church-Turing thesis is not about the speed of Turing machines or programming languages compiling to them. It is about the equivalence of different computational models and the idea that any algorithm can be simulated by a Turing machine. Two correct reasons are: (1) different approaches to defining computability end up being equivalent, and (2) long experience shows that algorithms can be implemented as programs and thus on Turing machines.\n\n_Rubric:_ Correct answer (compare with the official solution): 0 — The student's answer is incorrect. The Church-Turing thesis is not about the speed of Turing machines or the compilation of programming languages to Turing machines. It is about the equivalence of different models of computation and the limits of computability."
+    }
+   ]
+  },
+  {
+   "number": 15,
+   "marks": 4,
+   "awarded": 3.0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 1,
+     "awarded": 1.0,
+     "method": "exact",
+     "feedback": "Correct."
+    },
+    {
+     "label": "b",
+     "marks": 1,
+     "awarded": 1.0,
+     "method": "exact",
+     "feedback": "Correct."
+    },
+    {
+     "label": "c",
+     "marks": 1,
+     "awarded": 0.0,
+     "method": "exact",
+     "feedback": "Incorrect: the answer is Undecidable."
+    },
+    {
+     "label": "d",
+     "marks": 1,
+     "awarded": 1.0,
+     "method": "exact",
+     "feedback": "Correct."
+    }
+   ]
+  },
+  {
+   "number": 16,
+   "marks": 10,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "c",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "d",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "e",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "f",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "g",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "h",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "i",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "j",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 17,
+   "marks": 7,
+   "awarded": 2.0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 7,
+     "awarded": 2.0,
+     "method": "llm-rubric",
+     "feedback": "Your answer is concise but lacks the detailed case analysis required to apply the Pumping Lemma correctly. You need to clearly state the Pumping Lemma, justify the choice of string, and consider all possible cases for vxy. Make sure to show that pumping leads to a string not in L in each case.\n\n_Rubric:_ State the Pumping Lemma for context-free languages: 1 — The student mentions the Pumping Lemma but does not clearly state it. A full statement would include the form w = uvxyz, the conditions on |vxy| and |vy|, and the requirement that uv^i xy^i z ∈ L for all i ≥ 0.; Choose a suitable string w = a^N b^N c^N and justify its length: 1 — The student chooses w = a^N b^N c^N but does not clearly justify its length (e.g., that it is longer than the pumping length).; Apply the Pumping Lemma and consider all possible cases for vxy: 0 — The student does not consider all possible cases for vxy. They incorrectly assume that vxy cannot contain both a's and c's, which is not necessarily true. This is a critical omission.; Show that pumping leads to a string not in L in all cases: 0 — The student does not provide a detailed argument showing that pumping leads to a string not in L. The reasoning is too vague and lacks the necessary case analysis."
+    }
+   ]
+  },
+  {
+   "number": 18,
+   "marks": 5,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "c",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "d",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "e",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 19,
+   "marks": 4,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "c",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "d",
+     "marks": 1,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 20,
+   "marks": 4,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 4,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 21,
+   "marks": 2,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "",
+     "marks": 2,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  },
+  {
+   "number": 22,
+   "marks": 21,
+   "awarded": 0,
+   "parts": [
+    {
+     "label": "a",
+     "marks": 4.0,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "b",
+     "marks": 6.0,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "c",
+     "marks": 7.0,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "d",
+     "marks": 2.0,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    },
+    {
+     "label": "e",
+     "marks": 2.0,
+     "awarded": 0,
+     "method": "blank",
+     "feedback": "No answer given."
+    }
+   ]
+  }
+ ]
+}
