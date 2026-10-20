@@ -427,12 +427,18 @@ def gen_tm(rng: random.Random, marks: int = 6) -> dict:
              {"kind": "tm_function", "function": f.key, "alphabet": list(f.alphabet), "max_len": 6}, "tm", TM_FORMAT)])
 
 
+def split_marks(marks: int, n: int) -> list[int]:
+    """n whole-number part marks summing to marks, e.g. 20 over 18 parts -> two 2s and sixteen 1s."""
+    return [marks // n + (i < marks % n) for i in range(n)]
+
+
 def gen_decidability(rng: random.Random, marks: int = 4) -> dict:
-    probs = rng.sample(bank.DECISION_PROBLEMS, marks)
+    probs = rng.sample(bank.DECISION_PROBLEMS, min(marks, len(bank.DECISION_PROBLEMS)))
+    pm = split_marks(marks, len(probs))
     rows = "\n\n".join(f"**({chr(97 + i)})** " + p.replace("\n", "  \n") for i, (p, _) in enumerate(probs))
     return question("decidability", "mcq",
                     "For each of the following decision problems, indicate whether it is Decidable or Undecidable.\n\n" + rows,
-                    [part(chr(97 + i), "", 1, ans, [{"criterion": "Correct classification", "marks": 1}],
+                    [part(chr(97 + i), "", pm[i], ans, [{"criterion": "Correct classification", "marks": pm[i]}],
                           {"kind": "choice", "answer": ans, "options": ["Decidable", "Undecidable"]}, "mcq")
                      for i, (_, ans) in enumerate(probs)])
 
@@ -443,12 +449,13 @@ def gen_language_classes(rng: random.Random, marks: int = 10) -> dict:
               "Regular" if l.regular else "Context-Free" if l.context_free else "P") for l in bank.LANGUAGES]
     items += bank.CLASS_ITEMS
     chosen = rng.sample(items, min(marks, len(items)))
+    pm = split_marks(marks, len(chosen))
     rows = "\n".join(f"**({chr(97 + i)})** {d}  " for i, (d, _) in enumerate(chosen))
     text = ("Consider the classes of languages Finite ⊂ Regular ⊂ Context-Free ⊂ P ⊆ NP ⊂ Decidable ⊂ "
             "Recursively Enumerable (r.e.). For each language below, state the **smallest** of these classes "
             "that it is known to belong to, or **None** if it is not r.e. (Assume P ≠ NP.)\n\n" + rows)
     return question("language_classes", "language_classes", text,
-                    [part(chr(97 + i), "", 1, ans, [{"criterion": "Correct class", "marks": 1}],
+                    [part(chr(97 + i), "", pm[i], ans, [{"criterion": "Correct class", "marks": pm[i]}],
                           {"kind": "choice", "answer": ans, "options": bank.CLASSES}, "mcq")
                      for i, (_, ans) in enumerate(chosen)])
 

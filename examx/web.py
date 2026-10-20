@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import html
 import json
+import os
 import re
 import threading
 import time
@@ -31,12 +32,21 @@ SETTINGS = {"model": llm.DEFAULT_MODEL, "prose": "past", "review": False}
 PROVIDER_LABELS = {"ollama": "Local (Ollama)", "gemini": "Google Gemini", "claude": "Anthropic Claude"}
 KEY_HELP = {
     "ollama": "Start Ollama with <code>ollama serve</code> and pull a model, e.g. <code>ollama pull qwen3:8b</code>.",
-    "gemini": "Set <code>GEMINI_API_KEY</code> in the shell before <code>examx serve</code> "
-              "(free key: aistudio.google.com/apikey).",
-    "claude": "Set <code>ANTHROPIC_API_KEY</code> in the shell before <code>examx serve</code> "
-              "(key: console.anthropic.com).",
+    "gemini": "Set <code>GEMINI_API_KEY</code> in the environment of <code>examx serve</code> (for the website: in "
+              "<code>~/.examx.env</code>, then restart the container). Free key: aistudio.google.com/apikey.",
+    "claude": "Set <code>ANTHROPIC_API_KEY</code> in the environment of <code>examx serve</code> (for the website: in "
+              "<code>~/.examx.env</code>, then restart the container). Key: console.anthropic.com.",
 }
 _status_cache: dict = {"at": 0.0, "data": None}
+# Public deployment (see deploy/): with EXAMX_REQUIRE_ACCESS=1 every request must carry the identity header that
+# Cloudflare Access adds after login, so the site fails closed if Access is not set up. Running AI jobs cost
+# API quota, so their number is capped per day and at any one time.
+REQUIRE_ACCESS = os.environ.get("EXAMX_REQUIRE_ACCESS") == "1"
+ACCESS_HEADER = "Cf-Access-Authenticated-User-Email"
+DAILY_AI_JOBS = int(os.environ.get("EXAMX_DAILY_AI_JOBS", "0"))  # 0 = unlimited
+MAX_RUNNING = int(os.environ.get("EXAMX_MAX_JOBS", "2"))
+MAX_BODY = 1_000_000
+_ai_jobs: dict[str, int] = {}
 
 STYLE = """<style>
 :root{--bg:#f6f7f9;--card:#fff;--fg:#1d2330;--muted:#606a7b;--line:#dde1e8;--accent:#2f5bd3;--accent-fg:#fff;
@@ -120,6 +130,18 @@ def md(text: str) -> str:
 def papers() -> list[Path]:
     found = [p for p in OUT.glob("practice-*.json") if re.fullmatch(r"practice-\d+", p.stem)] if OUT.exists() else []
     return sorted(found, key=lambda p: p.stat().st_mtime, reverse=True)
+
+
+def job_refusal(uses_ai: bool) -> str | None:
+    """Why a new job cannot start now, or None."""
+    if sum(not j["done"] for j in JOBS.values()) >= MAX_RUNNING:
+        return f"{MAX_RUNNING} jobs are already running; try again when one finishes."
+    day = time.strftime("%Y-%m-%d")
+    if uses_ai and DAILY_AI_JOBS and _ai_jobs.get(day, 0) >= DAILY_AI_JOBS:
+        return f"The daily limit of {DAILY_AI_JOBS} AI jobs on this site is reached; it resets at midnight."
+    if uses_ai:
+        _ai_jobs[day] = _ai_jobs.get(day, 0) + 1
+    return None
 
 
 def run_job(kind: str, fn, *args) -> str:
@@ -209,7 +231,16 @@ class Handler(BaseHTTPRequestHandler):
     def log_message(self, *a):
         pass
 
+    def denied(self) -> bool:
+        if REQUIRE_ACCESS and not self.headers.get(ACCESS_HEADER):
+            self.send(page("Sign-in required", "<h1>Sign-in required</h1><p>This site only accepts requests that come "
+                           "through Cloudflare Access. Ask the owner for access.</p>"), 403)
+            return True
+        return False
+
     def do_GET(self):
+        if self.denied():
+            return
         url = urlparse(self.path)
         path = url.path.strip("/").split("/")
         if path == [""]:
@@ -231,6 +262,8 @@ class Handler(BaseHTTPRequestHandler):
             body = (f"<h1>{j['kind']}</h1><p class='muted'>{status}</p>"
                     f"<div class='log'>{html.escape(chr(10).join(j['log'])) or 'starting…'}</div>")
             return self.send(page("Job", body, refresh=not j["done"]))
+        if path[0] in ("paper", "solutions", "report") and (len(path) < 2 or not path[1].isdigit()):
+            return self.send(page("Not found", "<p>Not found.</p>"), 404)
         if path[0] in ("paper", "solutions") and len(path) == 2:
             f = OUT / f"practice-{path[1]}.json"
             if not f.exists():
@@ -310,7 +343,11 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
         return "".join(out)
 
     def do_POST(self):
-        n = int(self.headers.get("Content-Length", 0))
+        if self.denied():
+            return
+        n = int(self.headers.get("Content-Length", 0) or 0)
+        if n > MAX_BODY:
+            return self.send(page("Too large", "<p>Request too large.</p>"), 413)
         form = {k: v[0] for k, v in parse_qs(self.rfile.read(n).decode(), keep_blank_values=True).items()}
         path = urlparse(self.path).path.strip("/").split("/")
         if path == ["settings"]:
@@ -328,6 +365,8 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
             return self.redirect("/")
         if path == ["generate"]:
             seed = int(form["seed"]) if form.get("seed", "").strip().isdigit() else None
+            if why := job_refusal("llm" in form):
+                return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p><a href='/'>Back</a></p>"), 429)
             return self.redirect("/job/" + run_job("Generating paper", _generate, "llm" in form, seed,
                                                    SETTINGS["model"], SETTINGS["prose"], SETTINGS["review"]))
         if path[0] == "grade" and len(path) == 2 and (OUT / f"practice-{path[1]}.json").exists():
@@ -336,6 +375,9 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
                 if k.startswith("q") and "_" in k and k[1:].split("_", 1)[0].isdigit():
                     num, label = k[1:].split("_", 1)
                     answers.setdefault(int(num), {})[label] = v
+            if why := job_refusal("llm" in form):
+                return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p>Your answers are still saved in "
+                                      "this browser.</p>"), 429)
             return self.redirect("/job/" + run_job("Marking", _grade, path[1], answers, "llm" in form,
                                                    llm.grader_model(SETTINGS["model"])))
         self.send(page("Not found", "<p>Not found.</p>"), 404)
@@ -345,5 +387,6 @@ def serve(host: str = "127.0.0.1", port: int = 8014, model: str | None = None):
     load_settings()
     if model:
         SETTINGS["model"] = model
-    print(f"ExamX web UI on http://{host}:{port}  (model {SETTINGS['model']}; Ctrl+C to stop)")
+    print(f"ExamX web UI on http://{host}:{port}  (model {SETTINGS['model']}; "
+          f"{'Cloudflare Access required; ' if REQUIRE_ACCESS else ''}Ctrl+C to stop)", flush=True)
     ThreadingHTTPServer((host, port), Handler).serve_forever()

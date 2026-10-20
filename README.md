@@ -225,6 +225,34 @@ LLM marks for proofs are advisory. The exact marks (automata, grammars, TMs, log
 `examples/` contains a generated paper, a deliberately mixed `sample-attempt.md` and its
 `sample-attempt.report.md` (26.5/120, about 3.5 minutes to mark).
 
+## Deploying the website
+
+The site at **https://exam-x.vrp2206.com** runs on this server as a Docker container. Traffic comes in through
+the existing Cloudflare Tunnel and Caddy proxy (`~/Projects/proxy`), so no ports are opened:
+
+```
+browser ─► Cloudflare (Access login) ─► tunnel ─► Caddy :80 (Host: exam-x.vrp2206.com) ─► examx :8014
+```
+
+```bash
+docker compose -f deploy/compose.yaml up -d --build    # start, or rebuild after code changes
+docker compose -f deploy/compose.yaml logs -f          # logs
+docker compose -f deploy/compose.yaml restart          # after editing ~/.examx.env
+```
+
+- **API keys** go in `~/.examx.env` (outside the repo; `chmod 600`), one `NAME=value` per line, e.g.
+  `ANTHROPIC_API_KEY=...`. The container reads it at start-up, and nothing writes it.
+- **Default model:** `claude:claude-sonnet-5-5` (set in `deploy/compose.yaml`; the AI model page overrides it, and
+  that choice is saved in `output/settings.json`). Local Ollama models also work, because the container uses the
+  host network.
+- **Access control:** the container runs with `EXAMX_REQUIRE_ACCESS=1` and refuses (403) every request without
+  the `Cf-Access-Authenticated-User-Email` header. Cloudflare Access adds that header after a visitor signs in,
+  so the site stays closed until an Access application protects `exam-x.vrp2206.com`. This is a fail-closed
+  guard, not a signature check. The real protection is the Access policy, and the app is only reachable from
+  localhost.
+- **Cost guard:** at most `EXAMX_DAILY_AI_JOBS=30` AI jobs (papers or markings) per day and 2 jobs at a time.
+- Papers, reports and settings live in `output/` on the host.
+
 ## Tests
 
 ```bash

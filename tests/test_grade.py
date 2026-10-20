@@ -105,3 +105,12 @@ def test_past_paper_wrapper():
     assert sum(q["marks"] for q in paper["questions"]) == 120
     q22 = next(q for q in paper["questions"] if q["number"] == 22)
     assert [p["marks"] for p in q22["parts"]] == [4, 6, 7, 2, 2]
+
+
+@pytest.mark.parametrize("marks", [4, 20, 40])
+def test_table_generators_handle_large_slots(marks):
+    import random
+    from examx import procedural
+    for gen in (procedural.gen_decidability, procedural.gen_language_classes):
+        q = gen(random.Random(1), marks)
+        assert sum(p["marks"] for p in q["parts"]) == marks

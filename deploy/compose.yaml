@@ -1,0 +1,19 @@
+# Runs the ExamX web UI on 127.0.0.1:8014 (host network, so it can reach Ollama on localhost:11434).
+# The public hostname is served by the existing Cloudflare Tunnel -> Caddy proxy (~/Projects/proxy).
+# API keys come from ~/.examx.env (outside the repo, chmod 600), never from this file.
+services:
+  examx:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    restart: unless-stopped
+    network_mode: host
+    env_file:
+      - path: ${HOME}/.examx.env
+        required: false
+    environment:
+      - EXAMX_REQUIRE_ACCESS=1        # refuse requests that did not pass Cloudflare Access
+      - EXAMX_DAILY_AI_JOBS=30        # cap paid/free-tier API use per day
+      - EXAMX_MODEL=claude:claude-sonnet-5-5
+    volumes:
+      - ../output:/app/output
