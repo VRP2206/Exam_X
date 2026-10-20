@@ -4,7 +4,7 @@ from itertools import product
 import pytest
 
 from examx import bank
-from examx.checkers import cfg, regex
+from examx.checkers import cfg, regex, tm
 
 
 def strings(alphabet, n):
@@ -35,4 +35,11 @@ def test_tm_function_examples():
     assert bank.TMF["twos_complement"].fn("0110100") == "1001100"
     assert bank.TMF["increment"].fn("111") == "1000"
     assert bank.TMF["increment"].fn("1011") == "1100"
-    assert bank.TMF["erase_b"].fn("abbab") == "aa"
+
+
+@pytest.mark.parametrize("f", bank.TM_FUNCTIONS, ids=lambda f: f.key)
+def test_reference_tms(f):
+    machine = tm.parse_tm(f.tm)
+    for w in strings(f.alphabet, 7):
+        r = tm.run_tm(machine, w)
+        assert r.halted and not r.crashed and r.accepted and r.tape == f.fn(w), w

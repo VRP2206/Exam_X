@@ -105,23 +105,92 @@ class TMFunction:
     alphabet: tuple[str, ...]
     fn: Callable[[str], str]
     example: str
+    tm: str  # reference machine in examx.checkers.tm text format
 
 
 TM_FUNCTIONS = [
     TMFunction("twos_complement", "computes the 2's complement of a binary string: flip each bit up to (but not including) "
-               "the last 1, and keep that last 1 and all 0s after it unchanged", ("0", "1"), _twos, "0110100"),
+               "the last 1, and keep that last 1 and all 0s after it unchanged", ("0", "1"), _twos, "0110100", """
+start: 0
+halt: H
+# mark the first cell (X = 0, Y = 1): the tape has no blank to its left
+0 0 -> 1 X R
+0 1 -> 1 Y R
+0 Δ -> H Δ R
+1 0 -> 1 0 R
+1 1 -> 1 1 R
+1 Δ -> 2 Δ L
+# 2: skip trailing 0s leftwards until the last 1
+2 0 -> 2 0 L
+2 1 -> 3 1 L
+2 X -> H 0 R
+2 Y -> H 1 R
+# 3: flip everything to the left of the last 1
+3 0 -> 3 1 L
+3 1 -> 3 0 L
+3 X -> H 1 R
+3 Y -> H 0 R
+"""),
     TMFunction("flip_bits", "flips every bit of a binary string (0 becomes 1 and 1 becomes 0)", ("0", "1"),
-               lambda w: w.translate(str.maketrans("01", "10")), "01101"),
+               lambda w: w.translate(str.maketrans("01", "10")), "01101", """
+start: 1
+halt: H
+1 0 -> 1 1 R
+1 1 -> 1 0 R
+1 Δ -> H Δ R
+"""),
     TMFunction("increment", "adds 1 to a binary number (most significant bit first). If the input is all 1s, the output is "
-               "one bit longer, e.g. 111 becomes 1000", ("0", "1"), _incr, "1011"),
+               "one bit longer, e.g. 111 becomes 1000", ("0", "1"), _incr, "1011", """
+start: 0
+halt: H
+# mark the first cell (X = 0, Y = 1) so the left end can be recognised
+0 0 -> 1 X R
+0 1 -> 1 Y R
+0 Δ -> H 1 R
+1 0 -> 1 0 R
+1 1 -> 1 1 R
+1 Δ -> 2 Δ L
+2 1 -> 2 0 L
+2 0 -> 5 1 L
+2 X -> H 1 R
+2 Y -> 4 1 R
+4 0 -> 4 0 R
+4 Δ -> H 0 R
+5 0 -> 5 0 L
+5 1 -> 5 1 L
+5 X -> H 0 R
+5 Y -> H 1 R
+"""),
     TMFunction("swap_ab", "replaces every a by b and every b by a", ("a", "b"), lambda w: w.translate(str.maketrans("ab", "ba")),
-               "aab"),
-    TMFunction("append_a", "appends one a to the end of its input string", ("a", "b"), lambda w: w + "a", "bab"),
-    TMFunction("erase_b", "deletes every b from its input, shifting the remaining a's left so that the output "
-               "is a contiguous block of a's starting at the first cell", ("a", "b"), lambda w: w.replace("b", ""),
-               "abbab"),
+               "aab", """
+start: 1
+halt: H
+1 a -> 1 b R
+1 b -> 1 a R
+1 Δ -> H Δ R
+"""),
+    TMFunction("append_a", "appends one a to the end of its input string", ("a", "b"), lambda w: w + "a", "bab", """
+start: 1
+halt: H
+1 a -> 1 a R
+1 b -> 1 b R
+1 Δ -> H a R
+"""),
     TMFunction("double_last", "duplicates the last letter of a nonempty string (and leaves the empty string unchanged)",
-               ("a", "b"), lambda w: w + w[-1:] if w else w, "abb"),
+               ("a", "b"), lambda w: w + w[-1:] if w else w, "abb", """
+start: 0
+halt: H
+0 a -> 1 a R
+0 b -> 1 b R
+0 Δ -> H Δ R
+1 a -> 1 a R
+1 b -> 1 b R
+1 Δ -> 2 Δ L
+2 a -> 3 a R
+2 b -> 4 b R
+3 Δ -> H a R
+4 Δ -> H b R
+"""),
 ]
 TMF = {f.key: f for f in TM_FUNCTIONS}
 

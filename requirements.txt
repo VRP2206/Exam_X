@@ -1,3 +1,4 @@
 pymupdf==2.0
 requests==2.34.2
+markdown==3.11.2
 pytest==9.1.1
