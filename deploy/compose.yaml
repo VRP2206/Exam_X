@@ -1,6 +1,8 @@
 # Runs the ExamX web UI on 127.0.0.1:8014 (host network, so it can reach Ollama on localhost:11434).
-# The public hostname is served by the existing Cloudflare Tunnel -> Caddy proxy (~/Projects/proxy).
-# API keys come from ~/.examx.env (outside the repo, chmod 600), never from this file.
+# exam-x.vrp2206.com reaches it through its own Cloudflare Tunnel (the "tunnel" service below), whose public
+# hostname is set in the Cloudflare dashboard to http://localhost:8014.
+# Secrets never live in this file: the tunnel token is read from ~/.examx-tunnel.env (TUNNEL_TOKEN=...) and an
+# optional server-wide API key from ~/.examx.env, both outside the repo and chmod 600, created by the owner.
 services:
   examx:
     build:
@@ -17,3 +19,14 @@ services:
       - EXAMX_MODEL=claude:claude-sonnet-5-5
     volumes:
       - ../output:/app/output
+
+  tunnel:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    network_mode: host
+    command: tunnel --no-autoupdate --metrics 127.0.0.1:20242 run
+    env_file:
+      - path: ${HOME}/.examx-tunnel.env
+        required: true
+    depends_on:
+      - examx

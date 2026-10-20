@@ -233,15 +233,24 @@ LLM marks for proofs are advisory. The exact marks (automata, grammars, TMs, log
 
 ## Deploying the website
 
-The site at **https://exam-x.vrp2206.com** runs on this server as a Docker container. Traffic comes in through
-the existing Cloudflare Tunnel and Caddy proxy (`~/Projects/proxy`), so no ports are opened:
+The site at **https://exam-x.vrp2206.com** runs on this server as two Docker containers: the app, and a
+Cloudflare Tunnel connector for it. No ports are opened:
 
 ```
-browser ─► Cloudflare (Access login) ─► tunnel ─► Caddy :80 (Host: exam-x.vrp2206.com) ─► examx :8014
+browser ─► Cloudflare (Access: @monash.edu / @student.monash.edu) ─► tunnel ─► examx 127.0.0.1:8014
 ```
+
+One-time setup:
+
+1. In the Cloudflare dashboard, give the tunnel a public hostname `exam-x.vrp2206.com` → `HTTP` →
+   `localhost:8014`, and protect it with an Access application whose policy allows the permitted emails.
+2. Put the tunnel token in a private file outside the repo (the prompt hides what you paste):
+   ```bash
+   umask 077; read -rs T && printf 'TUNNEL_TOKEN=%s\n' "$T" > ~/.examx-tunnel.env && unset T
+   ```
 
 ```bash
-docker compose -f deploy/compose.yaml up -d --build    # start, or rebuild after code changes
+docker compose -f deploy/compose.yaml up -d --build    # start app + tunnel, or rebuild after code changes
 docker compose -f deploy/compose.yaml logs -f          # logs
 docker compose -f deploy/compose.yaml up -d --force-recreate   # after editing ~/.examx.env
 ```
