@@ -14,8 +14,11 @@ services:
       - path: ${HOME}/.examx.env
         required: false
     environment:
-      - EXAMX_REQUIRE_ACCESS=1        # refuse requests that did not pass Cloudflare Access
-      - EXAMX_DAILY_AI_JOBS=30        # cap paid/free-tier API use per day
+      # Public site: visitors (requests via Cloudflare) use only their own API keys, see only their own papers,
+      # and are limited per IP. Set EXAMX_REQUIRE_ACCESS=1 to require Cloudflare Access sign-in instead.
+      - EXAMX_PUBLIC_DAILY_JOBS=20    # papers + markings per visitor IP per day
+      - EXAMX_PUBLIC_DAILY_TOTAL=300  # all visitors together, per day
+      - EXAMX_DAILY_AI_JOBS=150       # public AI jobs per day (they use visitors' own keys)
       - EXAMX_MODEL=claude:claude-sonnet-5-5
     volumes:
       - ../output:/app/output

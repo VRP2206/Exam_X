@@ -3,14 +3,19 @@
 Run with `examx serve` and open http://127.0.0.1:8014. The model switcher chooses between the local Ollama
 models, Google Gemini and Anthropic Claude. Each visitor enters their own API key on the AI model page: it is
 checked once, kept only in that browser (an HttpOnly, Secure, SameSite=Strict cookie), sent back with each
-request and used just for that visitor's jobs. The server never writes or logs it. Keys in the server's
-environment, if any, are the fallback. Long jobs (LLM generation and marking) run in a background thread and
+request and used just for that visitor's jobs. The server never writes or logs it.
+
+Requests that arrive through Cloudflare (they carry Cf-Connecting-IP) are treated as public visitors: they can
+only use their own cloud keys (no local Ollama models, no server-side keys), see only their own papers and
+reports (tracked by an anonymous browser id cookie), keep their model choice in a cookie, and are rate-limited
+per IP. Requests made directly to 127.0.0.1 (the owner, on the server) get everything. Long jobs (LLM generation and marking) run in a background thread and
 the job page refreshes until they finish.
 """
 from __future__ import annotations
 
 import hashlib
 import html
+import random
 import http.cookies
 import json
 import os
@@ -19,6 +24,7 @@ import threading
 import time
 import traceback
 import uuid
+from urllib.parse import quote, unquote
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import parse_qs, urlparse
@@ -43,9 +49,17 @@ _status_cache: dict = {}  # hash of the visitor's keys -> (time, status)
 KEY_COOKIE = "examx_key_"  # + provider
 KEY_RE = re.compile(r"[A-Za-z0-9_\-.]{20,300}")
 REMEMBER_DAYS = 30
-# Public deployment (see deploy/): with EXAMX_REQUIRE_ACCESS=1 every request must carry the identity header that
-# Cloudflare Access adds after login, so the site fails closed if Access is not set up. Running AI jobs cost
-# API quota, so their number is capped per day and at any one time.
+PUBLIC_HEADER = "Cf-Connecting-IP"  # set by Cloudflare on every request through the tunnel
+UID_COOKIE, PREFS_COOKIE = "examx_uid", "examx_prefs"
+OWNERS_FILE = OUT / "owners.json"  # paper seed / report id -> anonymous browser id of its creator
+PUBLIC_DAILY_JOBS = int(os.environ.get("EXAMX_PUBLIC_DAILY_JOBS", "20"))     # per visitor IP
+PUBLIC_DAILY_TOTAL = int(os.environ.get("EXAMX_PUBLIC_DAILY_TOTAL", "300"))  # all public visitors together
+PUBLIC_DEFAULT_MODEL = llm.DEFAULT_MODEL if llm.is_cloud(llm.DEFAULT_MODEL) else "claude"
+_lock = threading.Lock()
+_public_jobs: dict[tuple[str, str], int] = {}  # (day, ip or "*") -> jobs started
+# Optional: with EXAMX_REQUIRE_ACCESS=1 every request must carry the identity header that Cloudflare Access adds
+# after login, so the site fails closed if Access is not set up. Public AI jobs are also capped per day
+# (EXAMX_DAILY_AI_JOBS) and all jobs at any one time (EXAMX_MAX_JOBS).
 REQUIRE_ACCESS = os.environ.get("EXAMX_REQUIRE_ACCESS") == "1"
 ACCESS_HEADER = "Cf-Access-Authenticated-User-Email"
 DAILY_AI_JOBS = int(os.environ.get("EXAMX_DAILY_AI_JOBS", "0"))  # 0 = unlimited
@@ -124,9 +138,9 @@ def provider_status(refresh: bool = False, keys: dict | None = None) -> dict:
     return _status_cache[tag][1]
 
 
-def page(title: str, body: str, refresh: bool = False) -> bytes:
+def page(title: str, body: str, refresh: bool = False, model: str | None = None) -> bytes:
     meta = '<meta http-equiv="refresh" content="3">' if refresh else ""
-    provider, name = llm.split(SETTINGS["model"])
+    provider, name = llm.split(model or SETTINGS["model"])
     chip = f"{PROVIDER_LABELS[provider].split(' (')[0]} · {name}"
     return (f"<!doctype html><html><head><meta charset='utf-8'><meta name='viewport' "
             f"content='width=device-width,initial-scale=1'><title>{html.escape(title)}</title>{meta}{STYLE}</head>"
@@ -148,21 +162,47 @@ def papers() -> list[Path]:
     return sorted(found, key=lambda p: p.stat().st_mtime, reverse=True)
 
 
-def job_refusal(uses_ai: bool) -> str | None:
-    """Why a new job cannot start now, or None."""
-    if sum(not j["done"] for j in JOBS.values()) >= MAX_RUNNING:
-        return f"{MAX_RUNNING} jobs are already running; try again when one finishes."
-    day = time.strftime("%Y-%m-%d")
-    if uses_ai and DAILY_AI_JOBS and _ai_jobs.get(day, 0) >= DAILY_AI_JOBS:
-        return f"The daily limit of {DAILY_AI_JOBS} AI jobs on this site is reached; it resets at midnight."
-    if uses_ai:
-        _ai_jobs[day] = _ai_jobs.get(day, 0) + 1
-    return None
+def owners() -> dict:
+    try:
+        data = json.loads(OWNERS_FILE.read_text())
+    except (OSError, ValueError):
+        data = {}
+    return {"papers": data.get("papers", {}), "reports": data.get("reports", {})}
 
 
-def run_job(kind: str, fn, *args, keys: dict | None = None) -> str:
-    jid = uuid.uuid4().hex[:8]
-    JOBS[jid] = {"kind": kind, "log": [], "done": False, "result": None, "start": time.time()}
+def set_owner(kind: str, ident: str, uid: str) -> None:
+    with _lock:
+        data = owners()
+        data[kind][str(ident)] = uid
+        OUT.mkdir(exist_ok=True)
+        OWNERS_FILE.write_text(json.dumps(data))
+
+
+def job_refusal(uses_ai: bool, public: bool, ip: str) -> str | None:
+    """Why a new job cannot start now, or None (and count the job)."""
+    with _lock:
+        running = [j for j in JOBS.values() if not j["done"]]
+        if len(running) >= MAX_RUNNING:
+            return f"{MAX_RUNNING} jobs are already running on this site; try again when one finishes."
+        if not public:
+            return None
+        if any(j.get("ip") == ip for j in running):
+            return "You already have a job running; wait for it to finish."
+        day = time.strftime("%Y-%m-%d")
+        if _public_jobs.get((day, ip), 0) >= PUBLIC_DAILY_JOBS:
+            return f"You have reached the limit of {PUBLIC_DAILY_JOBS} papers/markings per day; it resets at midnight."
+        if _public_jobs.get((day, "*"), 0) >= PUBLIC_DAILY_TOTAL:
+            return "The site has reached its daily limit; please try again tomorrow."
+        if uses_ai and DAILY_AI_JOBS and _public_jobs.get((day, "ai"), 0) >= DAILY_AI_JOBS:
+            return f"The daily limit of {DAILY_AI_JOBS} AI jobs on this site is reached; it resets at midnight."
+        for k in (ip, "*") + (("ai",) if uses_ai else ()):
+            _public_jobs[(day, k)] = _public_jobs.get((day, k), 0) + 1
+        return None
+
+
+def run_job(kind: str, fn, *args, keys: dict | None = None, uid: str = "", ip: str = "") -> str:
+    jid = uuid.uuid4().hex[:12]
+    JOBS[jid] = {"kind": kind, "log": [], "done": False, "result": None, "start": time.time(), "uid": uid, "ip": ip}
 
     def log(msg):
         JOBS[jid]["log"].append(str(msg))
@@ -170,7 +210,7 @@ def run_job(kind: str, fn, *args, keys: dict | None = None) -> str:
     def target():
         llm.use_keys(keys)  # this thread only; the keys are not kept in JOBS
         try:
-            JOBS[jid]["result"] = fn(*args, log=log)
+            JOBS[jid]["result"] = fn(*args, uid=uid, log=log)
         except Exception:
             log(traceback.format_exc())
         JOBS[jid]["done"] = True
@@ -178,23 +218,25 @@ def run_job(kind: str, fn, *args, keys: dict | None = None) -> str:
     return jid
 
 
-def _generate(use_llm: bool, seed, model: str, prose: str, review: bool, log):
+def _generate(use_llm: bool, seed, model: str, prose: str, review: bool, uid: str, log):
     from .generate import generate_paper, save_paper
     log(f"Model: {model if use_llm else 'none (procedural only)'} · prose: {prose}")
     paper = generate_paper(seed=seed, model=model, use_llm=use_llm, prose=prose, review=review, log=log)
     save_paper(paper, OUT)
+    set_owner("papers", paper["seed"], uid)
     return f"/paper/{paper['seed']}"
 
 
-def _grade(seed: str, answers: dict, use_llm: bool, model: str, log):
+def _grade(seed: str, answers: dict, use_llm: bool, model: str, uid: str, log):
     from .grade import grade_attempt
     paper = json.loads((OUT / f"practice-{seed}.json").read_text())
     if use_llm:
         log(f"Proofs and explanations marked by {model}")
     report = grade_attempt(paper, answers, use_llm=use_llm, model=model, log=log)
-    rid = uuid.uuid4().hex[:6]
+    rid = uuid.uuid4().hex[:12]
     (OUT / f"practice-{seed}-report-{rid}.md").write_text(render_report(report))
     (OUT / f"practice-{seed}-report-{rid}.json").write_text(json.dumps(report, indent=1, ensure_ascii=False))
+    set_owner("reports", rid, uid)
     return f"/report/{seed}/{rid}"
 
 
@@ -221,19 +263,24 @@ server never stores or logs it. Without "remember" it is forgotten when the brow
 console.anthropic.com (Claude) or aistudio.google.com/apikey (Gemini, free tier).</p>"""
 
 
-def settings_form(status: dict, compact: bool = False) -> str:
-    provider, name = llm.split(SETTINGS["model"])
+def settings_form(status: dict, prefs: dict, public: bool) -> str:
+    provider, name = llm.split(prefs["model"])
     cards, lists = [], []
     for p in llm.PROVIDERS:
         st = status[p]
-        state = ("<span class='ok'>● ready" + (" (your key)" if st.get("own_key") else "") + "</span>" if st["ready"] else
-                 "<span class='warn'>● not running</span>" if p == "ollama" else "<span class='warn'>● no API key</span>")
-        extra = "" if st["ready"] else f"<div class='muted'>{KEY_HELP[p]}</div>"
-        cards.append(f"<label class='prov'><input type='radio' name='provider' value='{p}'"
+        if p == "ollama" and public:
+            state, extra = "<span class='warn'>● server owner only</span>", ""
+        else:
+            state = ("<span class='ok'>● ready" + (" (your key)" if st.get("own_key") else "") + "</span>" if st["ready"]
+                     else "<span class='warn'>● not running</span>" if p == "ollama"
+                     else "<span class='warn'>● no API key</span>")
+            extra = "" if st["ready"] else f"<div class='muted'>{KEY_HELP[p]}</div>"
+        disabled = " disabled" if p == "ollama" and public else ""
+        cards.append(f"<label class='prov'><input type='radio' name='provider' value='{p}'{disabled}"
                      f"{' checked' if p == provider else ''}> <b>{PROVIDER_LABELS[p]}</b> {state}{extra}</label>")
         opts = "".join(f"<option value='{html.escape(m)}'>" for m in st["models"] or [st["default"]])
         lists.append(f"<datalist id='models-{p}' data-default='{html.escape(st['default'])}'>{opts}</datalist>")
-    prose_opts = "".join(f"<option value='{v}'{' selected' if SETTINGS['prose'] == v else ''}>{t}</option>" for v, t in
+    prose_opts = "".join(f"<option value='{v}'{' selected' if prefs['prose'] == v else ''}>{t}</option>" for v, t in
                          (("past", "real past questions with official solutions"),
                           ("llm", "new questions written by the AI model")))
     return f"""<form method='post' action='/settings'>
@@ -242,7 +289,7 @@ def settings_form(status: dict, compact: bool = False) -> str:
  value='{html.escape(name)}'></label>
 <span class='muted'>leave blank for the provider's default</span></div>
 <div class='row'><label>Proof / explanation slots: <select name='prose'>{prose_opts}</select></label>
-<label><input type='checkbox' name='review'{' checked' if SETTINGS['review'] else ''}> AI self-review of new questions</label></div>
+<label><input type='checkbox' name='review'{' checked' if prefs['review'] else ''}> AI self-review of new questions</label></div>
 <p class='muted'>Automata, grammars, Turing machines, logic and decidability questions are always generated and marked by
 exact code, whichever model is selected. The model writes proofs and new prose questions, and marks proofs and
 explanations. With the local model, keep "real past questions": in testing qwen3:8b often wrote false questions.
@@ -257,28 +304,91 @@ m.value=dl?dl.dataset.default:'';}});}});}})();
 
 
 class Handler(BaseHTTPRequestHandler):
+    _uid_new: str | None = None
+
+    # --- who is asking ------------------------------------------------------------------------------------------
+    @property
+    def public(self) -> bool:
+        return bool(self.headers.get(PUBLIC_HEADER))
+
+    @property
+    def ip(self) -> str:
+        return self.headers.get(PUBLIC_HEADER, "local")
+
+    def cookies(self) -> http.cookies.SimpleCookie:
+        jar = http.cookies.SimpleCookie()
+        try:
+            jar.load(self.headers.get("Cookie", ""))
+        except http.cookies.CookieError:
+            pass
+        return jar
+
+    def uid(self) -> str:
+        """Anonymous id of this browser, created on first visit."""
+        jar = self.cookies()
+        if UID_COOKIE in jar and re.fullmatch(r"[0-9a-f]{32}", jar[UID_COOKIE].value):
+            return jar[UID_COOKIE].value
+        if not self._uid_new:
+            self._uid_new = uuid.uuid4().hex
+        return self._uid_new
+
+    def keys(self) -> dict:
+        """The visitor's own API keys, from their cookies."""
+        jar = self.cookies()
+        return {p: jar[KEY_COOKIE + p].value for p in ("claude", "gemini")
+                if KEY_COOKIE + p in jar and KEY_RE.fullmatch(jar[KEY_COOKIE + p].value)}
+
+    def job_keys(self) -> dict:
+        """Keys a job may use: public visitors only their own, never the server's environment."""
+        return {**self.keys(), "__noenv": True} if self.public else self.keys()
+
+    def prefs(self) -> dict:
+        """Model and options: the server-wide settings for the owner, a cookie for public visitors."""
+        if not self.public:
+            return dict(SETTINGS)
+        out = {"model": PUBLIC_DEFAULT_MODEL, "prose": "past", "review": False}
+        jar = self.cookies()
+        if PREFS_COOKIE in jar:
+            parts = unquote(jar[PREFS_COOKIE].value).split("|")
+            if len(parts) == 3 and re.fullmatch(r"[\w.:\-/]+", parts[0]) and llm.is_cloud(parts[0]):
+                out = {"model": parts[0], "prose": "llm" if parts[1] == "llm" else "past", "review": parts[2] == "1"}
+        return out
+
+    def status(self, refresh: bool = False) -> dict:
+        status = provider_status(refresh=refresh, keys=self.job_keys())
+        if self.public:
+            status = {**status, "ollama": {**status["ollama"], "ready": False, "models": []}}
+        return status
+
+    def can_see(self, kind: str, ident: str) -> bool:
+        return not self.public or owners()[kind].get(str(ident)) == self.uid()
+
+    # --- responses ----------------------------------------------------------------------------------------------
+    def _cookie_headers(self, cookies=()):
+        for c in cookies:
+            self.send_header("Set-Cookie", c)
+        if self._uid_new:
+            self.send_header("Set-Cookie", f"{UID_COOKIE}={self._uid_new}; Path=/; HttpOnly; Secure; SameSite=Lax; "
+                                           f"Max-Age={365 * 86400}")
+
     def send(self, body: bytes, code=200, ctype="text/html; charset=utf-8"):
         self.send_response(code)
         self.send_header("Content-Type", ctype)
+        self._cookie_headers()
         self.end_headers()
         self.wfile.write(body)
 
     def redirect(self, to: str, cookies: list[str] = ()):
         self.send_response(303)
         self.send_header("Location", to)
-        for c in cookies:
-            self.send_header("Set-Cookie", c)
+        self._cookie_headers(cookies)
         self.end_headers()
 
-    def keys(self) -> dict:
-        """The visitor's own API keys, from their cookies."""
-        jar = http.cookies.SimpleCookie()
-        try:
-            jar.load(self.headers.get("Cookie", ""))
-        except http.cookies.CookieError:
-            return {}
-        return {p: jar[KEY_COOKIE + p].value for p in ("claude", "gemini")
-                if KEY_COOKIE + p in jar and KEY_RE.fullmatch(jar[KEY_COOKIE + p].value)}
+    def page(self, title: str, body: str, refresh: bool = False) -> bytes:
+        return page(title, body, refresh, model=self.prefs()["model"])
+
+    def not_found(self, msg: str = "Not found."):
+        return self.send(self.page("Not found", f"<p>{msg}</p>"), 404)
 
     def log_message(self, *a):
         pass
@@ -290,26 +400,32 @@ class Handler(BaseHTTPRequestHandler):
             return True
         return False
 
+    # --- GET ----------------------------------------------------------------------------------------------------
     def do_GET(self):
         if self.denied():
             return
+        if self.public:
+            self.uid()  # give every public browser its anonymous id from the first response
         url = urlparse(self.path)
         path = url.path.strip("/").split("/")
         if path == [""]:
-            return self.send(page("ExamX", self.home()))
+            return self.send(self.page("ExamX", self.home()))
         if path == ["settings"]:
             q = parse_qs(url.query)
-            status = provider_status(refresh="refresh" in q, keys=self.keys())
+            status = self.status(refresh="refresh" in q)
             msg = {"saved": "Saved: the key works.", "bad": "That key was rejected (or the provider is unreachable); "
                    "nothing was saved.", "removed": "Removed the key from this browser."}.get(q.get("key", [""])[0], "")
-            body = (f"<h1>AI model</h1><div class='card'>{settings_form(status)}</div>"
+            note = ("<p class='muted'>Local models run on the server owner's hardware, so on the public site you "
+                    "can use your own Claude or Gemini key, or generate papers without AI.</p>" if self.public else "")
+            body = (f"<h1>AI model</h1><div class='card'>{note}{settings_form(status, self.prefs(), self.public)}</div>"
                     f"<div class='card' id='keys'><h2>API keys</h2>{keys_form(status, msg)}</div>")
-            return self.send(page("AI model", body))
+            return self.send(self.page("AI model", body))
         if path[0] == "figures" and len(path) == 2 and re.fullmatch(r"[\w.\-]+\.png", path[1]):
             f = DATA_DIR / "figures" / path[1]
             if f.exists():
                 return self.send(f.read_bytes(), ctype="image/png")
-        if path[0] == "job" and len(path) == 2 and path[1] in JOBS:
+        if path[0] == "job" and len(path) == 2 and path[1] in JOBS and (
+                not self.public or JOBS[path[1]]["uid"] == self.uid()):
             j = JOBS[path[1]]
             if j["done"] and j["result"]:
                 return self.redirect(j["result"])
@@ -317,61 +433,68 @@ class Handler(BaseHTTPRequestHandler):
             status = "finished with errors" if j["done"] else f"running… {secs // 60}:{secs % 60:02d}"
             body = (f"<h1>{j['kind']}</h1><p class='muted'>{status}</p>"
                     f"<div class='log'>{html.escape(chr(10).join(j['log'])) or 'starting…'}</div>")
-            return self.send(page("Job", body, refresh=not j["done"]))
+            return self.send(self.page("Job", body, refresh=not j["done"]))
         if path[0] in ("paper", "solutions", "report") and (len(path) < 2 or not path[1].isdigit()):
-            return self.send(page("Not found", "<p>Not found.</p>"), 404)
+            return self.not_found()
         if path[0] in ("paper", "solutions") and len(path) == 2:
             f = OUT / f"practice-{path[1]}.json"
             if not f.exists():
-                return self.send(page("Not found", "<p>No such paper.</p>"), 404)
+                return self.not_found("No such paper.")
             paper = json.loads(f.read_text())
             if path[0] == "solutions":
                 body = (f"<p><a href='/paper/{path[1]}'>← back to the paper</a></p>"
                         + md(render_markdown(paper, solutions=True)))
-                return self.send(page(paper["title"], body))
-            return self.send(page(paper["title"], self.answer_form(paper)))
-        if path[0] == "report" and len(path) == 3 and re.fullmatch(r"\w+", path[2]):
+                return self.send(self.page(paper["title"], body))
+            return self.send(self.page(paper["title"], self.answer_form(paper)))
+        if path[0] == "report" and len(path) == 3 and re.fullmatch(r"\w+", path[2]) and self.can_see("reports", path[2]):
             f = OUT / f"practice-{path[1]}-report-{path[2]}.md"
             if f.exists():
                 body = (md(f.read_text()) + f"<p><a class='btn' href='/solutions/{path[1]}'>Model solutions</a> "
                         f"<a href='/paper/{path[1]}'>back to the paper</a></p>")
-                return self.send(page("Report", body))
-        self.send(page("Not found", "<p>Not found.</p>"), 404)
+                return self.send(self.page("Report", body))
+        self.not_found()
 
     def home(self) -> str:
-        status = provider_status(keys=self.keys())
-        provider, name = llm.split(SETTINGS["model"])
+        status, prefs = self.status(), self.prefs()
+        provider, name = llm.split(prefs["model"])
         ready = status[provider]["ready"]
         warn = "" if ready else (f"<p class='warn'>{PROVIDER_LABELS[provider]} is not available: "
-                                 f"{KEY_HELP[provider]} <a href='/settings'>Change model</a></p>")
+                                 f"{KEY_HELP[provider]} You can still generate papers without AI.</p>")
+        own = owners()
         items = []
         for p in papers():
             seed = p.stem.split("-")[1]
+            if self.public and own["papers"].get(seed) != self.uid():
+                continue
             try:
                 meta = json.loads(p.read_text())
             except ValueError:
                 continue
-            reports = sorted(OUT.glob(f"practice-{seed}-report-*.md"), key=lambda r: r.stat().st_mtime)
+            reports = sorted((r for r in OUT.glob(f"practice-{seed}-report-*.md")
+                              if not self.public or own["reports"].get(r.stem.rsplit("-", 1)[1]) == self.uid()),
+                             key=lambda r: r.stat().st_mtime)
             rep = "".join(f" <a href='/report/{seed}/{r.stem.rsplit('-', 1)[1]}'>report {i}</a>"
                           for i, r in enumerate(reports, 1))
             items.append(f"<li><a href='/paper/{seed}'><b>Seed {seed}</b></a>"
                          f"<span class='muted'>{html.escape(str(meta.get('model', '')))} · "
                          f"{time.strftime('%d %b %H:%M', time.localtime(p.stat().st_mtime))}</span>"
                          f"<a href='/solutions/{seed}'>solutions</a>{rep}</li>")
+        mine = "Your papers" if self.public else "Papers"
+        privacy = ("<p class='muted'>Only this browser can see your list and reports. Anyone you send a paper link to "
+                   "can open that paper.</p>" if self.public else "")
         return f"""<h1>FIT2014 practice papers</h1>
 <div class='card'><h2>New paper</h2>{warn}
 <form method='post' action='/generate'><div class='row'>
 <label>Seed <input name='seed' size='8' placeholder='random'></label>
-<label><input type='checkbox' name='llm' checked> use {html.escape(name)} for AI-written parts</label></div>
-<p class='muted'>Proof slots: {'real past questions' if SETTINGS['prose'] == 'past' else 'new AI-written questions'}
-· <a href='/settings'>change model or options</a>. Without the AI it takes about a second; with a local model,
-several minutes.</p>
+<label><input type='checkbox' name='llm'{' checked' if ready else ''}> use {html.escape(name)} for AI-written parts</label></div>
+<p class='muted'>Proof slots: {'real past questions' if prefs['prose'] == 'past' else 'new AI-written questions'}
+· <a href='/settings'>change model or options</a>. Without the AI it takes about a second; with AI, a few minutes.</p>
 <button>Generate paper</button></form></div>
-<div class='card'><h2>Papers</h2><ul class='papers'>{''.join(items) or '<li class=muted>none yet</li>'}</ul></div>"""
+<div class='card'><h2>{mine}</h2>{privacy}<ul class='papers'>{''.join(items) or '<li class=muted>none yet</li>'}</ul></div>"""
 
     def answer_form(self, paper: dict) -> str:
         seed = paper["seed"]
-        _, grader = llm.split(llm.grader_model(SETTINGS["model"]))
+        _, grader = llm.split(llm.grader_model(self.prefs()["model"]))
         out = [f"<h1>{html.escape(paper['title'])}</h1><p class='muted'>Total marks: {paper['total_marks']} · "
                f"generated with {html.escape(str(paper.get('model', '?')))} · "
                f"<a href='/solutions/{seed}'>solutions</a></p>",
@@ -398,12 +521,19 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
 </script>""")
         return "".join(out)
 
+    # --- POST ---------------------------------------------------------------------------------------------------
+    def busy(self, why: str, extra: str = ""):
+        return self.send(self.page("Busy", f"<h1>Not now</h1><p>{html.escape(why)}</p>{extra}"
+                                           "<p><a href='/'>Back</a></p>"), 429)
+
     def do_POST(self):
         if self.denied():
             return
+        if self.public:
+            self.uid()  # give every public browser its anonymous id from the first response
         n = int(self.headers.get("Content-Length", 0) or 0)
         if n > MAX_BODY:
-            return self.send(page("Too large", "<p>Request too large.</p>"), 413)
+            return self.send(self.page("Too large", "<p>Request too large.</p>"), 413)
         form = {k: v[0] for k, v in parse_qs(self.rfile.read(n).decode(), keep_blank_values=True).items()}
         path = urlparse(self.path).path.strip("/").split("/")
         if path == ["keys"]:
@@ -418,36 +548,56 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
             return self.redirect("/settings?key=removed#keys", [cookie])
         if path == ["settings"]:
             provider = form.get("provider") if form.get("provider") in llm.PROVIDERS else "ollama"
+            if self.public and provider == "ollama":
+                provider = llm.split(PUBLIC_DEFAULT_MODEL)[0]
             name = re.sub(r"[^\w.:\-/]", "", form.get("model", "").strip())
             if provider == "ollama":
-                name = name.removeprefix("ollama:") or provider_status()["ollama"]["default"]
-                SETTINGS["model"] = name
+                model = name.removeprefix("ollama:") or self.status()["ollama"]["default"]
             else:
                 name = name.removeprefix(provider + ":")
-                SETTINGS["model"] = f"{provider}:{name}" if name else provider
-            SETTINGS["prose"] = "llm" if form.get("prose") == "llm" else "past"
-            SETTINGS["review"] = "review" in form
+                model = f"{provider}:{name}" if name else provider
+            prose = "llm" if form.get("prose") == "llm" else "past"
+            if self.public:
+                value = quote(f"{model}|{prose}|{int('review' in form)}", safe="")
+                return self.redirect("/", [f"{PREFS_COOKIE}={value}; Path=/; Secure; SameSite=Lax; "
+                                           f"Max-Age={365 * 86400}"])
+            SETTINGS.update(model=model, prose=prose, review="review" in form)
             save_settings()
             return self.redirect("/")
         if path == ["generate"]:
+            prefs, use_llm = self.prefs(), "llm" in form
             seed = int(form["seed"]) if form.get("seed", "").strip().isdigit() else None
-            if why := job_refusal("llm" in form):
-                return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p><a href='/'>Back</a></p>"), 429)
-            return self.redirect("/job/" + run_job("Generating paper", _generate, "llm" in form, seed,
-                                                   SETTINGS["model"], SETTINGS["prose"], SETTINGS["review"],
-                                                   keys=self.keys()))
-        if path[0] == "grade" and len(path) == 2 and (OUT / f"practice-{path[1]}.json").exists():
+            if seed is not None and seed >= 10**9:
+                seed = None
+            if seed is not None and (OUT / f"practice-{seed}.json").exists() and not self.can_see("papers", seed):
+                return self.redirect(f"/paper/{seed}")  # someone else's paper: open it rather than overwrite it
+            while seed is None or ((OUT / f"practice-{seed}.json").exists() and not self.can_see("papers", seed)):
+                seed = random.randrange(10**6)
+            if use_llm and not self.status()[llm.split(prefs["model"])[0]]["ready"]:
+                return self.busy("The selected AI model is not available.",
+                                 "<p><a href='/settings#keys'>Add your API key</a>, or untick the AI option.</p>")
+            if why := job_refusal(use_llm, self.public, self.ip):
+                return self.busy(why)
+            return self.redirect("/job/" + run_job("Generating paper", _generate, use_llm, seed, prefs["model"],
+                                                   prefs["prose"], prefs["review"], keys=self.job_keys(),
+                                                   uid=self.uid(), ip=self.ip))
+        if path[0] == "grade" and len(path) == 2 and path[1].isdigit() and (OUT / f"practice-{path[1]}.json").exists():
             answers: dict[int, dict[str, str]] = {}
             for k, v in form.items():
                 if k.startswith("q") and "_" in k and k[1:].split("_", 1)[0].isdigit():
                     num, label = k[1:].split("_", 1)
                     answers.setdefault(int(num), {})[label] = v
-            if why := job_refusal("llm" in form):
-                return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p>Your answers are still saved in "
-                                      "this browser.</p>"), 429)
-            return self.redirect("/job/" + run_job("Marking", _grade, path[1], answers, "llm" in form,
-                                                   llm.grader_model(SETTINGS["model"]), keys=self.keys()))
-        self.send(page("Not found", "<p>Not found.</p>"), 404)
+            model, use_llm = llm.grader_model(self.prefs()["model"]), "llm" in form
+            saved = "<p>Your answers are still saved in this browser.</p>"
+            if use_llm and not self.status()[llm.split(model)[0]]["ready"]:
+                return self.busy("The selected AI model is not available.",
+                                 saved + "<p><a href='/settings#keys'>Add your API key</a>, or untick the AI option "
+                                         "(exact checks only).</p>")
+            if why := job_refusal(use_llm, self.public, self.ip):
+                return self.busy(why, saved)
+            return self.redirect("/job/" + run_job("Marking", _grade, path[1], answers, use_llm, model,
+                                                   keys=self.job_keys(), uid=self.uid(), ip=self.ip))
+        self.not_found()
 
 
 def serve(host: str = "127.0.0.1", port: int = 8014, model: str | None = None):

@@ -237,13 +237,13 @@ The site at **https://exam-x.vrp2206.com** runs on this server as two Docker con
 Cloudflare Tunnel connector for it. No ports are opened:
 
 ```
-browser ─► Cloudflare (Access: @monash.edu / @student.monash.edu) ─► tunnel ─► examx 127.0.0.1:8014
+browser ─► Cloudflare ─► tunnel ─► Caddy :80 ─► examx 127.0.0.1:8014
 ```
 
 One-time setup:
 
 1. In the Cloudflare dashboard, give the tunnel a public hostname `exam-x.vrp2206.com` → `HTTP` →
-   `localhost:8014`, and protect it with an Access application whose policy allows the permitted emails.
+   `localhost:80` (Caddy; `localhost:8014` also works).
 2. Put the tunnel token in a private file outside the repo (the prompt hides what you paste):
    ```bash
    umask 077; read -rs T && printf 'TUNNEL_TOKEN=%s\n' "$T" > ~/.examx-tunnel.env && unset T
@@ -255,18 +255,25 @@ docker compose -f deploy/compose.yaml logs -f          # logs
 docker compose -f deploy/compose.yaml up -d --force-recreate   # after editing ~/.examx.env
 ```
 
-- **API keys** are entered by each user on the site's AI model page and stay in their browser (see "Web UI").
-  Optionally, a server-wide fallback key can go in `~/.examx.env` (outside the repo; `chmod 600`; one
-  `NAME=value` per line). Every signed-in user would then share it.
-- **Default model:** `claude:claude-sonnet-5-5` (set in `deploy/compose.yaml`; the AI model page overrides it, and
-  that choice is saved in `output/settings.json`). Local Ollama models also work, because the container uses the
-  host network.
-- **Access control:** the container runs with `EXAMX_REQUIRE_ACCESS=1` and refuses (403) every request without
-  the `Cf-Access-Authenticated-User-Email` header. Cloudflare Access adds that header after a visitor signs in,
-  so the site stays closed until an Access application protects `exam-x.vrp2206.com`. This is a fail-closed
-  guard, not a signature check. The real protection is the Access policy, and the app is only reachable from
-  localhost.
-- **Cost guard:** at most `EXAMX_DAILY_AI_JOBS=30` AI jobs (papers or markings) per day and 2 jobs at a time.
+**The site is public.** Requests that come through Cloudflare carry a `Cf-Connecting-IP` header and are
+treated as public visitors:
+
+- **API keys:** visitors use only their own Claude/Gemini key, entered on the AI model page and kept in their
+  browser (see "Web UI"). Server-side keys (`~/.examx.env`, optional) and **local Ollama models are for the owner
+  only**, so visitors cannot spend the owner's quota or use the GPU. Without a key, visitors can still generate
+  procedural papers and get exact marking.
+- **Privacy:** each browser gets an anonymous id cookie. Visitors see only their own papers and reports in
+  their list. A report (which contains the student's answers) opens only for its owner. A paper opens for
+  anyone with its link, and a visitor cannot overwrite another visitor's paper by reusing its seed.
+- **Model choice** is per browser (a cookie) for visitors. The owner's choice is the site default.
+- **Limits:** 20 jobs per visitor IP per day, one running job per IP, 300 public jobs per day in total, and 2
+  jobs at a time on the server (`EXAMX_PUBLIC_DAILY_JOBS`, `EXAMX_PUBLIC_DAILY_TOTAL`, `EXAMX_MAX_JOBS`).
+- **The owner** uses http://127.0.0.1:8014 on the server (or an SSH tunnel to it), which has no limits and
+  can see everything. Requests reaching Caddy directly from the LAN also count as the owner.
+- To restrict the site to signed-in users later, put a Cloudflare Access application in front and set
+  `EXAMX_REQUIRE_ACCESS=1`. Every request must then carry Access's identity header.
+- **Content:** proof questions and official solutions from the Monash past papers appear on the public site.
+  Check that this is permitted before sharing the link widely.
 - Papers, reports and settings live in `output/` on the host.
 
 ## Tests

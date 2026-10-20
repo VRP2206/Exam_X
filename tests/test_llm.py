@@ -1,5 +1,6 @@
 """Model-spec parsing and the Gemini/Claude request formats, with the HTTP layer mocked (no keys or network)."""
 import json
+import re
 import threading
 import time
 import urllib.error
@@ -170,15 +171,84 @@ def test_web_key_is_kept_in_the_browser_only(tmp_path, monkeypatch):
         body = urllib.request.urlopen(req).read().decode()
         assert "key saved in this browser" in body and key not in body
 
-        def job(log):
+        def job(uid, log):
             seen["key"] = llm.api_key("claude")
-        handler = type("H", (), {"headers": {"Cookie": cookie.split(";")[0]}})
-        jid = web.run_job("t", job, keys=web.Handler.keys(handler))
+        jid = web.run_job("t", job, keys={"claude": key})
         for _ in range(50):
             if web.JOBS[jid]["done"]:
                 break
             time.sleep(0.05)
         assert seen["key"] == key and llm.api_key("claude") is None  # only inside the job's thread
         assert not any(key in f.read_text() for f in tmp_path.rglob("*") if f.is_file())
+    finally:
+        server.shutdown()
+
+
+def test_public_visitors_are_isolated_and_cannot_use_server_resources(tmp_path, monkeypatch):
+    from examx import web
+    monkeypatch.setattr(web, "OUT", tmp_path)
+    monkeypatch.setattr(web, "SETTINGS_FILE", tmp_path / "settings.json")
+    monkeypatch.setattr(web, "OWNERS_FILE", tmp_path / "owners.json")
+    monkeypatch.setattr(web, "_public_jobs", {})
+    monkeypatch.setattr(web, "PUBLIC_DAILY_JOBS", 2)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "server-key-" + "x" * 20)
+    monkeypatch.setattr(llm, "status", lambda: {p: {"ready": p == "ollama" or bool(llm.api_key(p)), "models": [],
+                                                     "default": "qwen3:8b" if p == "ollama" else p}
+                                                 for p in llm.PROVIDERS})
+    monkeypatch.setattr(web, "_status_cache", {})
+    server = ThreadingHTTPServer(("127.0.0.1", 0), web.Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{server.server_port}"
+
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *a, **k):
+            return None
+    opener = urllib.request.build_opener(NoRedirect)
+
+    def visit(path, ip, uid=None, data=None):
+        headers = {"Cf-Connecting-IP": ip} if ip else {}
+        if uid:
+            headers["Cookie"] = f"examx_uid={uid}"
+        try:
+            r = opener.open(urllib.request.Request(base + path, data=data, headers=headers))
+            return r.status, r.headers, r.read().decode()
+        except urllib.error.HTTPError as e:
+            return e.code, e.headers, e.read().decode()
+
+    def wait(seed):
+        for _ in range(100):
+            if (tmp_path / f"practice-{seed}.json").exists() and (tmp_path / "owners.json").exists():
+                return
+            time.sleep(0.05)
+    try:
+        # The server's own key is not offered to public visitors; local models are owner-only.
+        code, headers, body = visit("/", "1.2.3.4")
+        alice = re.search(r"examx_uid=([0-9a-f]{32})", headers["Set-Cookie"]).group(1)
+        body = visit("/settings", "1.2.3.4", alice)[2]
+        assert "server owner only" in body and "no API key" in body
+        code, _, body = visit("/generate", "1.2.3.4", alice, b"seed=11&llm=on")
+        assert code == 429 and "not available" in body
+        # Without AI: allowed, and only Alice sees it in her list.
+        code, headers, _ = visit("/generate", "1.2.3.4", alice, b"seed=11")
+        assert code == 303
+        wait(11)
+        assert "Seed 11" in visit("/", "1.2.3.4", alice)[2]
+        bob = "b" * 32
+        assert "Seed 11" not in visit("/", "5.6.7.8", bob)[2]
+        # Bob cannot overwrite Alice's paper by reusing its seed: he is sent to it instead.
+        code, headers, _ = visit("/generate", "5.6.7.8", bob, b"seed=11")
+        assert code == 303 and headers["Location"] == "/paper/11"
+        # Per-IP daily limit (2 here).
+        while any(not j["done"] for j in web.JOBS.values()):
+            time.sleep(0.05)
+        assert visit("/generate", "1.2.3.4", alice, b"seed=12")[0] == 303
+        while any(not j["done"] for j in web.JOBS.values()):
+            time.sleep(0.05)
+        code, _, body = visit("/generate", "1.2.3.4", alice, b"seed=13")
+        assert code == 429 and "limit" in body
+        # The owner on localhost sees everything and may use local models and server keys.
+        body = visit("/settings", None)[2]
+        assert "server owner only" not in body
+        assert "Seed 11" in visit("/", None)[2] and "Seed 12" in visit("/", None)[2]
     finally:
         server.shutdown()

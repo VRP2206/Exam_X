@@ -84,8 +84,11 @@ def check_key(provider: str, key: str) -> bool:
 
 
 def api_key(provider: str) -> str | None:
+    """The caller's key for this provider, else the environment's (unless the caller set "__noenv")."""
     if _KEYS.get().get(provider):
         return _KEYS.get()[provider]
+    if _KEYS.get().get("__noenv"):
+        return None
     names = {"gemini": ("GEMINI_API_KEY", "GOOGLE_API_KEY"), "claude": ("ANTHROPIC_API_KEY",)}[provider]
     return next((os.environ[n] for n in names if os.environ.get(n)), None)
 
