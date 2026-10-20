@@ -2,11 +2,14 @@
 from __future__ import annotations
 
 import argparse
+import functools
 import json
 import sys
 from pathlib import Path
 
 from .ingest import DATA_DIR, ROOT
+
+log = functools.partial(print, flush=True)  # progress lines appear promptly even when piped
 
 
 def cmd_ingest(args):
@@ -31,7 +34,7 @@ def cmd_stats(args):
 
 def cmd_generate(args):
     from .generate import generate_paper, save_paper
-    paper = generate_paper(seed=args.seed, model=args.model, use_llm=not args.no_llm, variation=args.variation)
+    paper = generate_paper(seed=args.seed, model=args.model, use_llm=not args.no_llm, variation=args.variation, log=log)
     paths = save_paper(paper, Path(args.out))
     print(f"\nTotal marks: {paper['total_marks']}")
     for k, p in paths.items():
@@ -43,7 +46,7 @@ def cmd_grade(args):
     from .render import render_report, write_pdf
     paper = load_paper(args.paper)
     attempt = parse_attempt(Path(args.attempt).read_text())
-    report = grade_attempt(paper, attempt, use_llm=not args.no_llm, model=args.model)
+    report = grade_attempt(paper, attempt, use_llm=not args.no_llm, model=args.model, log=log)
     md = render_report(report)
     out = Path(args.out) if args.out else Path(args.attempt).with_suffix(".report.md")
     out.write_text(md)

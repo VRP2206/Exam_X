@@ -401,10 +401,10 @@
    "solution": "",
    "comments": "",
    "topics": [
-    "turing_machines",
-    "decidability"
+    "decidability",
+    "turing_machines"
    ],
-   "primary_topic": "turing_machines",
+   "primary_topic": "decidability",
    "answer_type": "mcq",
    "has_figure": false,
    "figures": [],
@@ -522,15 +522,15 @@
    "solution": "",
    "comments": "",
    "topics": [
-    "turing_machines",
     "decidability",
     "language_classes",
+    "turing_machines",
     "complexity_p",
     "np_completeness",
     "propositional_logic",
     "finite_automata"
    ],
-   "primary_topic": "turing_machines",
+   "primary_topic": "decidability",
    "answer_type": "language_classes",
    "has_figure": true,
    "figures": [

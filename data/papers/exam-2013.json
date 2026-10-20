@@ -431,10 +431,10 @@
    "solution": "✓\n✓\n✓\n✓",
    "comments": "",
    "topics": [
-    "turing_machines",
-    "decidability"
+    "decidability",
+    "turing_machines"
    ],
-   "primary_topic": "turing_machines",
+   "primary_topic": "decidability",
    "answer_type": "mcq",
    "has_figure": false,
    "figures": [],
@@ -538,8 +538,8 @@
    "topics": [
     "decidability",
     "language_classes",
-    "turing_machines",
     "cfg",
+    "turing_machines",
     "np_completeness"
    ],
    "primary_topic": "decidability",
@@ -568,8 +568,7 @@
    "solution": "Let M, x be any input to the Halting Problem, where we want to know whether or not M\neventually halts when its input is x.\nFrom M, x, we construct the following program, which we call P_{M,x} (since we get a dif-\nferent program for each M, x, since M, x are hard-coded into the program):\nInput: anything.\nP_{M,x} : Simulate the execution of M on input x.\nAccept.\nIf M halts for input x, then when P_{M,x} is run, on any input at all, it will first simulate M\nwith input x, and after that simulation halts (which it must, eventually, in this case), it will\nAccept.\nOn the other hand, if M does not halt for input x, then P_{M,x} will just get stuck in its\nsimulation of M with input x, so it will never Accept.\nSo, M halts for input x if and only if P_{M,x} eventually accepts its input. (And this holds no\nmatter what input is given to P_{M,x}.)\nTherefore, if we have a decider, D, for the problem given in the question, then we can\nuse it to construct a decider H for the halting problem, which works as follows.\nSuppose M, x is input to the halting problem. Compute the program P_{M,x}. (This is possible,\nas constructing the program P_{M,x} from M, x is computable.) Pick any input for P_{M,x} that\nyou like. Use D to decide whether or not P_{M,x} accepts that input. If it does, then the answer\nto the halting problem is Yes; if it doesn’t, the answer to the Halting Problem is No. So we\nhave a decider for the halting problem.\nThis contradicts the undecidability of the Halting Problem. So the assumed decider, D,\ncannot exist. So the problem given in the question is undecidable.",
    "comments": "",
    "topics": [
-    "decidability",
-    "turing_machines"
+    "decidability"
    ],
    "primary_topic": "decidability",
    "answer_type": "proof",
@@ -633,10 +632,10 @@
    "solution": "Let x be an input string, of length n, for M. Then there is a constant c such that, provided\nn is sufficiently large, the time (number of steps) taken by M for input x is ≤ cn^{3}.\nThese steps can be simulated by U in ≤ (cn^{3})^{4} steps, i.e., in ≤ c^{4}n^{12} steps. Since c^{4} is\na constant, this means that the time taken by the simulation is O(n^{12}).",
    "comments": "",
    "topics": [
-    "turing_machines",
-    "complexity_p"
+    "complexity_p",
+    "turing_machines"
    ],
-   "primary_topic": "turing_machines",
+   "primary_topic": "complexity_p",
    "answer_type": "proof",
    "has_figure": false,
    "figures": [],

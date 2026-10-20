@@ -49,13 +49,14 @@ TOPICS: dict[str, list[tuple[str, float]]] = {
         (r"not context[- ]free", 4), (r"pumping lemma for context[- ]free", 4), (r"\buvxyz\b|uv\^\{?i", 2),
     ],
     "turing_machines": [
-        (r"turing machines?", 3), (r"\bTMs?\b", 1), (r"(draw|write|give) a turing machine|turing machine to (compute|decide|recognise)", 4),
+        (r"turing machines?", 1.5), (r"\bTMs?\b", 1), (r"(draw|write|give) a turing machine|turing machine to (compute|decide|recognise)", 4),
         (r"trace the execution", 2),
         (r"\btape\b", 2), (r"\bhead\b", 1), (r"universal turing machine|\bUTM\b", 2), (r"enumerator", 3),
     ],
     "church_turing": [(r"church[- ]turing", 5), (r"recursive function", 2), (r"lambda calculus|λ", 2)],
     "decidability": [
-        (r"\bdecidable\b|\bundecidable\b", 3), (r"halting problem", 2), (r"recursively enumerable|\br\.e\.", 3),
+        (r"\bdecidable\b|\bundecidable\b", 3), (r"halting problem", 2), (r"prove that .{0,80}undecidable", 4),
+        (r"input: (a|two) turing machines?", 1), (r"recursively enumerable|\br\.e\.", 3),
         (r"\bdecider\b", 1), (r"semi-?decidable|recogni[sz]able", 2), (r"rice'?s theorem", 4),
     ],
     "mapping_reductions": [

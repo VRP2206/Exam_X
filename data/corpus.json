@@ -563,10 +563,10 @@
   "solution": "✓\n✓\n✓\n✓",
   "comments": "Thanks to FIT2014 tutor Rebecca Young for suggesting the modification to deal with this case.",
   "topics": [
-   "turing_machines",
-   "decidability"
+   "decidability",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "mcq",
   "has_figure": false,
   "figures": [],
@@ -688,8 +688,8 @@
    "decidability",
    "language_classes",
    "propositional_logic",
-   "turing_machines",
-   "regular_expressions"
+   "regular_expressions",
+   "turing_machines"
   ],
   "primary_topic": "np_completeness",
   "answer_type": "language_classes",
@@ -717,8 +717,7 @@
   "solution": "Let (T, w) be an input to the Halting Problem. So T is a Turing machine (appropriately\nencoded), and w is a string which can be treated as an input to T. For the Halting Problem,\nwe want to know whether or not T eventually halts, when its input is w.\nWe construct from (T, w) a program M which runs as follows:\n1. Input: a string x.\n2. Simulate T on input w. (This is hardcoded. So we aren’t taking w as input\nto M, but rather, we have lines of code (or Turing machine instructions) that\nprovide w as input to this simulation of T.)\n3. Test if |x| is a multiple of 29. (The choice of 29 is arbitrary! All we want to\nensure is that there is an infinite sequence of strings x that satisfy this test.)\nIf so, halt; otherwise, loop forever.\nObserve that:\nIf T eventually halts, on input w, then the simulation in Step 2 of M will eventually stop.\nThen M goes on to Step 3. For any t, there will be some multiple of 29 that is greater than\nt (in fact, infinitely many, but we only need one). So, there is some x which, if given to M,\ncauses it to halt eventually.\nOn the other hand, if T loops forever for input w, then M will be forever stuck in Step 2.\nTherefore, there is no input x which causes M to eventually halt, and therefore certainly no\nsuch input with length ≥ t.\nSo, T halts for input w if and only if there is some input x with |x| ≥ t such that M\nhalts for input x.\nThis tells us that, if the problem stated in the question is decidable, then we could use\na decider for it to construct a decider for the Halting Problem. To see this, suppose D is\na decider for the problem stated in the question. Suppose we are given (T, w), as input to\nthe Halting Problem. From (T, x), construct M as described above. This construction is\ncomputable. Then use D to determine whether or not M has an input x, with |x| ≥ t,\nfor which it eventually halts. The answer D gives us becomes our answer to the Halting\nProblem regarding (T, x). So we are done.\nTherefore the problem stated in the question is undecidable.",
   "comments": "",
   "topics": [
-   "decidability",
-   "turing_machines"
+   "decidability"
   ],
   "primary_topic": "decidability",
   "answer_type": "proof",
@@ -1291,10 +1290,10 @@
   "solution": "✓\n✓\n✓\n✓",
   "comments": "",
   "topics": [
-   "turing_machines",
-   "decidability"
+   "decidability",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "mcq",
   "has_figure": false,
   "figures": [],
@@ -1398,8 +1397,8 @@
   "topics": [
    "decidability",
    "language_classes",
-   "turing_machines",
    "cfg",
+   "turing_machines",
    "np_completeness"
   ],
   "primary_topic": "decidability",
@@ -1428,8 +1427,7 @@
   "solution": "Let M, x be any input to the Halting Problem, where we want to know whether or not M\neventually halts when its input is x.\nFrom M, x, we construct the following program, which we call P_{M,x} (since we get a dif-\nferent program for each M, x, since M, x are hard-coded into the program):\nInput: anything.\nP_{M,x} : Simulate the execution of M on input x.\nAccept.\nIf M halts for input x, then when P_{M,x} is run, on any input at all, it will first simulate M\nwith input x, and after that simulation halts (which it must, eventually, in this case), it will\nAccept.\nOn the other hand, if M does not halt for input x, then P_{M,x} will just get stuck in its\nsimulation of M with input x, so it will never Accept.\nSo, M halts for input x if and only if P_{M,x} eventually accepts its input. (And this holds no\nmatter what input is given to P_{M,x}.)\nTherefore, if we have a decider, D, for the problem given in the question, then we can\nuse it to construct a decider H for the halting problem, which works as follows.\nSuppose M, x is input to the halting problem. Compute the program P_{M,x}. (This is possible,\nas constructing the program P_{M,x} from M, x is computable.) Pick any input for P_{M,x} that\nyou like. Use D to decide whether or not P_{M,x} accepts that input. If it does, then the answer\nto the halting problem is Yes; if it doesn’t, the answer to the Halting Problem is No. So we\nhave a decider for the halting problem.\nThis contradicts the undecidability of the Halting Problem. So the assumed decider, D,\ncannot exist. So the problem given in the question is undecidable.",
   "comments": "",
   "topics": [
-   "decidability",
-   "turing_machines"
+   "decidability"
   ],
   "primary_topic": "decidability",
   "answer_type": "proof",
@@ -1493,10 +1491,10 @@
   "solution": "Let x be an input string, of length n, for M. Then there is a constant c such that, provided\nn is sufficiently large, the time (number of steps) taken by M for input x is ≤ cn^{3}.\nThese steps can be simulated by U in ≤ (cn^{3})^{4} steps, i.e., in ≤ c^{4}n^{12} steps. Since c^{4} is\na constant, this means that the time taken by the simulation is O(n^{12}).",
   "comments": "",
   "topics": [
-   "turing_machines",
-   "complexity_p"
+   "complexity_p",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "complexity_p",
   "answer_type": "proof",
   "has_figure": false,
   "figures": [],
@@ -2017,10 +2015,10 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
-   "decidability"
+   "decidability",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "mcq",
   "has_figure": false,
   "figures": [],
@@ -2138,15 +2136,15 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
    "decidability",
    "language_classes",
+   "turing_machines",
    "complexity_p",
    "np_completeness",
    "propositional_logic",
    "finite_automata"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "language_classes",
   "has_figure": true,
   "figures": [
@@ -2656,10 +2654,10 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
-   "decidability"
+   "decidability",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "mcq",
   "has_figure": false,
   "figures": [],
@@ -2761,13 +2759,13 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
    "decidability",
    "language_classes",
+   "turing_machines",
    "np_completeness",
    "propositional_logic"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "language_classes",
   "has_figure": true,
   "figures": [
@@ -3125,8 +3123,7 @@
   "comments": "",
   "topics": [
    "finite_automata",
-   "minimisation",
-   "turing_machines"
+   "minimisation"
   ],
   "primary_topic": "finite_automata",
   "answer_type": "fa_minimise",
@@ -3341,10 +3338,10 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
-   "decidability"
+   "decidability",
+   "turing_machines"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "mcq",
   "has_figure": false,
   "figures": [],
@@ -3462,13 +3459,13 @@
   "solution": "",
   "comments": "",
   "topics": [
-   "turing_machines",
    "decidability",
    "language_classes",
+   "turing_machines",
    "propositional_logic",
    "np_completeness"
   ],
-  "primary_topic": "turing_machines",
+  "primary_topic": "decidability",
   "answer_type": "language_classes",
   "has_figure": true,
   "figures": [
