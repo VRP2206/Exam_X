@@ -237,7 +237,7 @@ browser ─► Cloudflare (Access login) ─► tunnel ─► Caddy :80 (Host: e
 ```bash
 docker compose -f deploy/compose.yaml up -d --build    # start, or rebuild after code changes
 docker compose -f deploy/compose.yaml logs -f          # logs
-docker compose -f deploy/compose.yaml restart          # after editing ~/.examx.env
+docker compose -f deploy/compose.yaml up -d --force-recreate   # after editing ~/.examx.env
 ```
 
 - **API keys** go in `~/.examx.env` (outside the repo; `chmod 600`), one `NAME=value` per line, e.g.
