@@ -123,3 +123,17 @@ def test_web_model_switch_and_procedural_paper(tmp_path, monkeypatch):
     finally:
         server.shutdown()
         web.SETTINGS.update(model=llm.DEFAULT_MODEL, prose="past", review=False)
+
+
+def test_daily_quota_fails_fast_and_is_remembered(calls):
+    log, queue = calls
+    llm.EXHAUSTED.clear()
+    body = {"error": {"message": "You exceeded your current quota.\n* Quota exceeded for metric: free_tier_requests, "
+                                 "limit: 20", "details": [{"retryDelay": "48017s"}]}}
+    queue.append(Resp(429, body))
+    with pytest.raises(llm.QuotaError, match="limit: 20"):
+        llm.chat(MSGS, model="gemini")
+    with pytest.raises(llm.QuotaError):
+        llm.chat(MSGS, model="gemini")
+    assert len(log) == 1  # the second call never reached the API
+    llm.EXHAUSTED.clear()

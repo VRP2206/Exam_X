@@ -108,8 +108,42 @@ def _ollama(messages, model, temperature, json_mode, num_ctx, num_predict, think
     return strip_think(data["message"]["content"])
 
 
+class QuotaError(LLMError):
+    """The provider's quota is used up for longer than is worth waiting (e.g. a free-tier daily limit)."""
+
+
+EXHAUSTED: dict[str, tuple[float, str]] = {}  # url -> (time the quota resets, message): skip calls until then
+
+
+def _retry_delay(r) -> float | None:
+    """Seconds the API asks us to wait, from Retry-After or Gemini's RetryInfo ("48017s")."""
+    wait = r.headers.get("retry-after", "")
+    if wait.replace(".", "", 1).isdigit():
+        return float(wait)
+    try:
+        for d in r.json().get("error", {}).get("details", []):
+            if str(d.get("retryDelay", "")).endswith("s"):
+                return float(d["retryDelay"][:-1])
+    except (ValueError, AttributeError):
+        pass
+    return None
+
+
+def _message(r) -> str:
+    try:
+        err = r.json().get("error", {})
+        return (err.get("message") if isinstance(err, dict) else str(err)) or r.text[:300]
+    except ValueError:
+        return r.text[:300]
+
+
 def _post(name: str, url: str, headers: dict, body: dict, timeout: int, retries: int = 4) -> dict:
-    """POST to a cloud API, waiting and retrying on rate limits and transient overloads."""
+    """POST to a cloud API, waiting and retrying on short rate limits and transient overloads.
+
+    A quota that resets later than MAX_WAIT seconds from now fails at once, and later calls to the same
+    model fail immediately too, so a run falls back instead of stalling for minutes per question."""
+    if url in EXHAUSTED and EXHAUSTED[url][0] > time.time():
+        raise QuotaError(EXHAUSTED[url][1])
     for attempt in range(retries + 1):
         try:
             r = requests.post(url, headers=headers, json=body, timeout=timeout)
@@ -120,13 +154,24 @@ def _post(name: str, url: str, headers: dict, body: dict, timeout: int, retries:
             continue
         if r.status_code == 200:
             return r.json()
+        msg = _message(r).strip()
+        if r.status_code == 429:
+            delay = _retry_delay(r)
+            if delay is not None and delay > MAX_WAIT or "PerDay" in r.text:
+                hours = f"; resets in about {delay / 3600:.1f} h" if delay else ""
+                text = (f"{name} quota used up{hours}. {msg.splitlines()[0]} "
+                        f"{(msg.splitlines() + [''])[1].strip()} Choose another model or a local one.")
+                EXHAUSTED[url] = (time.time() + (delay or 3600), text)
+                raise QuotaError(text)
         if r.status_code in (429, 500, 502, 503, 504, 529) and attempt < retries:
-            wait = r.headers.get("retry-after", "")
-            time.sleep(min(float(wait), 90) if wait.replace(".", "", 1).isdigit() else 15 * (attempt + 1))
+            delay = _retry_delay(r)
+            time.sleep(min(delay, MAX_WAIT) if delay else 15 * (attempt + 1))
             continue
-        hint = " (free-tier quota exhausted? try a smaller model or wait)" if r.status_code == 429 else ""
-        raise LLMError(f"{name} API error {r.status_code}{hint}: {r.text[:300]}")
+        raise LLMError(f"{name} API error {r.status_code}: {msg[:300]}")
     raise LLMError(f"{name} API: too many retries")
+
+
+MAX_WAIT = 120
 
 
 def _gemini(messages, model, temperature, json_mode, num_predict, timeout) -> str:

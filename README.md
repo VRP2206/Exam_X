@@ -77,9 +77,15 @@ A model is named `provider:model`; a bare name is an Ollama model.
 
 Set `EXAMX_MODEL` to change the default, `EXAMX_GEMINI_MODEL` / `EXAMX_CLAUDE_MODEL` to change the provider
 defaults, and `OLLAMA_HOST` if Ollama is not on `localhost:11434`. With a local model, proofs are marked by
-`EXAMX_GRADER_MODEL` (default `qwen3:14b`); with a cloud model, the selected model marks them too. Rate limits
-(HTTP 429) are retried with back-off; the Gemini free tier allows only a few requests per minute, so an LLM-mode
-paper takes a few minutes. Note that a cloud model receives the question text and the student's answers, and
+`EXAMX_GRADER_MODEL` (default `qwen3:14b`); with a cloud model, the selected model marks them too. Short rate limits
+(HTTP 429) and overloads (503) are retried with back-off. A quota that resets hours later fails at once, and
+later calls to that model are skipped, so the run falls back to procedural questions instead of stalling.
+
+**Gemini free tier in practice (tested October 2026):** `gemini-3.5-flash` allows only **20 requests per day**
+per model. An AI-written paper needs about 15–25 requests, and marking an attempt needs one per proof or
+explanation, so a free key gives roughly one paper or one marked attempt a day. Peak-time 503 "high demand"
+errors were also common. `gemini-flash-lite-latest` has a separate quota, but it is a weaker model. A paid
+Gemini or Claude key removes these limits. Note that a cloud model receives the question text and the student's answers, and
 Google may use free-tier prompts to improve its products.
 
 ### Web UI
