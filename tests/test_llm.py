@@ -41,7 +41,7 @@ def calls(monkeypatch):
     ("qwen3:8b", ("ollama", "qwen3:8b")),
     ("ollama:qwen3:14b", ("ollama", "qwen3:14b")),
     ("gemini", ("gemini", llm.CLOUD_DEFAULTS["gemini"])),
-    ("gemini:gemini-2.5-pro", ("gemini", "gemini-2.5-pro")),
+    ("gemini:gemini-3.8-flash", ("gemini", "gemini-3.8-flash")),
     ("claude", ("claude", llm.CLOUD_DEFAULTS["claude"])),
     ("claude:claude-opus-5-5", ("claude", "claude-opus-5-5")),
 ])
@@ -50,7 +50,7 @@ def test_split(spec, expected):
 
 
 def test_cloud_grader_is_the_selected_model():
-    assert llm.grader_model("gemini:gemini-2.5-pro") == "gemini:gemini-2.5-pro"
+    assert llm.grader_model("gemini:gemini-3.8-flash") == "gemini:gemini-3.8-flash"
     assert llm.grader_model("claude") == "claude"
 
 
@@ -59,9 +59,9 @@ def test_gemini_request(calls):
     queue.append(Resp(200, {"candidates": [{"content": {"parts": [{"text": "thinking", "thought": True},
                                                                   {"text": '{"a": 1}'}]}}],
                             "usageMetadata": {"candidatesTokenCount": 5}}))
-    assert llm.chat_json(MSGS, model="gemini:gemini-2.5-pro") == {"a": 1}
+    assert llm.chat_json(MSGS, model="gemini:gemini-3.8-flash") == {"a": 1}
     req = log[0]
-    assert req["url"].endswith("/models/gemini-2.5-pro:generateContent")
+    assert req["url"].endswith("/models/gemini-3.8-flash:generateContent")
     assert req["headers"] == {"x-goog-api-key": "test-gemini"}
     assert req["body"]["systemInstruction"] == {"parts": [{"text": "Be terse."}]}
     assert [c["role"] for c in req["body"]["contents"]] == ["user", "model", "user"]
@@ -107,10 +107,10 @@ def test_web_model_switch_and_procedural_paper(tmp_path, monkeypatch):
     base = f"http://127.0.0.1:{server.server_port}"
     try:
         assert "Google Gemini" in urllib.request.urlopen(base + "/settings").read().decode()
-        data = b"provider=gemini&model=gemini-2.5-pro&prose=llm"
+        data = b"provider=gemini&model=gemini-3.8-flash&prose=llm"
         urllib.request.urlopen(base + "/settings", data=data)
-        assert web.SETTINGS["model"] == "gemini:gemini-2.5-pro" and web.SETTINGS["prose"] == "llm"
-        assert "gemini-2.5-pro" in (tmp_path / "settings.json").read_text()
+        assert web.SETTINGS["model"] == "gemini:gemini-3.8-flash" and web.SETTINGS["prose"] == "llm"
+        assert "gemini-3.8-flash" in (tmp_path / "settings.json").read_text()
         assert "GEMINI_API_KEY" in urllib.request.urlopen(base + "/").read().decode()
         # No AI: a procedural paper, then a blank attempt marked by the exact checkers.
         urllib.request.urlopen(base + "/generate", data=b"seed=7")

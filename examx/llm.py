@@ -5,7 +5,7 @@ A model is named by a spec string "provider:model", where the provider is ollama
     qwen3:8b                  local Ollama model (a bare name means Ollama)
     ollama:qwen3:14b          the same, explicitly
     gemini                    Gemini with the default model ($EXAMX_GEMINI_MODEL or gemini-2.5-flash)
-    gemini:gemini-2.5-pro     a specific Gemini model
+    gemini:gemini-3.8-flash   a specific Gemini model
     claude                    Claude with the default model ($EXAMX_CLAUDE_MODEL or claude-sonnet-5-5)
     claude:claude-opus-5-5    a specific Claude model
 
@@ -25,8 +25,8 @@ import requests
 PROVIDERS = ("ollama", "gemini", "claude")
 DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:8b")
 CLOUD_DEFAULTS = {
-    # Flash has the most generous free-tier limits; gemini-2.5-pro is stronger but has a small daily quota.
-    "gemini": os.environ.get("EXAMX_GEMINI_MODEL", "gemini-2.5-flash"),
+    # gemini-2.5-* is closed to new keys and the free tier has no Pro quota; 3.5-flash answered fastest in testing.
+    "gemini": os.environ.get("EXAMX_GEMINI_MODEL", "gemini-3.5-flash"),
     "claude": os.environ.get("EXAMX_CLAUDE_MODEL", "claude-sonnet-5-5"),
 }
 # Marking proofs locally needs more careful reasoning than writing questions, and is a smaller job.
@@ -42,7 +42,7 @@ CLAUDE_URL = "https://api.anthropic.com/v1"
 
 
 def split(spec: str | None) -> tuple[str, str]:
-    """"gemini:gemini-2.5-pro" -> ("gemini", "gemini-2.5-pro"); "qwen3:8b" -> ("ollama", "qwen3:8b")."""
+    """"gemini:gemini-3.8-flash" -> ("gemini", "gemini-3.8-flash"); "qwen3:8b" -> ("ollama", "qwen3:8b")."""
     spec = (spec or DEFAULT_MODEL).strip()
     provider, _, name = spec.partition(":")
     if provider not in PROVIDERS:

@@ -72,7 +72,7 @@ A model is named `provider:model`; a bare name is an Ollama model.
 | spec | back end |
 |---|---|
 | `qwen3:8b` (default), `qwen3:14b`, ... | local Ollama |
-| `gemini`, `gemini:gemini-2.5-pro` | Google Gemini (default `gemini-2.5-flash`, which has the largest free-tier quota) |
+| `gemini`, `gemini:gemini-3.8-flash` | Google Gemini (default `gemini-3.5-flash`; on a free key, `gemini-2.5-*` is no longer offered and Pro models have no quota) |
 | `claude`, `claude:claude-opus-5-5` | Anthropic Claude (default `claude-sonnet-5-5`) |
 
 Set `EXAMX_MODEL` to change the default, `EXAMX_GEMINI_MODEL` / `EXAMX_CLAUDE_MODEL` to change the provider
