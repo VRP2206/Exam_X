@@ -1,13 +1,17 @@
 """Local web front end (stdlib only): pick the AI model, generate papers, answer them in the browser, get marked.
 
 Run with `examx serve` and open http://127.0.0.1:8014. The model switcher chooses between the local Ollama
-models, Google Gemini and Anthropic Claude. API keys are read from the environment only; the page shows
-whether a key is set, never its value. Long jobs (LLM generation and marking) run in a background thread and
+models, Google Gemini and Anthropic Claude. Each visitor enters their own API key on the AI model page: it is
+checked once, kept only in that browser (an HttpOnly, Secure, SameSite=Strict cookie), sent back with each
+request and used just for that visitor's jobs. The server never writes or logs it. Keys in the server's
+environment, if any, are the fallback. Long jobs (LLM generation and marking) run in a background thread and
 the job page refreshes until they finish.
 """
 from __future__ import annotations
 
+import hashlib
 import html
+import http.cookies
 import json
 import os
 import re
@@ -32,12 +36,13 @@ SETTINGS = {"model": llm.DEFAULT_MODEL, "prose": "past", "review": False}
 PROVIDER_LABELS = {"ollama": "Local (Ollama)", "gemini": "Google Gemini", "claude": "Anthropic Claude"}
 KEY_HELP = {
     "ollama": "Start Ollama with <code>ollama serve</code> and pull a model, e.g. <code>ollama pull qwen3:8b</code>.",
-    "gemini": "Set <code>GEMINI_API_KEY</code> in the environment of <code>examx serve</code> (for the website: in "
-              "<code>~/.examx.env</code>, then restart the container). Free key: aistudio.google.com/apikey.",
-    "claude": "Set <code>ANTHROPIC_API_KEY</code> in the environment of <code>examx serve</code> (for the website: in "
-              "<code>~/.examx.env</code>, then restart the container). Key: console.anthropic.com.",
+    "gemini": "Add your key under <a href='/settings#keys'>API keys</a> (free key: aistudio.google.com/apikey).",
+    "claude": "Add your key under <a href='/settings#keys'>API keys</a> (key: console.anthropic.com).",
 }
-_status_cache: dict = {"at": 0.0, "data": None}
+_status_cache: dict = {}  # hash of the visitor's keys -> (time, status)
+KEY_COOKIE = "examx_key_"  # + provider
+KEY_RE = re.compile(r"[A-Za-z0-9_\-.]{20,300}")
+REMEMBER_DAYS = 30
 # Public deployment (see deploy/): with EXAMX_REQUIRE_ACCESS=1 every request must carry the identity header that
 # Cloudflare Access adds after login, so the site fails closed if Access is not set up. Running AI jobs cost
 # API quota, so their number is capped per day and at any one time.
@@ -72,6 +77,7 @@ textarea{width:100%;min-height:110px;font:13.5px/1.4 ui-monospace,Menlo,monospac
 border:1px solid var(--line);background:var(--bg);color:var(--fg)}
 input[type=text],input:not([type]),select{padding:6px 8px;border-radius:6px;border:1px solid var(--line);
 background:var(--bg);color:var(--fg);font:inherit}
+button.secondary{background:transparent;color:var(--accent);border:1px solid var(--line);padding:4px 10px}
 button,.btn{background:var(--accent);color:var(--accent-fg);border:0;border-radius:6px;padding:8px 16px;font:inherit;
 font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
 .providers{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:12px}
@@ -102,10 +108,20 @@ def save_settings() -> None:
     SETTINGS_FILE.write_text(json.dumps(SETTINGS, indent=1))
 
 
-def provider_status(refresh: bool = False) -> dict:
-    if refresh or not _status_cache["data"] or time.time() - _status_cache["at"] > 60:
-        _status_cache.update(at=time.time(), data=llm.status())
-    return _status_cache["data"]
+def provider_status(refresh: bool = False, keys: dict | None = None) -> dict:
+    """Back-end status as seen with this visitor's keys (cached for a minute, by a hash of the keys)."""
+    keys = keys or {}
+    tag = hashlib.sha256(json.dumps(keys, sort_keys=True).encode()).hexdigest()
+    if refresh or tag not in _status_cache or time.time() - _status_cache[tag][0] > 60:
+        token = llm.use_keys(keys)
+        try:
+            status = llm.status()
+        finally:
+            llm._KEYS.reset(token)
+        for p, st in status.items():
+            st["own_key"] = p in keys
+        _status_cache[tag] = (time.time(), status)
+    return _status_cache[tag][1]
 
 
 def page(title: str, body: str, refresh: bool = False) -> bytes:
@@ -144,7 +160,7 @@ def job_refusal(uses_ai: bool) -> str | None:
     return None
 
 
-def run_job(kind: str, fn, *args) -> str:
+def run_job(kind: str, fn, *args, keys: dict | None = None) -> str:
     jid = uuid.uuid4().hex[:8]
     JOBS[jid] = {"kind": kind, "log": [], "done": False, "result": None, "start": time.time()}
 
@@ -152,6 +168,7 @@ def run_job(kind: str, fn, *args) -> str:
         JOBS[jid]["log"].append(str(msg))
 
     def target():
+        llm.use_keys(keys)  # this thread only; the keys are not kept in JOBS
         try:
             JOBS[jid]["result"] = fn(*args, log=log)
         except Exception:
@@ -181,12 +198,35 @@ def _grade(seed: str, answers: dict, use_llm: bool, model: str, log):
     return f"/report/{seed}/{rid}"
 
 
+def keys_form(status: dict, message: str = "") -> str:
+    rows = []
+    for p in ("claude", "gemini"):
+        st = status[p]
+        if st.get("own_key"):
+            ctl = (f"<span class='ok'>● key saved in this browser</span> <form method='post' action='/keys/forget' "
+                   f"style='display:inline'><input type='hidden' name='provider' value='{p}'>"
+                   f"<button class='secondary'>Remove</button></form>")
+        else:
+            server = " <span class='muted'>(the server has its own key; yours takes priority)</span>" if st["ready"] else ""
+            ctl = (f"<form method='post' action='/keys' class='row'><input type='hidden' name='provider' value='{p}'>"
+                   f"<input type='password' name='key' size='34' autocomplete='off' placeholder='paste API key'>"
+                   f"<label><input type='checkbox' name='remember'> remember on this device ({REMEMBER_DAYS} days)</label>"
+                   f"<button>Save key</button></form>{server}")
+        rows.append(f"<div style='margin:10px 0'><b>{PROVIDER_LABELS[p]}</b> {ctl}</div>")
+    note = f"<p class='{'ok' if message.startswith('Saved') else 'warn'}'>{html.escape(message)}</p>" if message else ""
+    return f"""{note}{''.join(rows)}
+<p class='muted'>Your key is checked with the provider once (no tokens used), then kept only in this browser as a
+secure cookie that page scripts cannot read. It is sent with your requests and used just for your own jobs; the
+server never stores or logs it. Without "remember" it is forgotten when the browser closes. Get keys at
+console.anthropic.com (Claude) or aistudio.google.com/apikey (Gemini, free tier).</p>"""
+
+
 def settings_form(status: dict, compact: bool = False) -> str:
     provider, name = llm.split(SETTINGS["model"])
     cards, lists = [], []
     for p in llm.PROVIDERS:
         st = status[p]
-        state = ("<span class='ok'>● ready</span>" if st["ready"] else
+        state = ("<span class='ok'>● ready" + (" (your key)" if st.get("own_key") else "") + "</span>" if st["ready"] else
                  "<span class='warn'>● not running</span>" if p == "ollama" else "<span class='warn'>● no API key</span>")
         extra = "" if st["ready"] else f"<div class='muted'>{KEY_HELP[p]}</div>"
         cards.append(f"<label class='prov'><input type='radio' name='provider' value='{p}'"
@@ -223,10 +263,22 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(body)
 
-    def redirect(self, to: str):
+    def redirect(self, to: str, cookies: list[str] = ()):
         self.send_response(303)
         self.send_header("Location", to)
+        for c in cookies:
+            self.send_header("Set-Cookie", c)
         self.end_headers()
+
+    def keys(self) -> dict:
+        """The visitor's own API keys, from their cookies."""
+        jar = http.cookies.SimpleCookie()
+        try:
+            jar.load(self.headers.get("Cookie", ""))
+        except http.cookies.CookieError:
+            return {}
+        return {p: jar[KEY_COOKIE + p].value for p in ("claude", "gemini")
+                if KEY_COOKIE + p in jar and KEY_RE.fullmatch(jar[KEY_COOKIE + p].value)}
 
     def log_message(self, *a):
         pass
@@ -246,8 +298,12 @@ class Handler(BaseHTTPRequestHandler):
         if path == [""]:
             return self.send(page("ExamX", self.home()))
         if path == ["settings"]:
-            status = provider_status(refresh="refresh" in parse_qs(url.query))
-            body = f"<h1>AI model</h1><div class='card'>{settings_form(status)}</div>"
+            q = parse_qs(url.query)
+            status = provider_status(refresh="refresh" in q, keys=self.keys())
+            msg = {"saved": "Saved: the key works.", "bad": "That key was rejected (or the provider is unreachable); "
+                   "nothing was saved.", "removed": "Removed the key from this browser."}.get(q.get("key", [""])[0], "")
+            body = (f"<h1>AI model</h1><div class='card'>{settings_form(status)}</div>"
+                    f"<div class='card' id='keys'><h2>API keys</h2>{keys_form(status, msg)}</div>")
             return self.send(page("AI model", body))
         if path[0] == "figures" and len(path) == 2 and re.fullmatch(r"[\w.\-]+\.png", path[1]):
             f = DATA_DIR / "figures" / path[1]
@@ -283,7 +339,7 @@ class Handler(BaseHTTPRequestHandler):
         self.send(page("Not found", "<p>Not found.</p>"), 404)
 
     def home(self) -> str:
-        status = provider_status()
+        status = provider_status(keys=self.keys())
         provider, name = llm.split(SETTINGS["model"])
         ready = status[provider]["ready"]
         warn = "" if ready else (f"<p class='warn'>{PROVIDER_LABELS[provider]} is not available: "
@@ -350,6 +406,16 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
             return self.send(page("Too large", "<p>Request too large.</p>"), 413)
         form = {k: v[0] for k, v in parse_qs(self.rfile.read(n).decode(), keep_blank_values=True).items()}
         path = urlparse(self.path).path.strip("/").split("/")
+        if path == ["keys"]:
+            provider, key = form.get("provider"), form.get("key", "").strip()
+            if provider not in ("claude", "gemini") or not KEY_RE.fullmatch(key) or not llm.check_key(provider, key):
+                return self.redirect("/settings?key=bad#keys")
+            age = f"; Max-Age={REMEMBER_DAYS * 86400}" if "remember" in form else ""
+            cookie = f"{KEY_COOKIE}{provider}={key}; Path=/; HttpOnly; Secure; SameSite=Strict{age}"
+            return self.redirect("/settings?key=saved#keys", [cookie])
+        if path == ["keys", "forget"] and form.get("provider") in ("claude", "gemini"):
+            cookie = f"{KEY_COOKIE}{form['provider']}=; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=0"
+            return self.redirect("/settings?key=removed#keys", [cookie])
         if path == ["settings"]:
             provider = form.get("provider") if form.get("provider") in llm.PROVIDERS else "ollama"
             name = re.sub(r"[^\w.:\-/]", "", form.get("model", "").strip())
@@ -368,7 +434,8 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
             if why := job_refusal("llm" in form):
                 return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p><a href='/'>Back</a></p>"), 429)
             return self.redirect("/job/" + run_job("Generating paper", _generate, "llm" in form, seed,
-                                                   SETTINGS["model"], SETTINGS["prose"], SETTINGS["review"]))
+                                                   SETTINGS["model"], SETTINGS["prose"], SETTINGS["review"],
+                                                   keys=self.keys()))
         if path[0] == "grade" and len(path) == 2 and (OUT / f"practice-{path[1]}.json").exists():
             answers: dict[int, dict[str, str]] = {}
             for k, v in form.items():
@@ -379,7 +446,7 @@ s.textContent='draft saved'}}catch(e){{}}}});}});}})();
                 return self.send(page("Busy", f"<h1>Not now</h1><p>{why}</p><p>Your answers are still saved in "
                                       "this browser.</p>"), 429)
             return self.redirect("/job/" + run_job("Marking", _grade, path[1], answers, "llm" in form,
-                                                   llm.grader_model(SETTINGS["model"])))
+                                                   llm.grader_model(SETTINGS["model"]), keys=self.keys()))
         self.send(page("Not found", "<p>Not found.</p>"), 404)
 
 

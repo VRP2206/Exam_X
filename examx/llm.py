@@ -9,12 +9,15 @@ A model is named by a spec string "provider:model", where the provider is ollama
     claude                    Claude with the default model ($EXAMX_CLAUDE_MODEL or claude-sonnet-5-5)
     claude:claude-opus-5-5    a specific Claude model
 
-The default spec is $EXAMX_MODEL (default qwen3:8b). API keys are read only from the environment
-(GEMINI_API_KEY or GOOGLE_API_KEY, and ANTHROPIC_API_KEY) and are never written anywhere.
+The default spec is $EXAMX_MODEL (default qwen3:8b). API keys come from the caller (the web UI passes the
+visitor's own key for the duration of a job, see use_keys) or else from the environment (GEMINI_API_KEY or
+GOOGLE_API_KEY, and ANTHROPIC_API_KEY). They are never written anywhere.
 The Ollama server is $OLLAMA_HOST (default localhost:11434).
 """
 from __future__ import annotations
 
+import contextvars
+import hashlib
 import json
 import os
 import re
@@ -63,7 +66,26 @@ def grader_model(spec: str | None = None) -> str:
     return spec
 
 
+_KEYS: contextvars.ContextVar[dict] = contextvars.ContextVar("examx_keys", default={})
+
+
+def use_keys(keys: dict | None):
+    """Use these {provider: key} in the current thread/context (e.g. one web visitor's job), before the environment."""
+    return _KEYS.set(dict(keys or {}))
+
+
+def check_key(provider: str, key: str) -> bool:
+    """Is the key accepted by the provider? (Lists its models: no tokens used.)"""
+    token = use_keys({provider: key})
+    try:
+        return bool(available_models(provider))
+    finally:
+        _KEYS.reset(token)
+
+
 def api_key(provider: str) -> str | None:
+    if _KEYS.get().get(provider):
+        return _KEYS.get()[provider]
     names = {"gemini": ("GEMINI_API_KEY", "GOOGLE_API_KEY"), "claude": ("ANTHROPIC_API_KEY",)}[provider]
     return next((os.environ[n] for n in names if os.environ.get(n)), None)
 
@@ -112,7 +134,7 @@ class QuotaError(LLMError):
     """The provider's quota is used up for longer than is worth waiting (e.g. a free-tier daily limit)."""
 
 
-EXHAUSTED: dict[str, tuple[float, str]] = {}  # url -> (time the quota resets, message): skip calls until then
+EXHAUSTED: dict[str, tuple[float, str]] = {}  # url#key-hash -> (time the quota resets, message): skip until then
 
 
 def _retry_delay(r) -> float | None:
@@ -142,8 +164,10 @@ def _post(name: str, url: str, headers: dict, body: dict, timeout: int, retries:
 
     A quota that resets later than MAX_WAIT seconds from now fails at once, and later calls to the same
     model fail immediately too, so a run falls back instead of stalling for minutes per question."""
-    if url in EXHAUSTED and EXHAUSTED[url][0] > time.time():
-        raise QuotaError(EXHAUSTED[url][1])
+    # Quotas belong to a key, so remember exhaustion per (model URL, key) without keeping the key itself.
+    tag = url + "#" + hashlib.sha256(json.dumps(headers, sort_keys=True).encode()).hexdigest()[:16]
+    if tag in EXHAUSTED and EXHAUSTED[tag][0] > time.time():
+        raise QuotaError(EXHAUSTED[tag][1])
     for attempt in range(retries + 1):
         try:
             r = requests.post(url, headers=headers, json=body, timeout=timeout)
@@ -161,7 +185,7 @@ def _post(name: str, url: str, headers: dict, body: dict, timeout: int, retries:
                 hours = f"; resets in about {delay / 3600:.1f} h" if delay else ""
                 text = (f"{name} quota used up{hours}. {msg.splitlines()[0]} "
                         f"{(msg.splitlines() + [''])[1].strip()} Choose another model or a local one.")
-                EXHAUSTED[url] = (time.time() + (delay or 3600), text)
+                EXHAUSTED[tag] = (time.time() + (delay or 3600), text)
                 raise QuotaError(text)
         if r.status_code in (429, 500, 502, 503, 504, 529) and attempt < retries:
             delay = _retry_delay(r)

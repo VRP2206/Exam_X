@@ -2,6 +2,7 @@
 import json
 import threading
 import time
+import urllib.error
 import urllib.request
 from http.server import ThreadingHTTPServer
 
@@ -99,7 +100,7 @@ def test_web_model_switch_and_procedural_paper(tmp_path, monkeypatch):
     from examx import web
     monkeypatch.setattr(web, "OUT", tmp_path)
     monkeypatch.setattr(web, "SETTINGS_FILE", tmp_path / "settings.json")
-    monkeypatch.setattr(web, "provider_status", lambda refresh=False: {
+    monkeypatch.setattr(web, "provider_status", lambda refresh=False, keys=None: {
         p: {"ready": p == "ollama", "models": ["qwen3:8b"] if p == "ollama" else [], "default": d}
         for p, d in (("ollama", "qwen3:8b"), ("gemini", "gemini-2.5-flash"), ("claude", "claude-sonnet-5-5"))})
     server = ThreadingHTTPServer(("127.0.0.1", 0), web.Handler)
@@ -111,7 +112,7 @@ def test_web_model_switch_and_procedural_paper(tmp_path, monkeypatch):
         urllib.request.urlopen(base + "/settings", data=data)
         assert web.SETTINGS["model"] == "gemini:gemini-3.8-flash" and web.SETTINGS["prose"] == "llm"
         assert "gemini-3.8-flash" in (tmp_path / "settings.json").read_text()
-        assert "GEMINI_API_KEY" in urllib.request.urlopen(base + "/").read().decode()
+        assert "/settings#keys" in urllib.request.urlopen(base + "/").read().decode()
         # No AI: a procedural paper, then a blank attempt marked by the exact checkers.
         urllib.request.urlopen(base + "/generate", data=b"seed=7")
         for _ in range(100):
@@ -137,3 +138,47 @@ def test_daily_quota_fails_fast_and_is_remembered(calls):
         llm.chat(MSGS, model="gemini")
     assert len(log) == 1  # the second call never reached the API
     llm.EXHAUSTED.clear()
+
+
+def test_web_key_is_kept_in_the_browser_only(tmp_path, monkeypatch):
+    from examx import web
+    monkeypatch.setattr(web, "OUT", tmp_path)
+    monkeypatch.setattr(web, "SETTINGS_FILE", tmp_path / "settings.json")
+    monkeypatch.setattr(llm, "check_key", lambda provider, key: key.startswith("sk-ant-good"))
+    seen = {}
+    monkeypatch.setattr(llm, "status", lambda: {p: {"ready": bool(llm.api_key(p)) if p != "ollama" else False,
+                                                     "models": [], "default": "x"} for p in llm.PROVIDERS})
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    server = ThreadingHTTPServer(("127.0.0.1", 0), web.Handler)
+    threading.Thread(target=server.serve_forever, daemon=True).start()
+    base = f"http://127.0.0.1:{server.server_port}"
+
+    class NoRedirect(urllib.request.HTTPRedirectHandler):
+        def redirect_request(self, *a, **k):
+            return None
+    opener = urllib.request.build_opener(NoRedirect)
+    key = "sk-ant-good-" + "x" * 30
+    try:
+        with pytest.raises(urllib.error.HTTPError) as bad:
+            opener.open(base + "/keys", data=b"provider=claude&key=sk-ant-bad-" + b"x" * 30)
+        assert "key=bad" in bad.value.headers["Location"] and not bad.value.headers.get("Set-Cookie")
+        with pytest.raises(urllib.error.HTTPError) as ok:
+            opener.open(base + "/keys", data=f"provider=claude&key={key}".encode())
+        cookie = ok.value.headers["Set-Cookie"]
+        assert key in cookie and "HttpOnly" in cookie and "Secure" in cookie and "Max-Age" not in cookie
+        req = urllib.request.Request(base + "/settings", headers={"Cookie": cookie.split(";")[0]})
+        body = urllib.request.urlopen(req).read().decode()
+        assert "key saved in this browser" in body and key not in body
+
+        def job(log):
+            seen["key"] = llm.api_key("claude")
+        handler = type("H", (), {"headers": {"Cookie": cookie.split(";")[0]}})
+        jid = web.run_job("t", job, keys=web.Handler.keys(handler))
+        for _ in range(50):
+            if web.JOBS[jid]["done"]:
+                break
+            time.sleep(0.05)
+        assert seen["key"] == key and llm.api_key("claude") is None  # only inside the job's thread
+        assert not any(key in f.read_text() for f in tmp_path.rglob("*") if f.is_file())
+    finally:
+        server.shutdown()

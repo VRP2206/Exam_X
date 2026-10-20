@@ -33,8 +33,8 @@ ollama pull qwen3:14b           # proof marker (optional but recommended)
 ollama pull qwen3:4b-instruct   # optional faster model
 ```
 
-For the cloud models, put the key in your shell environment (never in a file in the repo; ExamX only reads it
-from the environment and never writes it anywhere):
+**Cloud API keys.** In the web UI, paste your key on the **AI model** page (see "Web UI"). For the CLI, put it in
+your shell environment (never in a file in the repo; ExamX never writes keys anywhere):
 
 ```bash
 export GEMINI_API_KEY=...       # free key from https://aistudio.google.com/apikey
@@ -95,6 +95,12 @@ Google may use free-tier prompts to improve its products.
 - **AI model** page: choose Local / Gemini / Claude and the model (installed or offered models are suggested),
   see whether each back end is ready (Ollama running, key set), and choose whether proof slots use real past
   questions or new AI-written ones. The choice is saved in `output/settings.json` (no keys).
+- **API keys** (on the same page): paste a Claude or Gemini key. The server checks it once by listing the
+  provider's models (no tokens used). It then keeps it **only in your browser**, as an `HttpOnly; Secure;
+  SameSite=Strict` cookie that page scripts cannot read. The browser sends it with your requests, and it is used
+  only inside your own generation and marking jobs; the server never writes or logs it. By default it is
+  forgotten when the browser closes; tick "remember on this device" to keep it for 30 days. **Remove** deletes
+  it. Each visitor uses their own key. A key in the server's environment, if any, is the fallback.
 - **Papers**: generate a paper (with or without the AI), open it, view solutions and earlier reports.
 - **Paper**: answer each part in the browser (drafts are kept in the browser as you type) and submit for
   marking; the report shows marks and feedback per part.
@@ -240,8 +246,9 @@ docker compose -f deploy/compose.yaml logs -f          # logs
 docker compose -f deploy/compose.yaml up -d --force-recreate   # after editing ~/.examx.env
 ```
 
-- **API keys** go in `~/.examx.env` (outside the repo; `chmod 600`), one `NAME=value` per line, e.g.
-  `ANTHROPIC_API_KEY=...`. The container reads it at start-up, and nothing writes it.
+- **API keys** are entered by each user on the site's AI model page and stay in their browser (see "Web UI").
+  Optionally, a server-wide fallback key can go in `~/.examx.env` (outside the repo; `chmod 600`; one
+  `NAME=value` per line). Every signed-in user would then share it.
 - **Default model:** `claude:claude-sonnet-5-5` (set in `deploy/compose.yaml`; the AI model page overrides it, and
   that choice is saved in `output/settings.json`). Local Ollama models also work, because the container uses the
   host network.
