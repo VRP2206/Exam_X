@@ -1,6 +1,6 @@
 # Grading report: FIT2014 Practice Exam (seed 42)
 
-**Total: 23.5 / 120** (20%)
+**Total: 26.5 / 120** (22%)
 
 | Question | Marks | Method |
 |---|---|---|
@@ -20,7 +20,7 @@
 | 14 | 2 / 4 | llm-rubric |
 | 15 | 3 / 4 | exact |
 | 16 | 0 / 10 | blank |
-| 17 | 2 / 7 | llm-rubric |
+| 17 | 5 / 7 | llm-rubric |
 | 18 | 0 / 5 | blank |
 | 19 | 0 / 4 | blank |
 | 20 | 0 / 4 | blank |
@@ -129,15 +129,15 @@ Wrong on 7 of 127 test inputs. For input ε (the empty string) the output should
 
 **(a) 2 / 2** · _llm-rubric_
 
-Your answer is correct and captures the essence of the Church-Turing thesis. The model solution states it as 'Any function which can defined by an algorithm can be represented by a Turing Machine,' while your version says 'Anything that can be computed by an algorithm can be computed by a Turing machine.' Both are valid formulations. Well done!
+Your answer correctly states the Church-Turing thesis. You have clearly conveyed the idea that any algorithmic computation can be performed by a Turing machine.
 
-_Rubric:_ Correct answer (compare with the official solution): 2 — The student's answer is essentially equivalent to the model solution, with slightly different wording. Both convey the core idea of the Church-Turing thesis.
+_Rubric:_ Correct statement of the Church-Turing thesis: 2 — The student's answer is correct and accurately reflects the Church-Turing thesis.
 
 **(b) 0 / 2** · _llm-rubric_
 
-Your answer is incorrect. The Church-Turing thesis is not about the speed of Turing machines or programming languages compiling to them. It is about the equivalence of different computational models and the idea that any algorithm can be simulated by a Turing machine. Two correct reasons are: (1) different approaches to defining computability end up being equivalent, and (2) long experience shows that algorithms can be implemented as programs and thus on Turing machines.
+Your answer is incorrect and does not address the Church-Turing thesis properly. The Church-Turing thesis is about the equivalence of different models of computation and the ability to simulate algorithms on Turing machines, not about the speed of Turing machines or compilation of programming languages.
 
-_Rubric:_ Correct answer (compare with the official solution): 0 — The student's answer is incorrect. The Church-Turing thesis is not about the speed of Turing machines or the compilation of programming languages to Turing machines. It is about the equivalence of different models of computation and the limits of computability.
+_Rubric:_ Reason 1: Different approaches to defining computability end up being equivalent: 0 — This statement is incorrect. Turing machines are not fast; they are a theoretical model of computation, not a practical computing device. The speed of a Turing machine is not relevant to the Church-Turing thesis.; Reason 2: Long experience showing that algorithms can be implemented on Turing machines: 0 — This statement is vague and incorrect. The Church-Turing thesis is not about the speed or compilation of programming languages, but about the equivalence of different models of computation.
 
 ## Question 15 — 3 / 4
 
@@ -199,13 +199,13 @@ No answer given.
 
 No answer given.
 
-## Question 17 — 2 / 7
+## Question 17 — 5 / 7
 
-**2 / 7** · _llm-rubric_
+**5 / 7** · _llm-rubric_
 
-Your answer is concise but lacks the detailed case analysis required to apply the Pumping Lemma correctly. You need to clearly state the Pumping Lemma, justify the choice of string, and consider all possible cases for vxy. Make sure to show that pumping leads to a string not in L in each case.
+You correctly applied the Pumping Lemma and chose a suitable string. However, you did not fully consider all possible cases for vxy, and your argument about pumping was too vague. To improve, explicitly consider all possible cases for vxy (e.g., vxy containing only a's, only b's, only c's, or combinations) and provide specific examples of how pumping leads to strings not in L.
 
-_Rubric:_ State the Pumping Lemma for context-free languages: 1 — The student mentions the Pumping Lemma but does not clearly state it. A full statement would include the form w = uvxyz, the conditions on |vxy| and |vy|, and the requirement that uv^i xy^i z ∈ L for all i ≥ 0.; Choose a suitable string w = a^N b^N c^N and justify its length: 1 — The student chooses w = a^N b^N c^N but does not clearly justify its length (e.g., that it is longer than the pumping length).; Apply the Pumping Lemma and consider all possible cases for vxy: 0 — The student does not consider all possible cases for vxy. They incorrectly assume that vxy cannot contain both a's and c's, which is not necessarily true. This is a critical omission.; Show that pumping leads to a string not in L in all cases: 0 — The student does not provide a detailed argument showing that pumping leads to a string not in L. The reasoning is too vague and lacks the necessary case analysis.
+_Rubric:_ State the Pumping Lemma for context-free languages: 2 — The student correctly references the Pumping Lemma and mentions the key conditions (|vxy| ≤ N and |vy| ≥ 1).; Choose a suitable string w = a^N b^N c^N and justify its length: 1 — The student correctly chooses w = a^N b^N c^N and implies that N is large, which is sufficient for the Pumping Lemma.; Apply the Pumping Lemma and consider all possible cases for vxy: 1 — The student does not explicitly consider all possible cases for vxy. They make a general claim that vxy cannot contain both a's and c's, but this is not justified and misses the detailed case analysis required.; Show that pumping leads to a string not in L in all cases: 1 — The student provides a general argument that pumping increases at most two of the three letters, but this is vague and lacks the specific examples and reasoning needed to show that the pumped string is not in L in all cases.
 
 ## Question 18 — 0 / 5
 

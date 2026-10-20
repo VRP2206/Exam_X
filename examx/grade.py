@@ -266,7 +266,7 @@ def llm_grade(question: dict, part: dict, answer: str, model: str | None, note: 
             'Return JSON: {"criteria": [{"criterion": "...", "awarded": <number>, "comment": "..."}], '
             '"feedback": "2-4 sentences for the student"}')
     data = llm.chat_json([{"role": "system", "content": GRADER_SYSTEM}, {"role": "user", "content": user}],
-                         model=model or llm.GRADER_MODEL, temperature=0.0, num_predict=1200)
+                         model=model or llm.grader_model(), temperature=0.0, num_predict=1200)
     crit = [c for c in data.get("criteria", []) if isinstance(c, dict)]
     total = 0.0
     for c in crit:

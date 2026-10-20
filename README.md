@@ -23,6 +23,7 @@ virtual environment inside the repo (`.venv/`, git-ignored).
 python3 -m venv .venv
 .venv/bin/pip install -e '.[dev]'
 ollama pull qwen3:8b            # default model
+ollama pull qwen3:14b           # proof marker (optional but recommended)
 ollama pull qwen3:4b-instruct   # optional faster model
 ```
 
@@ -35,6 +36,8 @@ Activate with `source .venv/bin/activate`, or call `.venv/bin/examx` directly.
 examx ingest                      # parse papers/ + solution/ PDFs into data/
 examx stats                       # topic / answer-type mix of the past papers
 examx generate --seed 42          # new paper + solutions in output/ (.md, .pdf, .json)
+examx generate --prose past       # proof/explanation slots use real past questions + official solutions
+examx generate --no-review        # skip the LLM self-review pass (about 2x faster)
 examx generate --no-llm           # procedural-only paper in about a second (no Ollama needed)
 examx generate --model qwen3:4b-instruct   # faster, lower-quality LLM
 examx grade output/practice-42.json my-attempt.md     # marks + feedback -> my-attempt.report.md/.json
@@ -139,6 +142,31 @@ Benchmark from `examx bench`, using the same 700-token prompt (write a pumping-l
 
 The default favours quality, because wrong model solutions are worse than slow ones. Use
 `--model qwen3:4b-instruct` when speed matters.
+
+**Marking proofs uses `qwen3:14b` by default** (`ollama pull qwen3:14b`; override it with `EXAMX_GRADER_MODEL`.
+If it isn't installed, marking falls back to the generation model). It runs about 76% on the CPU and takes
+about 2 minutes per proof. On the sample attempt's correct-but-terse CFL pumping-lemma proof, qwen3:8b gave
+1–3/7 and asserted a true step was false, while qwen3:14b gave 5/7 with accurate feedback. Both gave 0/7 to a
+bogus proof that picks one fixed decomposition. Thinking mode made the 8B marker slower without making it
+more accurate.
+
+### Known limitations: honest results
+
+A full LLM-mode paper (seed 42, qwen3:8b, before the quality controls) took 19 minutes. Its procedural
+questions were all correct. Of its LLM-written questions, about half were poor: near-duplicate questions,
+a "prove that ..." of a false statement, wrong decidability and multiple-choice answers, and a meaningless
+graph in the NP question. In response:
+
+- decidability tables and Venn/language-class questions are now procedural;
+- near-duplicate drafts are rejected, and a self-review pass fixes what it can;
+- every LLM-written question carries a "check before relying on it" note in the solutions;
+- `--prose past` fills those slots with **real past questions and their official solutions** instead.
+  This is the most reliable mode, and `examples/practice-42*` was generated with it.
+
+LLM marks for proofs are advisory. The exact marks (automata, grammars, TMs, logic, choices) are reliable.
+
+`examples/` contains a generated paper, a deliberately mixed `sample-attempt.md` and its
+`sample-attempt.report.md` (26.5/120, about 3.5 minutes to mark).
 
 ## Tests
 

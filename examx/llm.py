@@ -15,7 +15,15 @@ import requests
 
 DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:8b")
 # Marking proofs needs more careful reasoning than writing questions, and is a smaller job.
-GRADER_MODEL = os.environ.get("EXAMX_GRADER_MODEL", DEFAULT_MODEL)
+# qwen3:14b runs mostly on CPU (~2 min per proof) but, unlike the 8B model, did not invent errors in a
+# correct proof and still gave 0 to a bogus one (see README). Falls back to DEFAULT_MODEL if not pulled.
+GRADER_MODEL = os.environ.get("EXAMX_GRADER_MODEL", "qwen3:14b")
+
+
+def grader_model() -> str:
+    if "EXAMX_GRADER_MODEL" in os.environ or GRADER_MODEL in available_models():
+        return GRADER_MODEL
+    return DEFAULT_MODEL
 HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 if not HOST.startswith("http"):
     HOST = "http://" + HOST
