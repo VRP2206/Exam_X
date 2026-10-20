@@ -1,0 +1,875 @@
+{
+ "paper": "sampleexam2013",
+ "year": 2013,
+ "source": "papers/FIT2014-SampleExam2013.pdf",
+ "has_solutions": true,
+ "total_marks": 120.0,
+ "questions": [
+  {
+   "id": "sampleexam2013-q1",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 1,
+   "marks": 4.0,
+   "text": "Annie, Henrietta, Radhanath and Williamina have been shortlisted for two jobs as comput-\ners. Let A, H, R, W be propositions with the following meanings.\nA: Annie gets one of the jobs.\nH: Henrietta gets one of the jobs.\nR: Radhanath gets one of the jobs.\nW: Williamina gets one of the jobs.\nUse A, H, R and W to write a proposition, in Conjunctive Normal Form, that is True\nprecisely when exactly two of them get jobs.",
+   "stem": "Annie, Henrietta, Radhanath and Williamina have been shortlisted for two jobs as comput-\ners. Let A, H, R, W be propositions with the following meanings.\nA: Annie gets one of the jobs.\nH: Henrietta gets one of the jobs.\nR: Radhanath gets one of the jobs.\nW: Williamina gets one of the jobs.\nUse A, H, R and W to write a proposition, in Conjunctive Normal Form, that is True\nprecisely when exactly two of them get jobs.",
+   "parts": [],
+   "solution": "(A ∨ H ∨ R) ∧ (A ∨ H ∨ W) ∧ (A ∨ R ∨ W) ∧ (H ∨ R ∨ W) ∧\n(¬A ∨¬H ∨¬R) ∧ (¬A ∨¬H ∨¬W) ∧ (¬A ∨¬R ∨¬W) ∧ (¬H ∨¬R ∨¬W)",
+   "comments": "The first four clauses together ensure that at least two of them get jobs. The last four\nclauses together ensure that at most two of them get jobs.\nThese four names belong to four famous computers:\nAnnie Jump Cannon (1863–1941),\nHenrietta Swan Leavitt (1868–1921),\nRadhanath Sikdar (1813–1870),\nWilliamina Fleming (1857–1911).\nLook them up!",
+   "topics": [
+    "propositional_logic"
+   ],
+   "primary_topic": "propositional_logic",
+   "answer_type": "prop_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    2
+   ]
+  },
+  {
+   "id": "sampleexam2013-q2",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 2,
+   "marks": 3.0,
+   "text": "Suppose you have the predicates prolog and elvish, with the following meanings:\nprolog(X): X knows the Prolog language.\nelvish(X): X knows the Elvish language.\n(a) Write a universal statement in predicate logic with the meaning:\n“Nobody knows both Prolog and Elvish.”\n(b) Suppose that the statement in (a) is False. Starting with its negation, derive an existential\nstatement meaning that someone knows both these languages.",
+   "stem": "Suppose you have the predicates prolog and elvish, with the following meanings:\nprolog(X): X knows the Prolog language.\nelvish(X): X knows the Elvish language.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Write a universal statement in predicate logic with the meaning:\n“Nobody knows both Prolog and Elvish.”",
+     "marks": null,
+     "answer_type": "predicate_formula",
+     "solution": "∀X ¬(prolog(X) ∧ elvish(X))\n∀X(¬prolog(X) ∨¬elvish(X))",
+     "comments": "Alternative answer:"
+    },
+    {
+     "label": "b",
+     "text": "Suppose that the statement in (a) is False. Starting with its negation, derive an existential\nstatement meaning that someone knows both these languages.",
+     "marks": null,
+     "answer_type": "predicate_formula",
+     "solution": "Negate the answer to (a):\n¬∀X ¬(prolog(X) ∧ elvish(X)) = ∃X¬¬(prolog(X) ∧ elvish(X))\n= ∃X(prolog(X) ∧ elvish(X))",
+     "comments": "If you start with the first answer given to (a) above:"
+    }
+   ],
+   "solution": "(a) ∀X ¬(prolog(X) ∧ elvish(X))\n∀X(¬prolog(X) ∨¬elvish(X))\n(b) Negate the answer to (a):\n¬∀X ¬(prolog(X) ∧ elvish(X)) = ∃X¬¬(prolog(X) ∧ elvish(X))\n= ∃X(prolog(X) ∧ elvish(X))",
+   "comments": "",
+   "topics": [
+    "predicate_logic"
+   ],
+   "primary_topic": "predicate_logic",
+   "answer_type": "predicate_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    2
+   ]
+  },
+  {
+   "id": "sampleexam2013-q3",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 3,
+   "marks": 2.0,
+   "text": "Give a regular expression for the set of all real numbers, represented in binary, that are\ngreater than 0, less than 1, and have a finite binary representation.\n(Assume that such binary numbers always have a bit before the binary point (i.e., what\nwe would normally call the “decimal point”), and at least one bit after it.)",
+   "stem": "Give a regular expression for the set of all real numbers, represented in binary, that are\ngreater than 0, less than 1, and have a finite binary representation.\n(Assume that such binary numbers always have a bit before the binary point (i.e., what\nwe would normally call the “decimal point”), and at least one bit after it.)",
+   "parts": [],
+   "solution": "0.(0 ∪ 1)^{∗}1",
+   "comments": "Alternative way of writing this, using common shorthand for regexps: 0.[01]*1\nThe regular expression 0.(0 ∪1)^{∗} doesn’t quite do the job, on two counts: firstly, it does\nnot guarantee that there is at least one bit after the point; and secondly, it allows zero,\nrepresented as 0.000. . . 0 (with some number of zeros after the point), which the question\nforbids. The regular expression 0.(0 ∪ 1)(0 ∪ 1)^{∗} (which may be abbreviated as 0.[01]+) is\nbetter, as it ensures that there be something after the point, but it still allows zero, which\nit shouldn’t.",
+   "topics": [
+    "regular_expressions"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "regex",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    3
+   ]
+  },
+  {
+   "id": "sampleexam2013-q4",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 4,
+   "marks": 4.0,
+   "text": "(a) Write down all strings of at most 8 letters, over alphabet {0,1}, that match the regular\nexpression ((101)^{∗} ∪ (00))^{∗} .\n(b) Give an NFA that recognises the language described by this regular expression.",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Write down all strings of at most 8 letters, over alphabet {0,1}, that match the regular\nexpression ((101)^{∗} ∪ (00))^{∗} .",
+     "marks": null,
+     "answer_type": "string_list",
+     "solution": "ε, 101, 101101, 00, 10100, 00101, 00101101, 10100101, 10110100, 0000, 0000101, 0010100,\n1010000, 000000, 00000000.",
+     "comments": "Observe that the Kleene star inside the parentheses is not needed. The given regular\nexpression is equivalent to ((101) ∪ (00))^{∗} ."
+    },
+    {
+     "label": "b",
+     "text": "Give an NFA that recognises the language described by this regular expression.",
+     "marks": null,
+     "answer_type": "nfa",
+     "solution": "0 0\n1 1\n1 1\nε\nε\n0 0 0 0\n0 0\n1 1\n1 1\nε ε ε ε\nε\nε\n0 0 0 0",
+     "comments": "Any of the following is acceptable:"
+    }
+   ],
+   "solution": "(a) ε, 101, 101101, 00, 10100, 00101, 00101101, 10100101, 10110100, 0000, 0000101, 0010100,\n1010000, 000000, 00000000.\n(b) 0 0\n1 1\n1 1\nε\nε\n0 0 0 0\n0 0\n1 1\n1 1\nε ε ε ε\nε\nε\n0 0 0 0",
+   "comments": "",
+   "topics": [
+    "regular_expressions",
+    "nfa"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "string_list",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [
+    "sampleexam2013-q4_soln_p4.png"
+   ],
+   "pages": [
+    3
+   ]
+  },
+  {
+   "id": "sampleexam2013-q5",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 5,
+   "marks": 3.0,
+   "text": "Prove that the class of regular languages is closed under complement.",
+   "stem": "Prove that the class of regular languages is closed under complement.",
+   "parts": [],
+   "solution": "We need to show that the complement of a regular language is also a regular language.\nIf L is a regular language, then by Kleene’s Theorem there is a finite automaton A that\nrecognises L. Create a new finite automaton, B, which is identical to A except that the\nFinal states in A are not Final in B, and the non-Final states in A are Final in B. Then B\nwill accept exactly those strings that are not accepted by A. So the language accepted by\nB is the complement of L. Therefore the complement of L, being the language accepted by\nsome FA, is also regular, by Kleene’s Theorem.",
+   "comments": "",
+   "topics": [
+    "regular_closure",
+    "finite_automata"
+   ],
+   "primary_topic": "regular_closure",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "sampleexam2013-q6",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 6,
+   "marks": 3.0,
+   "text": "What kinds of regular languages can be described by regular expressions that do not use the\nKleene star? Explain.",
+   "stem": "What kinds of regular languages can be described by regular expressions that do not use the\nKleene star? Explain.",
+   "parts": [],
+   "solution": "The Kleene star is the only regular expression operation which enables a regular expres-\nsion to match an infinite number of strings. Without the Kleene star, we just have ∪ and\nconcatenation, and these only allow us to match a finite number of strings.\nOn the other hand, any finite language can be described by some regular expression that\ndoes not use the Kleene star. Just take all the strings in the language and combine them\nusing the alternative construct, ∪.",
+   "comments": "",
+   "topics": [
+    "regular_expressions"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "sampleexam2013-q7",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 7,
+   "marks": 3.0,
+   "text": "Let L be the language of nonempty strings over {x,y} that must start and finish with the\nsame letter, and in the middle have at least one of the other letter. Draw a FA to recognise\nL.",
+   "stem": "Let L be the language of nonempty strings over {x,y} that must start and finish with the\nsame letter, and in the middle have at least one of the other letter. Draw a FA to recognise\nL.",
+   "parts": [],
+   "solution": "y x\nx\nx\ny\nx\ny\ny\ny\nx\nx\ny x\ny",
+   "comments": "",
+   "topics": [
+    "finite_automata"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "fa",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [
+    "sampleexam2013-q7_soln_p5.png"
+   ],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "sampleexam2013-q8",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 8,
+   "marks": 4.0,
+   "text": "Given the Finite Automaton described by the following table, find an FA with fewest states\nthat recognises the same language.\nstate a b\nStart 1 2 6\n2 3 6\n3 6 3\n4 5 4\nFinal 5 4 6\nFinal 6 3 6\nWrite your new FA in the blank table below.\nstate a b\nStart",
+   "stem": "Given the Finite Automaton described by the following table, find an FA with fewest states\nthat recognises the same language.\nstate a b\nStart 1 2 6\n2 3 6\n3 6 3\n4 5 4\nFinal 5 4 6\nFinal 6 3 6\nWrite your new FA in the blank table below.\nstate a b\nStart",
+   "parts": [],
+   "solution": "1 2 4\n2 3 4\n3 4 3\nFinal 4 3 4",
+   "comments": "",
+   "topics": [
+    "finite_automata",
+    "minimisation"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "fa_minimise",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    5
+   ]
+  },
+  {
+   "id": "sampleexam2013-q9",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 9,
+   "marks": 5.0,
+   "text": "(a) Prove that the language of strings of even length is regular.\n(b) Given the closure properties of regular languages, and the fact that the language of\nstrings of even length that are not palindromes is not regular, prove that the language of\npalindromes is not regular.",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that the language of strings of even length is regular.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "Assume alphabet {a,b}.\nThe language of strings of even length can be described by the regular expression ((a∪b)(a∪\nb))^{∗}. The expression within the outer parentheses, (a ∪b)(a ∪b), matches any string of two\nletters. Applying the Kleene star gives a string that matches any concatenation of any finite\nnumber of strings of two letters — in other words, any string of even length. So the language\nof such strings is regular.",
+     "comments": "Alternatively, you could give a FA which you can show matches all strings of even length.\nThen appeal to Kleene’s Theorem to conclude that the language of such strings is regular."
+    },
+    {
+     "label": "b",
+     "text": "Given the closure properties of regular languages, and the fact that the language of\nstrings of even length that are not palindromes is not regular, prove that the language of\npalindromes is not regular.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "We prove this by contradiction. Assume that the language of palindromes is regular.\nThen its complement, the language of non-palindromes, is also regular, since the regular\nlanguages are closed under complement. We know from part (a) that the language of even-\nlength strings is regular. So the intersection of the non-palindromes with the even-length\nstrings is also regular, since these languages are both regular and the regular languages are\nclosed under intersection. But this is a contradiction, as we are given that the language of\neven-length non-palindromes is not regular. Therefore our assumption, that the language of\npalindromes is regular, is wrong. So the language of palindromes is not regular.",
+     "comments": ""
+    }
+   ],
+   "solution": "(a) Assume alphabet {a,b}.\nThe language of strings of even length can be described by the regular expression ((a∪b)(a∪\nb))^{∗}. The expression within the outer parentheses, (a ∪b)(a ∪b), matches any string of two\nletters. Applying the Kleene star gives a string that matches any concatenation of any finite\nnumber of strings of two letters — in other words, any string of even length. So the language\nof such strings is regular.\n(b) We prove this by contradiction. Assume that the language of palindromes is regular.\nThen its complement, the language of non-palindromes, is also regular, since the regular\nlanguages are closed under complement. We know from part (a) that the language of even-\nlength strings is regular. So the intersection of the non-palindromes with the even-length\nstrings is also regular, since these languages are both regular and the regular languages are\nclosed under intersection. But this is a contradiction, as we are given that the language of\neven-length non-palindromes is not regular. Therefore our assumption, that the language of\npalindromes is regular, is wrong. So the language of palindromes is not regular.",
+   "comments": "",
+   "topics": [
+    "regular_closure",
+    "pumping_lemma_regular"
+   ],
+   "primary_topic": "regular_closure",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    6
+   ]
+  },
+  {
+   "id": "sampleexam2013-q10",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 10,
+   "marks": 6.0,
+   "text": "Consider the following Regular grammar:\nS → ε | aT | bU (1)\nT → aT | bS (2)\nU → aS (3)\n(a) Give (i) a derivation, and (ii) a parse tree, for the string baab .\n(b) Find the Finite Automaton for the language defined by the above grammar.\n(c) Give a regular expression for the language defined by the above grammar.",
+   "stem": "Consider the following Regular grammar:\nS → ε | aT | bU (1)\nT → aT | bS (2)\nU → aS (3)",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Give (i) a derivation, and (ii) a parse tree, for the string baab .",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "b U\na S\nS ⇒ bU by (1c)\n⇒ baS by (3)\na T\n⇒ baaT by (1b)\n⇒ baabS by (2b)\nb S\n⇒ baab by (1a)\nε",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Find the Finite Automaton for the language defined by the above grammar.",
+     "marks": null,
+     "answer_type": "regex",
+     "solution": "a a\nT T\na a\nb b\nS S\na,b\na a\nb\nb b\nU U",
+     "comments": "The FA on the left is obtained by direct conversion of the regular grammar to a FA. Strictly speaking, it is not\ndeterministic since state U does not have a transition for the letter b. This is easily fixed: see the FA on the right. (In\na sense, omitting transitions is a less “serious” form of nondeterminism than empty transitions or multiple transitions\nfor the same letter, since the former does not lead to ambiguity as to how to proceed, provided a missing transition is\ntaken to give rejection if it is attempted. That’s not how we’ve defined rejection by FAs in this unit, though.)"
+    },
+    {
+     "label": "c",
+     "text": "Give a regular expression for the language defined by the above grammar.",
+     "marks": null,
+     "answer_type": "regex",
+     "solution": "((aa^{∗}b) ∪ (ba))^{∗}",
+     "comments": ""
+    }
+   ],
+   "solution": "S",
+   "comments": "",
+   "topics": [
+    "cfg",
+    "regular_expressions",
+    "finite_automata"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "regex",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [
+    "sampleexam2013-q10_soln_p8.png"
+   ],
+   "pages": [
+    7
+   ]
+  },
+  {
+   "id": "sampleexam2013-q11",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 11,
+   "marks": 3.0,
+   "text": "A string over the alphabet {0,+,−} is said to be balanced if it satisfies both the following:\n• (i) for any i, the first i characters in the string contain at least as many + as −;\n• (ii) the whole string has the same number of + as −.\nGive a Context-Free Grammar for the language.",
+   "stem": "A string over the alphabet {0,+,−} is said to be balanced if it satisfies both the following:\n• (i) for any i, the first i characters in the string contain at least as many + as −;\n• (ii) the whole string has the same number of + as −.\nGive a Context-Free Grammar for the language.",
+   "parts": [],
+   "solution": "S → 0\nS → SS\nS → +S −\nS → ε",
+   "comments": "This is a variation on the Dyck language, with left parenthesis replaced by +, right paren-\nthesis replaced by −, and 0s allowed to be inserted anywhere.",
+   "topics": [
+    "cfg"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "cfg",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    8
+   ]
+  },
+  {
+   "id": "sampleexam2013-q12",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 12,
+   "marks": 9.0,
+   "text": "The language Luke has the following Context-Free Grammar:\nS → Z (1)\nS → Sooo (2)\nZ → nZ (3)\nZ → ε (4)\n(a) Give a derivation of the string nnooooooooo, indicating which production rule is used at\neach step.\n(b) Complete the following diagram to give a Pushdown Automaton for Luke.\nε, ε → $ ε, ε → S ε, $ → ε\np q r s\n(c) Is the above CFG a regular grammar? (Explain.)\n(d) Is Luke a regular language? (Explain.)\n(e) Convert the grammar into Chomsky Normal Form.",
+   "stem": "The language Luke has the following Context-Free Grammar:\nS → Z (1)\nS → Sooo (2)\nZ → nZ (3)\nZ → ε (4)",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Give a derivation of the string nnooooooooo, indicating which production rule is used at\neach step.",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "S ⇒ Sooo by (2)\n⇒ Soooooo by (2)\n⇒ Sooooooooo by (2)\n⇒ Zooooooooo by (1)\n⇒ nZooooooooo by (3)\n⇒ nnZooooooooo by (3)\n⇒ nnooooooooo by (4).",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Complete the following diagram to give a Pushdown Automaton for Luke.\nε, ε → $ ε, ε → S ε, $ → ε\np q r s",
+     "marks": null,
+     "answer_type": "pda",
+     "solution": "ε, S → Z\nn, Z → Z\nε, Z → ε\no, o → ε\nε, S → o ε, ε → S\nε, ε → o ε, ε → o",
+     "comments": "n, n → ε is optional"
+    },
+    {
+     "label": "c",
+     "text": "Is the above CFG a regular grammar? (Explain.)",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "No, because there is a production rule, namely S → Sooo, whose right-hand side does\nnot consist of terminals followed by non-terminals.",
+     "comments": ""
+    },
+    {
+     "label": "d",
+     "text": "Is Luke a regular language? (Explain.)",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "Yes, because it is described by a regular expression: n^{∗}(ooo)^{∗}",
+     "comments": "Alternatively, you could give a FA, or a regular grammar, for the language."
+    },
+    {
+     "label": "e",
+     "text": "Convert the grammar into Chomsky Normal Form.",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "O → OO\nS → ε _{′}\nO → O_{1}O\nS → NS _{′}\nO → O_{2}O_{3}\nS → SO\nO_{1} → o\nN → NN\nO_{2} → o\nN → n\nO_{3} → o",
+     "comments": ""
+    }
+   ],
+   "solution": "(a) S ⇒ Sooo by (2)\n⇒ Soooooo by (2)\n⇒ Sooooooooo by (2)\n⇒ Zooooooooo by (1)\n⇒ nZooooooooo by (3)\n⇒ nnZooooooooo by (3)\n⇒ nnooooooooo by (4).\n(b) ε, S → Z\nn, Z → Z\nε, Z → ε\no, o → ε\nε, S → o ε, ε → S\nε, ε → o ε, ε → o\n(c) No, because there is a production rule, namely S → Sooo, whose right-hand side does\nnot consist of terminals followed by non-terminals.\n(d) Yes, because it is described by a regular expression: n^{∗}(ooo)^{∗}\n(e) O → OO\nS → ε _{′}\nO → O_{1}O\nS → NS _{′}\nO → O_{2}O_{3}\nS → SO\nO_{1} → o\nN → NN\nO_{2} → o\nN → n\nO_{3} → o",
+   "comments": "",
+   "topics": [
+    "cfg",
+    "pda"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "derivation",
+   "has_figure": true,
+   "figures": [
+    "sampleexam2013-q12_p9.png"
+   ],
+   "solution_figures": [
+    "sampleexam2013-q12_soln_p10.png"
+   ],
+   "pages": [
+    8,
+    9,
+    10
+   ]
+  },
+  {
+   "id": "sampleexam2013-q13",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 13,
+   "marks": 5.0,
+   "text": "Find a Context-Free Grammar for the language accepted by the following PDA.\nb, ε → Y\na, ε → X d, Y → ε e, X → ε\n1 2 3 4\nc, Y → ε\nYour CFG must use only the nonterminal symbols S, A_{11}, A_{22}, A_{33}, A_{44}, A_{14}, A_{23}.\nWrite the CFG in the space below. Five production rules have already been written in,\nto get you started.\nS → A_{14}\nA_{11} → ε\nA_{22} → ε\nA_{33} → ε\nA_{44} → ε",
+   "stem": "Find a Context-Free Grammar for the language accepted by the following PDA.\nb, ε → Y\na, ε → X d, Y → ε e, X → ε\n1 2 3 4\nc, Y → ε\nYour CFG must use only the nonterminal symbols S, A_{11}, A_{22}, A_{33}, A_{44}, A_{14}, A_{23}.\nWrite the CFG in the space below. Five production rules have already been written in,\nto get you started.\nS → A_{14}\nA_{11} → ε\nA_{22} → ε\nA_{33} → ε\nA_{44} → ε",
+   "parts": [],
+   "solution": "A_{14} → aA_{23}e\nA_{23} → A_{22}A_{23}\nA → bA d\n23 22\nA_{22} → A_{22}A_{22}\nA_{22} → bA_{22}c",
+   "comments": "In this case, the symbols A_{11}, A_{33}, A_{44}, and their associated production rules, are not\nused.",
+   "topics": [
+    "cfg",
+    "pda"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "short_answer",
+   "has_figure": true,
+   "figures": [
+    "sampleexam2013-q13_p11.png"
+   ],
+   "solution_figures": [
+    "sampleexam2013-q13_soln_p11.png"
+   ],
+   "pages": [
+    11
+   ]
+  },
+  {
+   "id": "sampleexam2013-q14",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 14,
+   "marks": 8.0,
+   "text": "(a) Prove that the language of strings representing powers of 2, in binary form, is regular.\n(b) Prove that the language of strings representing powers of 2, in unary form, is not\ncontext-free.",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that the language of strings representing powers of 2, in binary form, is regular.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "This language is described by the regular expression 10^{∗}, therefore is regular.",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove that the language of strings representing powers of 2, in unary form, is not\ncontext-free.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "We prove this by contradiction, using the Pumping Lemma for Context-Free Languages.\nAssume that this language is context-free, with some context-free grammar. Let k be the\nnumber of non-terminal symbols in the grammar. Let w be any word in the language of\nlength > 2^{k−1}. Then, by the Pumping Lemma, w can be divided up into strings u, v, x, y, z\nsuch that v, y are not both empty, |vxy| ≤ 2^{k}, and uv^{n}xy^{n}z is in the language for every n.\nObserve that w is a string of 2^{i} ones, for some i (since w represents a power of 2, in unary).\nSuppose the combined length of v and y is j. Note that j = 0, since v and y are not both\nempty. Now, uv^{2}xy^{2}z consists of |w| + j ones, since it is just w with an extra j ones (for the\nextra pair v, y). So its length is 2^{i} + j (since |w| = 2^{i}). If 2^{i} > j, then 2^{i} + j cannot be a\npower of 2, so uv^{2}xy^{2}z is not in the language, which is a contradiction with the conclusion\nof the Pumping Lemma. (Observe that we can ensure that 2^{i} > j by just choosing w to be\nlong enough, since the combined length j of v and y is bounded independently of the length\nof w (since |vxy| ≤ 2^{k}). Also, in deducing that 2^{i} + j cannot be a power of 2, we are using\nthe fact that j = 0.)\nSo the assumption that the language is context-free is incorrect. Therefore it is not context-\nfree.",
+     "comments": ""
+    }
+   ],
+   "solution": "(a) This language is described by the regular expression 10^{∗}, therefore is regular.\n(b) We prove this by contradiction, using the Pumping Lemma for Context-Free Languages.\nAssume that this language is context-free, with some context-free grammar. Let k be the\nnumber of non-terminal symbols in the grammar. Let w be any word in the language of\nlength > 2^{k−1}. Then, by the Pumping Lemma, w can be divided up into strings u, v, x, y, z\nsuch that v, y are not both empty, |vxy| ≤ 2^{k}, and uv^{n}xy^{n}z is in the language for every n.\nObserve that w is a string of 2^{i} ones, for some i (since w represents a power of 2, in unary).\nSuppose the combined length of v and y is j. Note that j = 0, since v and y are not both\nempty. Now, uv^{2}xy^{2}z consists of |w| + j ones, since it is just w with an extra j ones (for the\nextra pair v, y). So its length is 2^{i} + j (since |w| = 2^{i}). If 2^{i} > j, then 2^{i} + j cannot be a\npower of 2, so uv^{2}xy^{2}z is not in the language, which is a contradiction with the conclusion\nof the Pumping Lemma. (Observe that we can ensure that 2^{i} > j by just choosing w to be\nlong enough, since the combined length j of v and y is bounded independently of the length\nof w (since |vxy| ≤ 2^{k}). Also, in deducing that 2^{i} + j cannot be a power of 2, we are using\nthe fact that j = 0.)\nSo the assumption that the language is context-free is incorrect. Therefore it is not context-\nfree.",
+   "comments": "",
+   "topics": [
+    "pumping_lemma_cfl",
+    "regular_closure"
+   ],
+   "primary_topic": "pumping_lemma_cfl",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    12
+   ]
+  },
+  {
+   "id": "sampleexam2013-q15",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 15,
+   "marks": 3.0,
+   "text": "State two important results that can be proved using the Chomsky Normal Form for Context-\nFree Grammars.",
+   "stem": "State two important results that can be proved using the Chomsky Normal Form for Context-\nFree Grammars.",
+   "parts": [],
+   "solution": "The Cocke-Yonger-Kasami (CYK) Algorithm, which enables us to parse strings for any\ncontext-free language, uses Chomsky Normal Form.\nThe Pumping Lemma for CFLs (see above) also uses Chomsky Normal Form.",
+   "comments": "",
+   "topics": [
+    "cfg"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    13
+   ]
+  },
+  {
+   "id": "sampleexam2013-q16",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 16,
+   "marks": 6.0,
+   "text": "Write a Turing machine that flips the middle bit (i.e., changes 0 to 1, and 1 to 0) of a\nbinary string of odd length, and leaves a string of even length unchanged.\nFor example, if the input string is 0111110, then the output must be 0110110. If the\ninput string is 011110, then the output is also 011110.",
+   "stem": "Write a Turing machine that flips the middle bit (i.e., changes 0 to 1, and 1 to 0) of a\nbinary string of odd length, and leaves a string of even length unchanged.\nFor example, if the input string is 0111110, then the output must be 0110110. If the\ninput string is 011110, then the output is also 011110.",
+   "parts": [],
+   "solution": "A®0,R\nΔ®Δ,R*\nΔ®Δ,R B®1,R\nC®0,R\n0®C,R\nD®1,R\n1®D,R\nA®L\n4 ^{C®0,R}\nA®B,L\nB®L\nD®1,R\nB®A,L\nΔ®L\n0®A,L\n1®B,L\n0®L\n0®L 1®L\n1®L\n0®R 7\nA®R A®L\n1®R\nB®R B®L\nC®R\nD®R\n0®A,R Δ®R\nA®L\n1®B,R\nB®L\n* Direction in this case\ncould be L or R.",
+   "comments": "Outline of how this works:\nIn the above Turing machine: you start by replacing the first and last bits by letters,\nwith 0 being replaced by A or C, and 1 being replaced by B or D. The positions of these bits\nare easy to recognise. The first bit is where you start (1 → 2), and you find the last bit by\nmoving to the right (loop at State 3) until you reach a blank, then you go one step to the\nleft (3 → 4) so you know you’re at the last bit, which you then change to a letter (4 → 5).\nNow that the first and last bits are letters, you go all the way back (loop at State 5) until\nyou reach another letter, then go one step back from it (5 → 6). You are now at the leftmost\nbit; there was a bit further to the left but it has been replaced by a letter.\nYou keep going like this, shuttling back and forth along the tape, replacing each pair of\noutermost bits by letters, and passing over the bits between them, until all bits have been\nreplaced by letters. We find ourselves repeatedly going around the circuit 6,3,4,5,6. The bits\nin the middle, between the letters, decrease in number. If the original bit-string is of even\nlength, then we leave the circuit at 6. If it is of odd length, we leave it at 4. Then, using\nthe loop at State 7, we move back (i.e., leftwards) to the start, and we can recognise when\nwe’re at the start because in this position the bit was replaced by C or D, rather than A or\nB. Then (State 8) we go all the way along the tape (rightwards), replacing every A or C by\n0, and every B or D by 1. When we reach a blank, we stop.\nIn this TM, the flip of the middle bit (if such exists) is done in transition 4 → 7 (see\ngreen box), using the letter that (by then) represents that bit.\nStrings consisting of just a single bit are a special case. They are the only input\nstrings that use the transition 4 → 2. They cause the Turing machine to do the transi-\ntions 1 → 3 → 4 → 2, which together have the effect of flipping the bit.^{1}",
+   "topics": [
+    "turing_machines"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "tm",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [
+    "sampleexam2013-q16_soln_p13.png"
+   ],
+   "pages": [
+    13
+   ]
+  },
+  {
+   "id": "sampleexam2013-q17",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 17,
+   "marks": 1.0,
+   "text": "The characteristic function f_{L} of a language L over some alphabet is defined by:\n\u001a\n1, x ∈ L,\nf_{L}(w) =\n0, x ∈ L,\nfor any string w over the alphabet.\nState the property that f_{L} must have, for the language L to be decidable.",
+   "stem": "The characteristic function f_{L} of a language L over some alphabet is defined by:\n\u001a\n1, x ∈ L,\nf_{L}(w) =\n0, x ∈ L,\nfor any string w over the alphabet.\nState the property that f_{L} must have, for the language L to be decidable.",
+   "parts": [],
+   "solution": "f_{L} must be computable.",
+   "comments": "",
+   "topics": [
+    "decidability"
+   ],
+   "primary_topic": "decidability",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    14
+   ]
+  },
+  {
+   "id": "sampleexam2013-q18",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 18,
+   "marks": 4.0,
+   "text": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: Turing machines M and N.\nQuestion: Are the encoded forms of M and N identical?\nDecidable Undecidable\nInput: Turing machines M and N.\nQuestion: Do M and N have the same time complexity?\nDecidable Undecidable\nInput: a Turing machine M.\nQuestion: Does M correctly determine whether or not\nits input string is a palindrome? Decidable Undecidable\nInput: a Turing machine M, and a string w.\nQuestion: Does M ever change any letter of w on the\ntape? Decidable Undecidable",
+   "stem": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: Turing machines M and N.\nQuestion: Are the encoded forms of M and N identical?\nDecidable Undecidable\nInput: Turing machines M and N.\nQuestion: Do M and N have the same time complexity?\nDecidable Undecidable\nInput: a Turing machine M.\nQuestion: Does M correctly determine whether or not\nits input string is a palindrome? Decidable Undecidable\nInput: a Turing machine M, and a string w.\nQuestion: Does M ever change any letter of w on the\ntape? Decidable Undecidable",
+   "parts": [],
+   "solution": "✓\n✓\n✓\n✓",
+   "comments": "Thanks to FIT2014 tutor Rebecca Young for suggesting the modification to deal with this case.",
+   "topics": [
+    "turing_machines",
+    "decidability"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "mcq",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    14
+   ]
+  },
+  {
+   "id": "sampleexam2013-q19",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 19,
+   "marks": 9.0,
+   "text": "The Venn diagram at the left shows several classes of languages. For each language (a)–(l)\nin the list below, indicate which classes it belongs to, and which it doesn’t belong to, by\nplacing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.\n(a) The Dyck language.\n(b) The set of all even numbers, represented in binary.\n(c) The set of all correctly formed arithmetic expressions, using integers and the symbols\n+, −, ×, /, and parentheses.\n(d) The Code-Word Language (CWL).\n(e) The set of all encodings of Turing machines (encoded using strings from CWL).\n(f) DOUBLEWORD, the set of all strings consisting of a string concatenated with itself.\n(g) The set of all palindromes (i.e., strings that are the same forwards or backwards).\n(h) The set of all Turing machines that accept every binary string.\n(i) The set of all regular expressions.\n(j) The set of all polynomials (with any number of variables) with an integer root.\n(k) The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at\nmost two literals in each clause.\n(l) The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at most\nthree literals in each clause.\nWhich, if any, of these languages are NP-complete?\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+   "stem": "The Venn diagram at the left shows several classes of languages. For each language (a)–(l)\nin the list below, indicate which classes it belongs to, and which it doesn’t belong to, by\nplacing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "The Dyck language.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "The set of all even numbers, represented in binary.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "The set of all correctly formed arithmetic expressions, using integers and the symbols\n+, −, ×, /, and parentheses.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "d",
+     "text": "The Code-Word Language (CWL).",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "e",
+     "text": "The set of all encodings of Turing machines (encoded using strings from CWL).",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "f",
+     "text": "DOUBLEWORD, the set of all strings consisting of a string concatenated with itself.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "g",
+     "text": "The set of all palindromes (i.e., strings that are the same forwards or backwards).",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "h",
+     "text": "The set of all Turing machines that accept every binary string.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "i",
+     "text": "The set of all regular expressions.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "j",
+     "text": "The set of all polynomials (with any number of variables) with an integer root.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "k",
+     "text": "The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at\nmost two literals in each clause.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "l",
+     "text": "The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at most\nthree literals in each clause.\nWhich, if any, of these languages are NP-complete?\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "The language l is NP-complete.\nh\nj\nl\ne k f\na c g\ni\nb d",
+     "comments": "This is easy to show, by polynomial-time reduction from 3SAT."
+    }
+   ],
+   "solution": "(l) The language l is NP-complete.\nh\nj\nl\ne k f\na c g\ni\nb d",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "decidability",
+    "language_classes",
+    "propositional_logic",
+    "turing_machines",
+    "regular_expressions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "language_classes",
+   "has_figure": true,
+   "figures": [
+    "sampleexam2013-q19_p16.png"
+   ],
+   "solution_figures": [
+    "sampleexam2013-q19_soln_p16.png"
+   ],
+   "pages": [
+    15,
+    16
+   ]
+  },
+  {
+   "id": "sampleexam2013-q20",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 20,
+   "marks": 7.0,
+   "text": "Prove that the following problem is undecidable.\nInput: a Turing machine M, and a positive integer t.\nQuestion: Is there an input string x of length at least t such that, if M is run on x, it\neventually halts?\nYou may use the fact that the halting problem is undecidable.",
+   "stem": "Prove that the following problem is undecidable.\nInput: a Turing machine M, and a positive integer t.\nQuestion: Is there an input string x of length at least t such that, if M is run on x, it\neventually halts?\nYou may use the fact that the halting problem is undecidable.",
+   "parts": [],
+   "solution": "Let (T, w) be an input to the Halting Problem. So T is a Turing machine (appropriately\nencoded), and w is a string which can be treated as an input to T. For the Halting Problem,\nwe want to know whether or not T eventually halts, when its input is w.\nWe construct from (T, w) a program M which runs as follows:\n1. Input: a string x.\n2. Simulate T on input w. (This is hardcoded. So we aren’t taking w as input\nto M, but rather, we have lines of code (or Turing machine instructions) that\nprovide w as input to this simulation of T.)\n3. Test if |x| is a multiple of 29. (The choice of 29 is arbitrary! All we want to\nensure is that there is an infinite sequence of strings x that satisfy this test.)\nIf so, halt; otherwise, loop forever.\nObserve that:\nIf T eventually halts, on input w, then the simulation in Step 2 of M will eventually stop.\nThen M goes on to Step 3. For any t, there will be some multiple of 29 that is greater than\nt (in fact, infinitely many, but we only need one). So, there is some x which, if given to M,\ncauses it to halt eventually.\nOn the other hand, if T loops forever for input w, then M will be forever stuck in Step 2.\nTherefore, there is no input x which causes M to eventually halt, and therefore certainly no\nsuch input with length ≥ t.\nSo, T halts for input w if and only if there is some input x with |x| ≥ t such that M\nhalts for input x.\nThis tells us that, if the problem stated in the question is decidable, then we could use\na decider for it to construct a decider for the Halting Problem. To see this, suppose D is\na decider for the problem stated in the question. Suppose we are given (T, w), as input to\nthe Halting Problem. From (T, x), construct M as described above. This construction is\ncomputable. Then use D to determine whether or not M has an input x, with |x| ≥ t,\nfor which it eventually halts. The answer D gives us becomes our answer to the Halting\nProblem regarding (T, x). So we are done.\nTherefore the problem stated in the question is undecidable.",
+   "comments": "",
+   "topics": [
+    "decidability",
+    "turing_machines"
+   ],
+   "primary_topic": "decidability",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    17
+   ]
+  },
+  {
+   "id": "sampleexam2013-q21",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 21,
+   "marks": 5.0,
+   "text": "For this question, recall that the composition of two polynomial-time reductions is again a\npolynomial-time reduction, and that the notation ≤_{p} indicates the existence of a polynomial-\ntime reduction.\nProve by induction on n that, if L_{1}, . . . , L_{n} are languages, and L_{i} ≤_{p} L_{i+1} for all i in the\nrange 1 ≤ i ≤ n − 1, then L_{1} ≤_{p} L_{n}.",
+   "stem": "For this question, recall that the composition of two polynomial-time reductions is again a\npolynomial-time reduction, and that the notation ≤_{p} indicates the existence of a polynomial-\ntime reduction.\nProve by induction on n that, if L_{1}, . . . , L_{n} are languages, and L_{i} ≤_{p} L_{i+1} for all i in the\nrange 1 ≤ i ≤ n − 1, then L_{1} ≤_{p} L_{n}.",
+   "parts": [],
+   "solution": "Inductive hypothesis:\nThere is a polynomial-time reduction from L_{1} to L_{i}.\nBase case:\nIf i = 1, then the identity map (i.e., the polynomial-time reduction that “does nothing”,\njust mapping everything to itself), establishes that L_{1} ≤ L_{1}.\nInductive step:\nSuppose the inductive hypothesis holds when i = j, where j ≥ 2\n. We want to show that it holds for i = j + 1.\nThe inductive hypothesis tells us that there is a polynomial-time reduction from L_{1} to L_{j}.\nWe can assume (from the information given in the question) that there is a polynomial-\ntime reduction from L_{j} to L_{j+1}.\nThese two polynomial-time reductions combine (i.e., compose) to give a polynomial-time\nreduction from L_{1} to L_{j+1}.\nConclusion:\nThe result therefore follows, by the Principle of Mathematical Induction.",
+   "comments": "This is the reflexive property of polynomial-time reducibility.\nAlternatively, you can take i = 2 as the base case, since we are given that L_{1} ≤ L_{2}.\n(or j ≥ 3, if you used\ni = 2 as your base case)",
+   "topics": [
+    "np_completeness",
+    "induction",
+    "complexity_p"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    18
+   ]
+  },
+  {
+   "id": "sampleexam2013-q22",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 22,
+   "marks": 6.0,
+   "text": "(a) Define the class of NP-complete languages.\n(b) Prove that, if K is NP-complete, K ≤_{p} L and L ∈ NP, then L is NP-complete.",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Define the class of NP-complete languages.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "A language L is NP-complete if it belongs to NP and every language L^{′} in NP is\npolynomial-time reducible to L.",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove that, if K is NP-complete, K ≤_{p} L and L ∈ NP, then L is NP-complete.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "We are given that L ∈ NP. So, to show that L is NP-complete, it remains to show that,\nfor any language J ∈ NP, we have J ≤_{p} L.\nTake any J ∈ NP. Since K is NP-complete, we know J ≤_{p} K. But we are given that\nK ≤_{p} L. By transitivity, J ≤_{p} K and K ≤_{p} L implies J ≤_{p} L. So any language in NP is\npolynomial-time reducible to L.\nWe conclude that L is NP-complete.",
+     "comments": ""
+    }
+   ],
+   "solution": "(a) A language L is NP-complete if it belongs to NP and every language L^{′} in NP is\npolynomial-time reducible to L.\n(b) We are given that L ∈ NP. So, to show that L is NP-complete, it remains to show that,\nfor any language J ∈ NP, we have J ≤_{p} L.\nTake any J ∈ NP. Since K is NP-complete, we know J ≤_{p} K. But we are given that\nK ≤_{p} L. By transitivity, J ≤_{p} K and K ≤_{p} L implies J ≤_{p} L. So any language in NP is\npolynomial-time reducible to L.\nWe conclude that L is NP-complete.",
+   "comments": "",
+   "topics": [
+    "np_completeness"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    19
+   ]
+  },
+  {
+   "id": "sampleexam2013-q23",
+   "paper": "sampleexam2013",
+   "year": 2013,
+   "number": 23,
+   "marks": 17.0,
+   "text": "Consider the language CUBIC SUBGRAPH, which consists of all graphs G which have\na subgraph, with at least one edge, whose vertices all have degree 0 or 3.\n(a) Prove that the language CUBIC SUBGRAPH is in NP.\nNow, let W be the following graph.\ny\nHHHHHHHHHH\nT\n T\n T\n T\ny Ty y y\n@ \u0014\n@ \u0014\n@ \u0014\n@ \u0014\n\b\b\b\b\b\b\b\b\b\n@y\u0014\b\n(b) Construct a Boolean expression E_{W} in Conjunctive Normal Form such that the\nsatisfying truth assignments for E_{W} correspond to solutions to the CUBIC SUBGRAPH\nproblem on the above graph W. (I.e., they correspond to subgraphs of W for which every\nvertex has degree 0 or 3 in the subgraph.)\n(c) Give a polynomial-time reduction from CUBIC SUBGRAPH to SATISFIABILITY.\n(d) Give the usual name for the set of all languages that are polynomial-time Turing\nreducible to SATISFIABILITY.\n(e) If it were shown that all algorithms for CUBIC SUBGRAPH take exponential time,\nwhat would you conclude about the time complexity of SATISFIABILITY?\nBlank Page for Working",
+   "stem": "Consider the language CUBIC SUBGRAPH, which consists of all graphs G which have\na subgraph, with at least one edge, whose vertices all have degree 0 or 3.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that the language CUBIC SUBGRAPH is in NP.\nNow, let W be the following graph.\ny\nHHHHHHHHHH\nT\n T\n T\n T\ny Ty y y\n@ \u0014\n@ \u0014\n@ \u0014\n@ \u0014\n\b\b\b\b\b\b\b\b\b\n@y\u0014\b",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "Verifier for CUBIC SUBGRAPH:\nInput: Graph G\nCertificate: a subgraph Y of G (as a set of edges).\nCheck that each edge given in Y is indeed an edge of G. If Y is empty, Reject.\nFor each vertex v in G:\nCount the number of edges of G that are incident with v and are also in Y .\nIf this number is 0 or 3, continue; otherwise, Reject.\nIf end of loop reached, then the test in each loop iteration must have been passed, so Accept.\nEnd of Verifier.\nA graph G belongs to CUBIC SUBGRAPH if and only if some subgraph has all vertices\nof degree 0 or 3, which is precisely the condition under which there exists a certificate Y\nwhich causes G to be accepted by the above verifier. So this is indeed a verifier for CUBIC\nSUBGRAPH.\nTo see that it runs in polynomial time: observe firstly that the main loop is executed at\nmost n times (where n is the number of vertices of G). In each iteration, each edge incident\nwith v is examined, and there are at most n−1 of these. For each such edge, we see if it is in\nthe certificate Y . This means looking it up in Y , which we may think of as a list of at most\nm edges (where m is the number of edges of G). This takes time O(m), even with just a\nsimple list for the certificate. So total time complexity is O(n×(n−1)×m) = O(n^{2}m) which\nis at most a polynomial in the input size. (E.g., if input is given as an adjacency matrix,\nthen input size is n^{2}, and using m = O(n^{2}), we see that the time complexity of verification\nis at most quadratic in the input size.)\na\nf\nd\ni\nc\ng\nb\ne\nh",
+     "comments": "Smarter algorithms and data structures will give lower time complexity, but such clever-\nness is not necessary to show that the algorithm runs in polynomial time."
+    },
+    {
+     "label": "b",
+     "text": "Construct a Boolean expression E_{W} in Conjunctive Normal Form such that the\nsatisfying truth assignments for E_{W} correspond to solutions to the CUBIC SUBGRAPH\nproblem on the above graph W. (I.e., they correspond to subgraphs of W for which every\nvertex has degree 0 or 3 in the subgraph.)",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "I’ve marked variable names on the edges in the picture of W above.\nThe interpretation of each variable is that it is True if that edge is included in the cu-\nbic subgraph, and False otherwise.\nThe clauses are given in the following table.\nWhat you want to say How to say it, using clauses\nFor each vertex v, it can’t have just one incident edge in Y . In other words, if one\nof its incident edges is in Y , then at least one other such edge must be in Y too.\n¬a ∨ b, ¬b ∨ a,\n¬a∨c∨d∨f, ¬c∨a∨d∨f, ¬d∨a∨c∨f,\n¬f ∨ a ∨ c ∨ d,\n¬b ∨c ∨e ∨h, ¬c ∨b ∨e ∨h, ¬e ∨b ∨c ∨h,\n¬h ∨ b ∨ c ∨ e,\n¬d ∨ e ∨ g, ¬e ∨ d ∨ g, ¬g ∨ d ∨ e,\n¬f ∨g ∨h∨i, ¬g ∨f ∨h∨i, ¬h∨f ∨g ∨i,\n¬i ∨ f ∨ g ∨ h,\n¬i.\nFor each vertex v, it can’t have just two incident edges in Y . In other words, if\nany two of its incident edges are in Y , then at least one other such edge must be\nin Y too.\n¬a ∨¬b,\n¬a∨¬c∨d∨f, ¬a∨¬d∨c∨f, ¬a∨¬f∨c∨d,\n¬c∨¬d∨a∨f, ¬c∨¬f∨a∨d, ¬d∨¬f∨a∨c,\n¬b∨¬c∨e∨h, ¬b∨¬e∨c∨h, ¬b∨¬h∨c∨e,\n¬c∨¬e∨b∨h, ¬c∨¬h∨b∨e, ¬e∨¬h∨b∨c,\n¬d ∨¬e ∨ g, ¬d ∨¬g ∨ e, ¬e ∨¬g ∨ d,\n¬f∨¬g∨h∨i, ¬f∨¬h∨g∨i, ¬f∨¬i∨g∨h,\n¬g∨¬h∨f∨i, ¬g∨¬i∨f∨h, ¬h∨¬i∨f∨g.\nFor each vertex v, it can’t have four or more incident edges in Y . In other words,\nfor any four of its incident edges, at least one must not be in Y .\n¬a ∨¬c ∨¬d ∨¬f,\n¬b ∨¬c ∨¬e ∨¬h,\n¬f ∨¬g ∨¬h ∨¬i.\nY has at least one edge\na ∨ b ∨ c ∨ d ∨ e ∨ f ∨ g ∨ h ∨ i\nE_{W} is just the conjunction of all the clauses listed above.",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "Give a polynomial-time reduction from CUBIC SUBGRAPH to SATISFIABILITY.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "Input: Graph G.\nFor each edge e:\nCreate a new variable x_{e}.\nFor each vertex v:\n1. For each edge e incident with v, create a clause\n¬x_{e} ∨ x_{f1} ∨ x_{f2} ∨· · · ,\nwhere f_{1}, f_{2}, . . . are all the other edges incident with v (apart from e).\nThis clause says that “if e in Y , then some other edge at v must be in Y too”.\nTogether, all the clauses created in this loop say that Y cannot meet v with exactly\none edge.\n2. For each pair of edges e_{1}, e_{2} incident with v, create a clause\n¬x_{e1} ∨¬x_{e2} ∨ x_{f1} ∨ x_{f2} ∨· · · ,\nwhere f_{1}, f_{2}, . . . are all the other edges incident with v (apart from e_{1} and e_{2}).\nThis clause says that “if e_{1} and e_{2} are both in Y , then some other edge at v must\nbe in Y too”.\nTogether, all the clauses created in this loop say that Y cannot meet v with exactly\ntwo edges.\n3. For each 4-tuple of edges e_{1}, e_{2}, e_{3}, e_{4} incident with v, create a clause\n¬x_{e1} ∨¬x_{e2} ∨¬x_{e3} ∨¬x_{e4}.\nThis clause says that “e_{1}, e_{2}, e_{3} and e_{4} cannot all be in Y ”.\nTogether, all the clauses created in this loop say that Y cannot meet v with four\nor more edges.\n4. Create a clause consisting of the disjunction of all our variables:\nx_{e1} ∨ x_{e2} ∨· · · ∨ x_{em},\nwhere the edges of the graph are e_{1}, e_{2}, . . . , e_{m}.\nLet φ := conjunction of all clauses created so far.\nOutput: φ.",
+     "comments": ""
+    },
+    {
+     "label": "d",
+     "text": "Give the usual name for the set of all languages that are polynomial-time Turing\nreducible to SATISFIABILITY.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "This is just NP.\nIf a language L is in NP, then it must be polynomial-time reducible to SAT (or to any\nother NP-complete language, for that matter), by the definition of NP-completeness.\nOn the other hand, if a language is polynomial-time reducible to SAT, then it is polynomial-\ntime reducible to a language in NP (since SAT is in NP), so it must be in NP itself.\nSo NP is precisely the set of languages polynomial-time reducible to SAT.",
+     "comments": ""
+    },
+    {
+     "label": "e",
+     "text": "If it were shown that all algorithms for CUBIC SUBGRAPH take exponential time,\nwhat would you conclude about the time complexity of SATISFIABILITY?\nBlank Page for Working",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "If CUBIC SUBGRAPH takes exponential time, then it is not possible for an algorithm for\nSAT to take polynomial time.\nThis is because we know that CUBIC SUBGRAPH ≤_{P} SAT (by part (c) of this ques-\ntion), which implies that if SAT were in P, then CUBIC SUBGRAPH would be in P too.\nFrom SAT ∈ P, it would follow that P = NP, since we know that SAT is in NP.",
+     "comments": ""
+    }
+   ],
+   "solution": "(a) Verifier for CUBIC SUBGRAPH:\nInput: Graph G\nCertificate: a subgraph Y of G (as a set of edges).\nCheck that each edge given in Y is indeed an edge of G. If Y is empty, Reject.\nFor each vertex v in G:\nCount the number of edges of G that are incident with v and are also in Y .\nIf this number is 0 or 3, continue; otherwise, Reject.\nIf end of loop reached, then the test in each loop iteration must have been passed, so Accept.\nEnd of Verifier.\nA graph G belongs to CUBIC SUBGRAPH if and only if some subgraph has all vertices\nof degree 0 or 3, which is precisely the condition under which there exists a certificate Y\nwhich causes G to be accepted by the above verifier. So this is indeed a verifier for CUBIC\nSUBGRAPH.\nTo see that it runs in polynomial time: observe firstly that the main loop is executed at\nmost n times (where n is the number of vertices of G). In each iteration, each edge incident\nwith v is examined, and there are at most n−1 of these. For each such edge, we see if it is in\nthe certificate Y . This means looking it up in Y , which we may think of as a list of at most\nm edges (where m is the number of edges of G). This takes time O(m), even with just a\nsimple list for the certificate. So total time complexity is O(n×(n−1)×m) = O(n^{2}m) which\nis at most a polynomial in the input size. (E.g., if input is given as an adjacency matrix,\nthen input size is n^{2}, and using m = O(n^{2}), we see that the time complexity of verification\nis at most quadratic in the input size.)\na\nf\nd\ni\nc\ng\nb\ne\nh\n(b) I’ve marked variable names on the edges in the picture of W above.\nThe interpretation of each variable is that it is True if that edge is included in the cu-\nbic subgraph, and False otherwise.\nThe clauses are given in the following table.\nWhat you want to say How to say it, using clauses\nFor each vertex v, it can’t have just one incident edge in Y . In other words, if one\nof its incident edges is in Y , then at least one other such edge must be in Y too.\n¬a ∨ b, ¬b ∨ a,\n¬a∨c∨d∨f, ¬c∨a∨d∨f, ¬d∨a∨c∨f,\n¬f ∨ a ∨ c ∨ d,\n¬b ∨c ∨e ∨h, ¬c ∨b ∨e ∨h, ¬e ∨b ∨c ∨h,\n¬h ∨ b ∨ c ∨ e,\n¬d ∨ e ∨ g, ¬e ∨ d ∨ g, ¬g ∨ d ∨ e,\n¬f ∨g ∨h∨i, ¬g ∨f ∨h∨i, ¬h∨f ∨g ∨i,\n¬i ∨ f ∨ g ∨ h,\n¬i.\nFor each vertex v, it can’t have just two incident edges in Y . In other words, if\nany two of its incident edges are in Y , then at least one other such edge must be\nin Y too.\n¬a ∨¬b,\n¬a∨¬c∨d∨f, ¬a∨¬d∨c∨f, ¬a∨¬f∨c∨d,\n¬c∨¬d∨a∨f, ¬c∨¬f∨a∨d, ¬d∨¬f∨a∨c,\n¬b∨¬c∨e∨h, ¬b∨¬e∨c∨h, ¬b∨¬h∨c∨e,\n¬c∨¬e∨b∨h, ¬c∨¬h∨b∨e, ¬e∨¬h∨b∨c,\n¬d ∨¬e ∨ g, ¬d ∨¬g ∨ e, ¬e ∨¬g ∨ d,\n¬f∨¬g∨h∨i, ¬f∨¬h∨g∨i, ¬f∨¬i∨g∨h,\n¬g∨¬h∨f∨i, ¬g∨¬i∨f∨h, ¬h∨¬i∨f∨g.\nFor each vertex v, it can’t have four or more incident edges in Y . In other words,\nfor any four of its incident edges, at least one must not be in Y .\n¬a ∨¬c ∨¬d ∨¬f,\n¬b ∨¬c ∨¬e ∨¬h,\n¬f ∨¬g ∨¬h ∨¬i.\nY has at least one edge\na ∨ b ∨ c ∨ d ∨ e ∨ f ∨ g ∨ h ∨ i\nE_{W} is just the conjunction of all the clauses listed above.\n(c) Input: Graph G.\nFor each edge e:\nCreate a new variable x_{e}.\nFor each vertex v:\n1. For each edge e incident with v, create a clause\n¬x_{e} ∨ x_{f1} ∨ x_{f2} ∨· · · ,\nwhere f_{1}, f_{2}, . . . are all the other edges incident with v (apart from e).\nThis clause says that “if e in Y , then some other edge at v must be in Y too”.\nTogether, all the clauses created in this loop say that Y cannot meet v with exactly\none edge.\n2. For each pair of edges e_{1}, e_{2} incident with v, create a clause\n¬x_{e1} ∨¬x_{e2} ∨ x_{f1} ∨ x_{f2} ∨· · · ,\nwhere f_{1}, f_{2}, . . . are all the other edges incident with v (apart from e_{1} and e_{2}).\nThis clause says that “if e_{1} and e_{2} are both in Y , then some other edge at v must\nbe in Y too”.\nTogether, all the clauses created in this loop say that Y cannot meet v with exactly\ntwo edges.\n3. For each 4-tuple of edges e_{1}, e_{2}, e_{3}, e_{4} incident with v, create a clause\n¬x_{e1} ∨¬x_{e2} ∨¬x_{e3} ∨¬x_{e4}.\nThis clause says that “e_{1}, e_{2}, e_{3} and e_{4} cannot all be in Y ”.\nTogether, all the clauses created in this loop say that Y cannot meet v with four\nor more edges.\n4. Create a clause consisting of the disjunction of all our variables:\nx_{e1} ∨ x_{e2} ∨· · · ∨ x_{em},\nwhere the edges of the graph are e_{1}, e_{2}, . . . , e_{m}.\nLet φ := conjunction of all clauses created so far.\nOutput: φ.\n(d) This is just NP.\nIf a language L is in NP, then it must be polynomial-time reducible to SAT (or to any\nother NP-complete language, for that matter), by the definition of NP-completeness.\nOn the other hand, if a language is polynomial-time reducible to SAT, then it is polynomial-\ntime reducible to a language in NP (since SAT is in NP), so it must be in NP itself.\nSo NP is precisely the set of languages polynomial-time reducible to SAT.\n(e) If CUBIC SUBGRAPH takes exponential time, then it is not possible for an algorithm for\nSAT to take polynomial time.\nThis is because we know that CUBIC SUBGRAPH ≤_{P} SAT (by part (c) of this ques-\ntion), which implies that if SAT were in P, then CUBIC SUBGRAPH would be in P too.\nFrom SAT ∈ P, it would follow that P = NP, since we know that SAT is in NP.",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "complexity_p",
+    "propositional_logic",
+    "mapping_reductions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "prop_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    20,
+    21,
+    22,
+    23,
+    24
+   ]
+  }
+ ]
+}

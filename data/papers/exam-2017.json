@@ -1,0 +1,686 @@
+{
+ "paper": "exam-2017",
+ "year": 2017,
+ "source": "papers/FIT2014-exam-2017.pdf",
+ "has_solutions": false,
+ "total_marks": 120.0,
+ "questions": [
+  {
+   "id": "exam-2017-q1",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 1,
+   "marks": 4.0,
+   "text": "Suppose we have propositions A, K and L, with the following meanings.\nA: alphaGo is the equal-best Go player in the world.\nK: K¯e Ji´e is the equal-best Go player in the world.\nL: Lee Se-dol is the equal-best Go player in the world.\nUse A, K and L to write a proposition that is True if and only if exactly two of\nalphaGo, K¯e Ji´e and Lee Se-dol are the equal-best Go players in the world.\nFor full marks, your proposition should be in Conjunctive Normal Form.",
+   "stem": "Suppose we have propositions A, K and L, with the following meanings.\nA: alphaGo is the equal-best Go player in the world.\nK: K¯e Ji´e is the equal-best Go player in the world.\nL: Lee Se-dol is the equal-best Go player in the world.\nUse A, K and L to write a proposition that is True if and only if exactly two of\nalphaGo, K¯e Ji´e and Lee Se-dol are the equal-best Go players in the world.\nFor full marks, your proposition should be in Conjunctive Normal Form.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "propositional_logic"
+   ],
+   "primary_topic": "propositional_logic",
+   "answer_type": "prop_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    3
+   ]
+  },
+  {
+   "id": "exam-2017-q2",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 2,
+   "marks": 3.0,
+   "text": "Suppose you have predicates computableByGoedel, computableByChurch, and computableByTuring\nwith the following meanings, where variable F : {a, b∗} → N ∪{0} represents an arbitrary\nfunction from finite strings over {a, b} to nonnegative integers:\ncomputableByGoedel(F): the function F is a recursive function, according to Kurt\nG¨odel’s definition.\ncomputableByChurch(F): the function F has a lambda expression, in the sense of\nAlonzo Church’s Lambda Calculus.\ncomputableByTuring(F): the function F is computable.\nIn the space below, write a statement in predicate logic with the meaning:\nEvery function that satisfies any one of the three definitions of computability\n— recursive functions (G¨odel), lambda calculus (Church), or Turing computabil-\nity — also satisfies each of the others.\nTo do this, you may only use: the above three predicates; quantifiers; logical connectives.\n(In particular, you may not use set theory symbols such as ⊆, ⊂, ∩, ∪, etc, and in fact they\nwould not help.)",
+   "stem": "Suppose you have predicates computableByGoedel, computableByChurch, and computableByTuring\nwith the following meanings, where variable F : {a, b∗} → N ∪{0} represents an arbitrary\nfunction from finite strings over {a, b} to nonnegative integers:\ncomputableByGoedel(F): the function F is a recursive function, according to Kurt\nG¨odel’s definition.\ncomputableByChurch(F): the function F has a lambda expression, in the sense of\nAlonzo Church’s Lambda Calculus.\ncomputableByTuring(F): the function F is computable.\nIn the space below, write a statement in predicate logic with the meaning:\nEvery function that satisfies any one of the three definitions of computability\n— recursive functions (G¨odel), lambda calculus (Church), or Turing computabil-\nity — also satisfies each of the others.\nTo do this, you may only use: the above three predicates; quantifiers; logical connectives.\n(In particular, you may not use set theory symbols such as ⊆, ⊂, ∩, ∪, etc, and in fact they\nwould not help.)",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "predicate_logic",
+    "church_turing"
+   ],
+   "primary_topic": "predicate_logic",
+   "answer_type": "predicate_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    3
+   ]
+  },
+  {
+   "id": "exam-2017-q3",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 3,
+   "marks": 6.0,
+   "text": "Let E_{n} be the following Boolean expression in variables x_{1}, x_{2}, . . . , x_{n}:\n((· · · ((((¬x_{1} ∨ x_{2}) ∧¬x_{2}) ∨ x_{3}) ∧¬x_{3}) · · ·) ∨ x_{n}) ∧¬x_{n}\nFor example, E_{1} = ¬x_{1}, and E_{2} = (¬x_{1} ∨ x_{2}) ∧¬x_{2}. In general, E_{n} = (E_{n−1} ∨ x_{n}) ∧¬x_{n}.\nProve by induction on n that, for all n ≥ 1, the expression E_{n} is satisfiable.",
+   "stem": "Let E_{n} be the following Boolean expression in variables x_{1}, x_{2}, . . . , x_{n}:\n((· · · ((((¬x_{1} ∨ x_{2}) ∧¬x_{2}) ∨ x_{3}) ∧¬x_{3}) · · ·) ∨ x_{n}) ∧¬x_{n}\nFor example, E_{1} = ¬x_{1}, and E_{2} = (¬x_{1} ∨ x_{2}) ∧¬x_{2}. In general, E_{n} = (E_{n−1} ∨ x_{n}) ∧¬x_{n}.\nProve by induction on n that, for all n ≥ 1, the expression E_{n} is satisfiable.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "induction"
+   ],
+   "primary_topic": "induction",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "exam-2017-q4",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 4,
+   "marks": 4.0,
+   "text": "Write down all strings of length ≤ 6 that match the following regular expression:\n∗ ∗\nε ∪ (ab) b(aaa ∪ bb)",
+   "stem": "Write down all strings of length ≤ 6 that match the following regular expression:\n∗ ∗\nε ∪ (ab) b(aaa ∪ bb)",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "regular_expressions"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "string_list",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    5
+   ]
+  },
+  {
+   "id": "exam-2017-q5",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 5,
+   "marks": 4.0,
+   "text": "Let R be any regular expression.\n(a) Give, in terms of R, a regular expression for the language of all strings that can be\ndivided into two substrings, each of which matches R.\n(b) Prove that the language EVEN(R) of all strings that can be divided into any even\nnumber of substrings, each of which matches R, is regular.\nFor example, if R is a ∪ bb, then the string w = aabba can be divided into\nfour substrings a,a,bb,a which each match R. So this w belongs to EVEN(R).\nThe empty string is also in EVEN(R), noting that zero is an even number. But\naabb and bbb do not belong to EVEN(R).",
+   "stem": "Let R be any regular expression.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Give, in terms of R, a regular expression for the language of all strings that can be\ndivided into two substrings, each of which matches R.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove that the language EVEN(R) of all strings that can be divided into any even\nnumber of substrings, each of which matches R, is regular.\nFor example, if R is a ∪ bb, then the string w = aabba can be divided into\nfour substrings a,a,bb,a which each match R. So this w belongs to EVEN(R).\nThe empty string is also in EVEN(R), noting that zero is an even number. But\naabb and bbb do not belong to EVEN(R).",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "regular_expressions"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    7
+   ]
+  },
+  {
+   "id": "exam-2017-q6",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 6,
+   "marks": 8.0,
+   "text": "(a) Convert the following Nondeterministic Finite Automaton (NFA) into an equivalent\nDeterministic Finite Automaton (FA).\na a\n1 a ε 4 a\nb\na\nε\nYour FA must be presented by filling in some rows in the following table. You may not\nneed all the rows available.\nstate a b\n(b) Give a regular expression for the language accepted by the above NFA.\n(You should not need to apply a general automaton-to-regexp conversion algorithm.\nJust think about what the automaton does. The equivalent FA should help.)",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Convert the following Nondeterministic Finite Automaton (NFA) into an equivalent\nDeterministic Finite Automaton (FA).\na a\n1 a ε 4 a\nb\na\nε\nYour FA must be presented by filling in some rows in the following table. You may not\nneed all the rows available.\nstate a b",
+     "marks": null,
+     "answer_type": "regex",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Give a regular expression for the language accepted by the above NFA.\n(You should not need to apply a general automaton-to-regexp conversion algorithm.\nJust think about what the automaton does. The equivalent FA should help.)",
+     "marks": null,
+     "answer_type": "regex",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "finite_automata",
+    "nfa",
+    "regular_expressions"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "regex",
+   "has_figure": true,
+   "figures": [
+    "exam-2017-q6_p8.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    8,
+    9
+   ]
+  },
+  {
+   "id": "exam-2017-q7",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 7,
+   "marks": 5.0,
+   "text": "Give an algorithm which takes, as input, a Finite Automaton represented as a table, and\nfinds another Finite Automaton that accepts the same language as the first one and has the\nminimum number of states among all FAs that accept that language.\nA pseudocode description is fine.\nDo not try to write your algorithm as a Turing machine.",
+   "stem": "Give an algorithm which takes, as input, a Finite Automaton represented as a table, and\nfinds another Finite Automaton that accepts the same language as the first one and has the\nminimum number of states among all FAs that accept that language.\nA pseudocode description is fine.\nDo not try to write your algorithm as a Turing machine.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "finite_automata",
+    "minimisation",
+    "turing_machines"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "fa_minimise",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    9
+   ]
+  },
+  {
+   "id": "exam-2017-q8",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 8,
+   "marks": 12.0,
+   "text": "Consider the following Pushdown Automaton (PDA), with input alphabet {a,b,c} and extra\nstack symbols S and $.\n(T4): a, S → c (T5): ε, ε → S\n(T1): ε, ε → $ (T2): ε, ε → S (T3): ε, $ → ε\n1 2 3 4\n(T6) : ε, S → b\n(T7) : a, a → ε\n(T8) : b, b → ε\n(T9) : c, c → ε\n(a) Show that the single-letter string b is accepted by this PDA, by giving the sequence\nof transitions that leads to acceptance of b.\nUse the names of the transitions, i.e., T1, T2, . . ., etc.\n(b) Prove the following statement by induction on n:\nFor all n ≥ 0:\nIf the PDA is in State 3, the top symbol on the stack is S, and the remaining\ninput begins with a^{n}bc^{n}, then after reading a^{n}bc^{n} the PDA is again in State 3\nand the stack is the same except that the S on the top has been removed.\n(c) Hence prove that, for all n ≥ 0, the string a^{n}bc^{n} is accepted by this PDA.",
+   "stem": "Consider the following Pushdown Automaton (PDA), with input alphabet {a,b,c} and extra\nstack symbols S and $.\n(T4): a, S → c (T5): ε, ε → S\n(T1): ε, ε → $ (T2): ε, ε → S (T3): ε, $ → ε\n1 2 3 4\n(T6) : ε, S → b\n(T7) : a, a → ε\n(T8) : b, b → ε\n(T9) : c, c → ε",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Show that the single-letter string b is accepted by this PDA, by giving the sequence\nof transitions that leads to acceptance of b.\nUse the names of the transitions, i.e., T1, T2, . . ., etc.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove the following statement by induction on n:\nFor all n ≥ 0:\nIf the PDA is in State 3, the top symbol on the stack is S, and the remaining\ninput begins with a^{n}bc^{n}, then after reading a^{n}bc^{n} the PDA is again in State 3\nand the stack is the same except that the S on the top has been removed.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "Hence prove that, for all n ≥ 0, the string a^{n}bc^{n} is accepted by this PDA.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "pda",
+    "induction"
+   ],
+   "primary_topic": "pda",
+   "answer_type": "pda",
+   "has_figure": true,
+   "figures": [
+    "exam-2017-q8_p10.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    10,
+    11
+   ]
+  },
+  {
+   "id": "exam-2017-q9",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 9,
+   "marks": 13.0,
+   "text": "Let GOAL be the language generated by the following Context-Free Grammar:\nS → gooXal (1)\nX → ooXa (2)\nX → ε (3)\nGOAL consists of all strings of the form g(oo)^{n}a^{n}l , where n ≥ 1. The first few strings in\nthis language, in order of increasing length, are:\ngooal, gooooaal, gooooooaaal, . . .\n(a) Give a derivation for the string gooooaal.\nEach step in your derivation must be labelled, on its right, by the number of the rule used.\n(b) Give a parse tree for the same string, gooooaal.\n(c) Use the Pumping Lemma for Regular Languages to prove that GOAL is not regular.",
+   "stem": "Let GOAL be the language generated by the following Context-Free Grammar:\nS → gooXal (1)\nX → ooXa (2)\nX → ε (3)\nGOAL consists of all strings of the form g(oo)^{n}a^{n}l , where n ≥ 1. The first few strings in\nthis language, in order of increasing length, are:\ngooal, gooooaal, gooooooaaal, . . .",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Give a derivation for the string gooooaal.\nEach step in your derivation must be labelled, on its right, by the number of the rule used.",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Give a parse tree for the same string, gooooaal.",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "Use the Pumping Lemma for Regular Languages to prove that GOAL is not regular.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "cfg",
+    "pumping_lemma_regular"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "derivation",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    12,
+    13
+   ]
+  },
+  {
+   "id": "exam-2017-q10",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 10,
+   "marks": 2.0,
+   "text": "The Cocke-Younger-Kasami (CYK) algorithm is less efficient than most commonly used\nparsing algorithms. What is one significant advantage it has over those algorithms?",
+   "stem": "The Cocke-Younger-Kasami (CYK) algorithm is less efficient than most commonly used\nparsing algorithms. What is one significant advantage it has over those algorithms?",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "cfg"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    14
+   ]
+  },
+  {
+   "id": "exam-2017-q11",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 11,
+   "marks": 6.0,
+   "text": "Consider the following Turing machine.\nb→a,R ∆→a,R\na→b,R\n^{START} 1 2 ^{ACCEPT}\nb→b,R\na→b,L\na→b,R\nb→a,L\nTrace the execution of this Turing machine, writing your answer in the spaces provided\non the next page.\nThe lines show the configuration of the Turing machine at the start of each step. For\neach line, fill in the state and the contents of the tape. On the tape, you should indicate the\ncurrently-scanned character by underlining it, and you should show the first blank character\nas ∆(but there is no need to show subsequent blank characters).\nYou should not need all the lines provided.\nTo get you started, the first line has been filled in already.\nAt start of step 1: State: 1 Tape: b b b a ∆\nAt start of step 2: State: Tape:\nAt start of step 3: State: Tape:\nAt start of step 4: State: Tape:\nAt start of step 5: State: Tape:\nAt start of step 6: State: Tape:\nAt start of step 7: State: Tape:\nAt start of step 8: State: Tape:\nAt start of step 9: State: Tape:\nAt start of step 10: State: Tape:\nAt start of step 11: State: Tape:\nAt start of step 12: State: Tape:",
+   "stem": "Consider the following Turing machine.\nb→a,R ∆→a,R\na→b,R\n^{START} 1 2 ^{ACCEPT}\nb→b,R\na→b,L\na→b,R\nb→a,L\nTrace the execution of this Turing machine, writing your answer in the spaces provided\non the next page.\nThe lines show the configuration of the Turing machine at the start of each step. For\neach line, fill in the state and the contents of the tape. On the tape, you should indicate the\ncurrently-scanned character by underlining it, and you should show the first blank character\nas ∆(but there is no need to show subsequent blank characters).\nYou should not need all the lines provided.\nTo get you started, the first line has been filled in already.\nAt start of step 1: State: 1 Tape: b b b a ∆\nAt start of step 2: State: Tape:\nAt start of step 3: State: Tape:\nAt start of step 4: State: Tape:\nAt start of step 5: State: Tape:\nAt start of step 6: State: Tape:\nAt start of step 7: State: Tape:\nAt start of step 8: State: Tape:\nAt start of step 9: State: Tape:\nAt start of step 10: State: Tape:\nAt start of step 11: State: Tape:\nAt start of step 12: State: Tape:",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "tm_trace",
+   "has_figure": true,
+   "figures": [
+    "exam-2017-q11_p14.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    14,
+    15
+   ]
+  },
+  {
+   "id": "exam-2017-q12",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 12,
+   "marks": 5.0,
+   "text": "(a) Name three variations on Turing machines that give the same class of computable\nfunctions.\n(b) Give one way of modifying the definition of Turing machines so that they can still\nrecognise all regular languages but can no longer recognise all decidable languages.\nFor full marks, your modification should be as simple as possible. It should involve\naltering just one part of the definition of Turing machines. Replacement of an entire machine\nby something else is not acceptable.\nNo proof is required for this question.",
+   "stem": "",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Name three variations on Turing machines that give the same class of computable\nfunctions.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Give one way of modifying the definition of Turing machines so that they can still\nrecognise all regular languages but can no longer recognise all decidable languages.\nFor full marks, your modification should be as simple as possible. It should involve\naltering just one part of the definition of Turing machines. Replacement of an entire machine\nby something else is not acceptable.\nNo proof is required for this question.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines",
+    "decidability"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    16
+   ]
+  },
+  {
+   "id": "exam-2017-q13",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 13,
+   "marks": 4.0,
+   "text": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Does M_{1} eventually halt, when given M_{2} as\ninput? Decidable Undecidable\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Does M_{1} have the same number of states as\nM_{2}? Decidable Undecidable\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Is M_{1} equivalent to M_{2} (i.e., do M_{1} and M_{2} have\nthe same sets of accepted strings and the same sets of rejected\nDecidable Undecidable\nstrings)?\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: If each machine is given itself as input, does M_{1}\nfinish before M_{2}? Decidable Undecidable",
+   "stem": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Does M_{1} eventually halt, when given M_{2} as\ninput? Decidable Undecidable\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Does M_{1} have the same number of states as\nM_{2}? Decidable Undecidable\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: Is M_{1} equivalent to M_{2} (i.e., do M_{1} and M_{2} have\nthe same sets of accepted strings and the same sets of rejected\nDecidable Undecidable\nstrings)?\nInput: two Turing machines M_{1} and M_{2}.\nQuestion: If each machine is given itself as input, does M_{1}\nfinish before M_{2}? Decidable Undecidable",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines",
+    "decidability"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "mcq",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    17
+   ]
+  },
+  {
+   "id": "exam-2017-q14",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 14,
+   "marks": 12.0,
+   "text": "The Venn diagram on the next page shows several classes of languages. For each language\n(a)–(j) in the list below, indicate which classes it belongs to, and which it doesn’t belong to,\nby placing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL), with input alphabet {a,b} and tape alphabet {a,b,#,∆}.\n(a) The set of all binary strings.\n(b) The set of all strings in which every a occurs before every b.\n(c) The set of all strings in which a occurs more times than b.\n(d) The set of all strings in which every a occurs before every band ALSO a occurs more\ntimes than b.\n(e) The set of adjacency matrices of 2-colourable graphs.\n(f) The set of adjacency matrices of 4-colourable graphs.\n(g) The set of all Boolean expressions in Conjunctive Normal Form (CNF), whether satisfi-\nable or unsatisfiable. (Assume the variables are x_{1}, x_{2}, . . . , x_{n}, and variable x_{i} is represented\nby its index i as a binary positive integer.)\n(h) The set of all encodings of Turing machines that accept regular languages.\n(i) The set of all encodings of Turing machines that accept non-context-free languages.\n(j) The set of all encodings of Turing machines that loop forever for some input.\n(k) The set of all arithmetic expressions involving positive integers, in decimal notation,\nand addition, subtraction, multiplication and division, but with no parentheses.\n(l) The set of all arithmetic expressions involving positive integers, in decimal notation,\nand addition, subtraction and parentheses, but no multiplication or division.\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+   "stem": "The Venn diagram on the next page shows several classes of languages. For each language",
+   "parts": [
+    {
+     "label": "a",
+     "text": "–(j) in the list below, indicate which classes it belongs to, and which it doesn’t belong to,\nby placing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL), with input alphabet {a,b} and tape alphabet {a,b,#,∆}.\n(a) The set of all binary strings.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "The set of all strings in which every a occurs before every b.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "The set of all strings in which a occurs more times than b.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "d",
+     "text": "The set of all strings in which every a occurs before every band ALSO a occurs more\ntimes than b.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "e",
+     "text": "The set of adjacency matrices of 2-colourable graphs.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "f",
+     "text": "The set of adjacency matrices of 4-colourable graphs.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "g",
+     "text": "The set of all Boolean expressions in Conjunctive Normal Form (CNF), whether satisfi-\nable or unsatisfiable. (Assume the variables are x_{1}, x_{2}, . . . , x_{n}, and variable x_{i} is represented\nby its index i as a binary positive integer.)",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "h",
+     "text": "The set of all encodings of Turing machines that accept regular languages.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "i",
+     "text": "The set of all encodings of Turing machines that accept non-context-free languages.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "j",
+     "text": "The set of all encodings of Turing machines that loop forever for some input.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "k",
+     "text": "The set of all arithmetic expressions involving positive integers, in decimal notation,\nand addition, subtraction, multiplication and division, but with no parentheses.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "l",
+     "text": "The set of all arithmetic expressions involving positive integers, in decimal notation,\nand addition, subtraction and parentheses, but no multiplication or division.\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines",
+    "decidability",
+    "language_classes",
+    "propositional_logic",
+    "np_completeness"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "language_classes",
+   "has_figure": true,
+   "figures": [
+    "exam-2017-q14_p19.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    18,
+    19
+   ]
+  },
+  {
+   "id": "exam-2017-q15",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 15,
+   "marks": 8.0,
+   "text": "Let L and K be languages. Suppose that K is finite.\nDefinition: The symmetric difference L∆K consists of all strings that belong to L or\nK, but not both. In other words, L∆K = (L ∪ K) \\ (L ∩ K).\n(a) Prove that there exists a mapping reduction from L to L∆K.\n(b) Prove that L is undecidable if and only if L∆K is undecidable.",
+   "stem": "Let L and K be languages. Suppose that K is finite.\nDefinition: The symmetric difference L∆K consists of all strings that belong to L or\nK, but not both. In other words, L∆K = (L ∪ K) \\ (L ∩ K).",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that there exists a mapping reduction from L to L∆K.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove that L is undecidable if and only if L∆K is undecidable.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "decidability",
+    "mapping_reductions"
+   ],
+   "primary_topic": "decidability",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    21
+   ]
+  },
+  {
+   "id": "exam-2017-q16",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 16,
+   "marks": 5.0,
+   "text": "An enumerator for a language is normally allowed to output a given string in the language\nmore than once. A direct enumerator is an enumerator which never outputs a string more\nthan once.\nProve that if a language has an enumerator then it has a direct enumerator.",
+   "stem": "An enumerator for a language is normally allowed to output a given string in the language\nmore than once. A direct enumerator is an enumerator which never outputs a string more\nthan once.\nProve that if a language has an enumerator then it has a direct enumerator.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    22
+   ]
+  },
+  {
+   "id": "exam-2017-q17",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 17,
+   "marks": 11.0,
+   "text": "A vertex cover in a graph G is a set X of vertices that meets every edge of G. So,\nevery edge is incident with at least one vertex in X.\nThe VERTEX COVER decision problem is as follows.\nVERTEX COVER\nInput: Graph G.\nQuestion: Does G have a vertex cover?\nFor example, in the following graph, the vertex set {u, w, x} is a vertex cover, and so is\n{v, w}. But {u, x} is not a vertex cover, since it does not meet every edge. (Specifically, it\nmisses the diagonal edge c.)\nu b v\ny y\n\nc\na e\n\ny y\nw d x\nLet W be the above graph.\n(a) Construct a Boolean expression E_{W} in Conjunctive Normal Form such that the satisfying\ntruth assignments for E_{W} correspond to vertex covers in the above graph W.\n(b) Give a polynomial-time reduction from VERTEX COVER to SATISFIABILITY.",
+   "stem": "A vertex cover in a graph G is a set X of vertices that meets every edge of G. So,\nevery edge is incident with at least one vertex in X.\nThe VERTEX COVER decision problem is as follows.\nVERTEX COVER\nInput: Graph G.\nQuestion: Does G have a vertex cover?\nFor example, in the following graph, the vertex set {u, w, x} is a vertex cover, and so is\n{v, w}. But {u, x} is not a vertex cover, since it does not meet every edge. (Specifically, it\nmisses the diagonal edge c.)\nu b v\ny y\n\nc\na e\n\ny y\nw d x\nLet W be the above graph.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Construct a Boolean expression E_{W} in Conjunctive Normal Form such that the satisfying\ntruth assignments for E_{W} correspond to vertex covers in the above graph W.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Give a polynomial-time reduction from VERTEX COVER to SATISFIABILITY.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "propositional_logic",
+    "mapping_reductions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "prop_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    23,
+    24
+   ]
+  },
+  {
+   "id": "exam-2017-q18",
+   "paper": "exam-2017",
+   "year": 2017,
+   "number": 18,
+   "marks": 8.0,
+   "text": "Prove that the problem LONG PATH is NP-complete, using reduction from HAMIL-\nTONIAN PATH. You may assume that HAMILTONIAN PATH is NP-complete.\nDefinitions:\nHAMILTONIAN PATH\nInput: Graph G.\nQuestion: Does G have a path that contains every vertex?\nLONG PATH\nInput: Graph G, with an even number of vertices.\nQuestion: Does G contain a path of length ≥ n/2?\nIn each of these definitions, n is the number of vertices in the graph G.",
+   "stem": "Prove that the problem LONG PATH is NP-complete, using reduction from HAMIL-\nTONIAN PATH. You may assume that HAMILTONIAN PATH is NP-complete.\nDefinitions:\nHAMILTONIAN PATH\nInput: Graph G.\nQuestion: Does G have a path that contains every vertex?\nLONG PATH\nInput: Graph G, with an even number of vertices.\nQuestion: Does G contain a path of length ≥ n/2?\nIn each of these definitions, n is the number of vertices in the graph G.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "mapping_reductions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    25
+   ]
+  }
+ ]
+}

@@ -1,0 +1,660 @@
+{
+ "paper": "exam-2014",
+ "year": 2014,
+ "source": "papers/FIT2014-exam-2014.pdf",
+ "has_solutions": false,
+ "total_marks": 120.0,
+ "questions": [
+  {
+   "id": "exam-2014-q1",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 1,
+   "marks": 4.0,
+   "text": "Use De Morgan’s Laws to prove that ¬((P ∧ Q) ∧ (¬P ∧¬Q)) is a tautology.\nYou may use other principles of propositional logic too, if you wish. But your proof\nmust make significant use of De Morgan’s Laws.",
+   "stem": "Use De Morgan’s Laws to prove that ¬((P ∧ Q) ∧ (¬P ∧¬Q)) is a tautology.\nYou may use other principles of propositional logic too, if you wish. But your proof\nmust make significant use of De Morgan’s Laws.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "propositional_logic"
+   ],
+   "primary_topic": "propositional_logic",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    3
+   ]
+  },
+  {
+   "id": "exam-2014-q2",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 2,
+   "marks": 6.0,
+   "text": "Suppose you have predicates algorithm and TuringMachine with the following meanings,\nwhere variable X represents an arbitrary function:\nalgorithm(X): there is an algorithm for X.\nTuringMachine(X): there is a Turing machine for computing X.\n(a) Write a universal statement in predicate logic with the meaning:\n“Every function with an algorithm can be computed by a Turing machine.”\n(b) By what name is this assertion usually known?\n(c) What reasons are there for believing that this assertion is true?",
+   "stem": "Suppose you have predicates algorithm and TuringMachine with the following meanings,\nwhere variable X represents an arbitrary function:\nalgorithm(X): there is an algorithm for X.\nTuringMachine(X): there is a Turing machine for computing X.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Write a universal statement in predicate logic with the meaning:\n“Every function with an algorithm can be computed by a Turing machine.”",
+     "marks": null,
+     "answer_type": "predicate_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "By what name is this assertion usually known?",
+     "marks": null,
+     "answer_type": "predicate_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "What reasons are there for believing that this assertion is true?",
+     "marks": null,
+     "answer_type": "predicate_formula",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "predicate_logic",
+    "turing_machines"
+   ],
+   "primary_topic": "predicate_logic",
+   "answer_type": "predicate_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "exam-2014-q3",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 3,
+   "marks": 3.0,
+   "text": "Give a regular expression for the language of all strings over alphabet {a,b} whose first and\nlast letters are different.",
+   "stem": "Give a regular expression for the language of all strings over alphabet {a,b} whose first and\nlast letters are different.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "regular_expressions"
+   ],
+   "primary_topic": "regular_expressions",
+   "answer_type": "regex",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    4
+   ]
+  },
+  {
+   "id": "exam-2014-q4",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 4,
+   "marks": 4.0,
+   "text": "Let L be the language of nonempty strings over {a,b} that can start and finish with any\nletter but all other letters must be a. Draw a Finite Automaton to recognise L.",
+   "stem": "Let L be the language of nonempty strings over {a,b} that can start and finish with any\nletter but all other letters must be a. Draw a Finite Automaton to recognise L.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "finite_automata"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "fa",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    5
+   ]
+  },
+  {
+   "id": "exam-2014-q5",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 5,
+   "marks": 3.0,
+   "text": "When converting a Nondeterministic Finite Automaton (NFA) to an equivalent Finite Au-\ntomaton (FA), how do you determine which states in the NFA are combined to form the\nsingle Start state in the FA?",
+   "stem": "When converting a Nondeterministic Finite Automaton (NFA) to an equivalent Finite Au-\ntomaton (FA), how do you determine which states in the NFA are combined to form the\nsingle Start state in the FA?",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "finite_automata",
+    "nfa"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    5
+   ]
+  },
+  {
+   "id": "exam-2014-q6",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 6,
+   "marks": 4.0,
+   "text": "The following table describes a Finite Automaton with three states.\nFind another FA that is equivalent to this one and has only two states.\nWrite your two-state FA in the second table below.\nstate a b\nStart 1 2 3\n2 1 3\nFinal 3 1 2\nYOUR ANSWER:\nstate a b",
+   "stem": "The following table describes a Finite Automaton with three states.\nFind another FA that is equivalent to this one and has only two states.\nWrite your two-state FA in the second table below.\nstate a b\nStart 1 2 3\n2 1 3\nFinal 3 1 2\nYOUR ANSWER:\nstate a b",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "finite_automata"
+   ],
+   "primary_topic": "finite_automata",
+   "answer_type": "fa_minimise",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    6
+   ]
+  },
+  {
+   "id": "exam-2014-q7",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 7,
+   "marks": 4.0,
+   "text": "Explain why the class of regular languages over the alphabet {a,b} is closed under in-\nterchange of a and b.\nDefinition:\nIf L is any language over the alphabet {a,b}, then the interchange of a and b forms a\nnew language as follows: take every string in L, and replace every a by b and every b by a,\nsimultaneously. So, for example, the string abb becomes baa.",
+   "stem": "Explain why the class of regular languages over the alphabet {a,b} is closed under in-\nterchange of a and b.\nDefinition:\nIf L is any language over the alphabet {a,b}, then the interchange of a and b forms a\nnew language as follows: take every string in L, and replace every a by b and every b by a,\nsimultaneously. So, for example, the string abb becomes baa.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "regular_closure"
+   ],
+   "primary_topic": "regular_closure",
+   "answer_type": "short_answer",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    7
+   ]
+  },
+  {
+   "id": "exam-2014-q8",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 8,
+   "marks": 7.0,
+   "text": "Consider the following Context-Free Grammar. Its non-terminals are S and L.\nS → L (1)\nL → haL (2)\nL → aL (3)\nL → h (4)\nGive\n(a) a derivation, and\n(b) a parse tree,\nfor the string ahahaah .\nLabel each step in the derivation on its right by the rule used. Use the spaces below for\nyour answers.\n(a)\n(b)",
+   "stem": "Consider the following Context-Free Grammar. Its non-terminals are S and L.\nS → L (1)\nL → haL (2)\nL → aL (3)\nL → h (4)\nGive",
+   "parts": [
+    {
+     "label": "a",
+     "text": "a derivation, and",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "a parse tree,\nfor the string ahahaah .\nLabel each step in the derivation on its right by the rule used. Use the spaces below for\nyour answers.\n(a)\n(b)",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "cfg"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "derivation",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    8
+   ]
+  },
+  {
+   "id": "exam-2014-q9",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 9,
+   "marks": 3.0,
+   "text": "Give a regular grammar for the language of positive integers represented in binary with\nleading bit 1. (The leading bit is the most significant bit, i.e., the leftmost bit.)",
+   "stem": "Give a regular grammar for the language of positive integers represented in binary with\nleading bit 1. (The leading bit is the most significant bit, i.e., the leftmost bit.)",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "cfg"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "cfg",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    10
+   ]
+  },
+  {
+   "id": "exam-2014-q10",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 10,
+   "marks": 6.0,
+   "text": "Given the following Context-Free Grammar:\nS → ε (1)\nS → T (2)\nT → aTb (3)\nT → aT (4)\nT → b (5)\ncomplete the following diagram to give a Pushdown Automaton for the language generated\nby the grammar.\nε, ε → $ ε, ε → S ε, $ → ε\n1 2 3 4",
+   "stem": "Given the following Context-Free Grammar:\nS → ε (1)\nS → T (2)\nT → aTb (3)\nT → aT (4)\nT → b (5)\ncomplete the following diagram to give a Pushdown Automaton for the language generated\nby the grammar.\nε, ε → $ ε, ε → S ε, $ → ε\n1 2 3 4",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "pda",
+    "cfg"
+   ],
+   "primary_topic": "pda",
+   "answer_type": "pda",
+   "has_figure": true,
+   "figures": [
+    "exam-2014-q10_p10.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    10
+   ]
+  },
+  {
+   "id": "exam-2014-q11",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 11,
+   "marks": 10.0,
+   "text": "This question uses the same grammar as the previous question.\nLet L be the language generated by this grammar.\n(a) Prove by induction that every string of the form a^{m}b^{n}, where m ≥ n −1 and n ≥ 1,\nbelongs to L.\n(b) Prove or disprove: some string in L has a derivation, using this grammar, that is\nneither a leftmost derivation nor a rightmost derivation.",
+   "stem": "This question uses the same grammar as the previous question.\nLet L be the language generated by this grammar.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove by induction that every string of the form a^{m}b^{n}, where m ≥ n −1 and n ≥ 1,\nbelongs to L.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Prove or disprove: some string in L has a derivation, using this grammar, that is\nneither a leftmost derivation nor a rightmost derivation.",
+     "marks": null,
+     "answer_type": "derivation",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "cfg",
+    "induction"
+   ],
+   "primary_topic": "cfg",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    11
+   ]
+  },
+  {
+   "id": "exam-2014-q12",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 12,
+   "marks": 7.0,
+   "text": "Recall that the Fibonacci numbers, F_{n}, are defined recursively as follows:\nF_{1} = 1,\nF_{2} = 1,\nF_{n} = F_{n−1} + F_{n−2} for n ≥ 3.\nThe first few numbers in the sequence are\n1, 1, 2, 3, 5, 8, 13, 21, 34, . . .\nNote that the Fibonacci numbers are (after the first term) an increasing sequence of positive\nintegers.\nThe language FIBONACCI is defined to be the set of all strings of the letter a whose\nlength is a Fibonacci number. So,\nF_{n}\nFIBONACCI = { a : n ∈ N }.\n(a) Prove that the difference, F_{n} − F_{n−1}, between two consecutive Fibonacci numbers\nincreases as n increases, i.e., F_{n} − F_{n−1} > F_{n−1} − F_{n−2} for all n ≥ 5.\n(b) Using (a), prove that the language FIBONACCI is not context-free.",
+   "stem": "Recall that the Fibonacci numbers, F_{n}, are defined recursively as follows:\nF_{1} = 1,\nF_{2} = 1,\nF_{n} = F_{n−1} + F_{n−2} for n ≥ 3.\nThe first few numbers in the sequence are\n1, 1, 2, 3, 5, 8, 13, 21, 34, . . .\nNote that the Fibonacci numbers are (after the first term) an increasing sequence of positive\nintegers.\nThe language FIBONACCI is defined to be the set of all strings of the letter a whose\nlength is a Fibonacci number. So,\nF_{n}\nFIBONACCI = { a : n ∈ N }.",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Prove that the difference, F_{n} − F_{n−1}, between two consecutive Fibonacci numbers\nincreases as n increases, i.e., F_{n} − F_{n−1} > F_{n−1} − F_{n−2} for all n ≥ 5.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Using (a), prove that the language FIBONACCI is not context-free.",
+     "marks": null,
+     "answer_type": "proof",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "pumping_lemma_cfl"
+   ],
+   "primary_topic": "pumping_lemma_cfl",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    13
+   ]
+  },
+  {
+   "id": "exam-2014-q13",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 13,
+   "marks": 9.0,
+   "text": "Consider the following Turing machine.\na→b,L\na→b,R\n∆ →a,L\nSTART 1 b→a,R 2 ACCEPT\n∆ →b,R\nb→b,L\nTrace the execution of this Turing machine, writing your answer in the spaces provided\non the next page.\nThe lines show the configuration of the Turing machine at the start of each step. For\neach line, fill in the state and the contents of the tape. On the tape, you should indicate the\ncurrently-scanned character by underlining it, and you should show the first blank character\nas ∆(but there is no need to show subsequent blank characters).\nTo get you started, the first line has been filled in already.\nAt start of step 1: State: 1 Tape: a a b ∆\nAt start of step 2: State: Tape:\nAt start of step 3: State: Tape:\nAt start of step 4: State: Tape:\nAt start of step 5: State: Tape:\nAt start of step 6: State: Tape:\nAt start of step 7: State: Tape:\nAt start of step 8: State: Tape:\nAt start of step 9: State: Tape:\nAt start of step 10: State: Tape:\nAt start of step 11: State: Tape:\nAt start of step 12: State: Tape:",
+   "stem": "Consider the following Turing machine.\na→b,L\na→b,R\n∆ →a,L\nSTART 1 b→a,R 2 ACCEPT\n∆ →b,R\nb→b,L\nTrace the execution of this Turing machine, writing your answer in the spaces provided\non the next page.\nThe lines show the configuration of the Turing machine at the start of each step. For\neach line, fill in the state and the contents of the tape. On the tape, you should indicate the\ncurrently-scanned character by underlining it, and you should show the first blank character\nas ∆(but there is no need to show subsequent blank characters).\nTo get you started, the first line has been filled in already.\nAt start of step 1: State: 1 Tape: a a b ∆\nAt start of step 2: State: Tape:\nAt start of step 3: State: Tape:\nAt start of step 4: State: Tape:\nAt start of step 5: State: Tape:\nAt start of step 6: State: Tape:\nAt start of step 7: State: Tape:\nAt start of step 8: State: Tape:\nAt start of step 9: State: Tape:\nAt start of step 10: State: Tape:\nAt start of step 11: State: Tape:\nAt start of step 12: State: Tape:",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "tm_trace",
+   "has_figure": true,
+   "figures": [
+    "exam-2014-q13_p14.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    14,
+    15
+   ]
+  },
+  {
+   "id": "exam-2014-q14",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 14,
+   "marks": 5.0,
+   "text": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: a Turing machine M, and a positive integer k.\nQuestion: Does M accept some input string of at most\nk letters? Decidable Undecidable\nInput: a Turing machine M, and a positive integer k.\nQuestion: Does the encoding of M have at least k letters?\nDecidable Undecidable\nInput: a Turing machine M, and a positive integer k.\nQuestion: When M is given an encoding of itself as input,\ndoes the computation go for at least k steps? Decidable Undecidable\nInput: a Turing machine M.\nQuestion: Does M eventually print an encoding of M on\nthe tape and then halt? Decidable Undecidable\nInput: a Turing machine M, and a string w.\nQuestion: Does M reject w?\nDecidable Undecidable",
+   "stem": "For each of the following decision problems, indicate whether or not it is decidable.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\nDecision Problem your answer\n(tick one box in each row)\nInput: a Turing machine M, and a positive integer k.\nQuestion: Does M accept some input string of at most\nk letters? Decidable Undecidable\nInput: a Turing machine M, and a positive integer k.\nQuestion: Does the encoding of M have at least k letters?\nDecidable Undecidable\nInput: a Turing machine M, and a positive integer k.\nQuestion: When M is given an encoding of itself as input,\ndoes the computation go for at least k steps? Decidable Undecidable\nInput: a Turing machine M.\nQuestion: Does M eventually print an encoding of M on\nthe tape and then halt? Decidable Undecidable\nInput: a Turing machine M, and a string w.\nQuestion: Does M reject w?\nDecidable Undecidable",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines",
+    "decidability"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "mcq",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    16
+   ]
+  },
+  {
+   "id": "exam-2014-q15",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 15,
+   "marks": 12.0,
+   "text": "The Venn diagram on the right shows several classes of languages. For each language (a)–(l)\nin the list below, indicate which classes it belongs to, and which it doesn’t belong to, by\nplacing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).\n(a) The set of all graphs, encoded as adjacency matrices.\n(b) The set of all 2-colourable graphs. (A graph is 2-colourable if each vertex can be\ncoloured Black or White in such a way that adjacent vertices receive different colours.)\n(c) The set of all 3-colourable graphs. (Definition is like 2-colourable, except now the\navailable colours are Red, White and Black.)\n(d) The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at\nleast two literals in each clause.\n(e) EQUAL, the set of all strings over alphabet {a,b} with an equal number of a’s and b’s.\n(f) The set of all strings of parentheses such that the parentheses are correctly matched.\n(g) The set of all strings in which every letter is next to an identical letter.\n(h) The set of all Finite Automata that define the empty language.\n(i) The set of all Turing Machines with polynomial time complexity.\n(j) The set of all Turing machines which, when given themselves as input, eventually either\nreject or loop forever.\n(k) The set of all Turing machines whose language of accepted strings is regular.\n(l) The set of all Turing machines that have ever been written.\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+   "stem": "The Venn diagram on the right shows several classes of languages. For each language (a)–(l)\nin the list below, indicate which classes it belongs to, and which it doesn’t belong to, by\nplacing its corresponding letter in the correct region of the diagram.\nIf a language does not belong to any of these classes, then place its letter above the top\nof the diagram.\nYou may assume that, when Turing machines are encoded as strings, this is done using\nthe Code-Word Language (CWL).",
+   "parts": [
+    {
+     "label": "a",
+     "text": "The set of all graphs, encoded as adjacency matrices.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "The set of all 2-colourable graphs. (A graph is 2-colourable if each vertex can be\ncoloured Black or White in such a way that adjacent vertices receive different colours.)",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "c",
+     "text": "The set of all 3-colourable graphs. (Definition is like 2-colourable, except now the\navailable colours are Red, White and Black.)",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "d",
+     "text": "The set of all satisfiable Boolean expressions in Conjunctive Normal Form with at\nleast two literals in each clause.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "e",
+     "text": "EQUAL, the set of all strings over alphabet {a,b} with an equal number of a’s and b’s.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "f",
+     "text": "The set of all strings of parentheses such that the parentheses are correctly matched.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "g",
+     "text": "The set of all strings in which every letter is next to an identical letter.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "h",
+     "text": "The set of all Finite Automata that define the empty language.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "i",
+     "text": "The set of all Turing Machines with polynomial time complexity.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "j",
+     "text": "The set of all Turing machines which, when given themselves as input, eventually either\nreject or loop forever.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "k",
+     "text": "The set of all Turing machines whose language of accepted strings is regular.",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "l",
+     "text": "The set of all Turing machines that have ever been written.\nrecursively enumerable (r.e.)\ndecidable\nNP\nP\nContext-Free\nRegular\nFinite",
+     "marks": null,
+     "answer_type": "language_classes",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "turing_machines",
+    "decidability",
+    "language_classes",
+    "complexity_p",
+    "np_completeness",
+    "propositional_logic",
+    "finite_automata"
+   ],
+   "primary_topic": "turing_machines",
+   "answer_type": "language_classes",
+   "has_figure": true,
+   "figures": [
+    "exam-2014-q15_p19.png"
+   ],
+   "solution_figures": [],
+   "pages": [
+    18,
+    19
+   ]
+  },
+  {
+   "id": "exam-2014-q16",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 16,
+   "marks": 7.0,
+   "text": "Prove that the following problem is undecidable.\nInput: a Turing machine M and a positive integer t.\nQuestion: Is there a string x which, if given as input to M, causes it to eventually erase\neverything on the tape (i.e., overwrite every letter by Blank), after which it never writes any\nother symbol?\nYou may use the fact that the halting problem is undecidable.",
+   "stem": "Prove that the following problem is undecidable.\nInput: a Turing machine M and a positive integer t.\nQuestion: Is there a string x which, if given as input to M, causes it to eventually erase\neverything on the tape (i.e., overwrite every letter by Blank), after which it never writes any\nother symbol?\nYou may use the fact that the halting problem is undecidable.",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "decidability",
+    "turing_machines"
+   ],
+   "primary_topic": "decidability",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    20
+   ]
+  },
+  {
+   "id": "exam-2014-q17",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 17,
+   "marks": 3.0,
+   "text": "Explain how to obtain, from any language that is recursively enumerable but not decidable,\nanother closely related language that is not recursively enumerable. (Proof is not required.)",
+   "stem": "Explain how to obtain, from any language that is recursively enumerable but not decidable,\nanother closely related language that is not recursively enumerable. (Proof is not required.)",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "decidability"
+   ],
+   "primary_topic": "decidability",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    20
+   ]
+  },
+  {
+   "id": "exam-2014-q18",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 18,
+   "marks": 15.0,
+   "text": "Consider the language 3-EDGE-COLOURABILITY, which consists of all graphs G such\nthat we can assign colours to the edges of the graph so that (i) each edge is Red, White or\nBlack, and (ii) any two edges that are incident at a common vertex must get different colours.\nLet H be the following graph.\nb\ny y\n\nc\na\n\ny y\nd\n(a) Construct a Boolean expression E_{H} in Conjunctive Normal Form such that the satisfy-\ning truth assignments for E_{H} correspond to solutions to the 3-EDGE-COLOURABILITY\nproblem on the above graph H (i.e., they correspond to colourings of the edges of H, using\nat most three colours and which give different colours to incident edges).\nTo do this, use variable names a_{R}, a_{W}, a_{B}, b_{R}, b_{W}, b_{B}, c_{R}, c_{W}, c_{B}, d_{R}, d_{W}, d_{B}, where vari-\nable e_{X} is True if and only if edge e gets colour X (where e ∈{a, b, c, d} and X ∈{R, W, B}).\n(b) Give a polynomial-time reduction from 3-EDGE-COLOURABILITY to SATISFIABIL-\nITY.",
+   "stem": "Consider the language 3-EDGE-COLOURABILITY, which consists of all graphs G such\nthat we can assign colours to the edges of the graph so that (i) each edge is Red, White or\nBlack, and (ii) any two edges that are incident at a common vertex must get different colours.\nLet H be the following graph.\nb\ny y\n\nc\na\n\ny y\nd",
+   "parts": [
+    {
+     "label": "a",
+     "text": "Construct a Boolean expression E_{H} in Conjunctive Normal Form such that the satisfy-\ning truth assignments for E_{H} correspond to solutions to the 3-EDGE-COLOURABILITY\nproblem on the above graph H (i.e., they correspond to colourings of the edges of H, using\nat most three colours and which give different colours to incident edges).\nTo do this, use variable names a_{R}, a_{W}, a_{B}, b_{R}, b_{W}, b_{B}, c_{R}, c_{W}, c_{B}, d_{R}, d_{W}, d_{B}, where vari-\nable e_{X} is True if and only if edge e gets colour X (where e ∈{a, b, c, d} and X ∈{R, W, B}).",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    },
+    {
+     "label": "b",
+     "text": "Give a polynomial-time reduction from 3-EDGE-COLOURABILITY to SATISFIABIL-\nITY.",
+     "marks": null,
+     "answer_type": "prop_formula",
+     "solution": "",
+     "comments": ""
+    }
+   ],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "propositional_logic",
+    "mapping_reductions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "prop_formula",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    21,
+    22
+   ]
+  },
+  {
+   "id": "exam-2014-q19",
+   "paper": "exam-2014",
+   "year": 2014,
+   "number": 19,
+   "marks": 8.0,
+   "text": "Prove that the HAMILTONIAN CIRCUIT problem is NP-complete, by reduction from\nHAMILTONIAN PATH. You may assume that HAMILTONIAN PATH is NP-complete.\nDefinitions:\nA Hamiltonian path in a graph G is a path that includes every vertex of G. All the\nvertices on the path must be distinct.\nA Hamiltonian circuit in a graph G is a circuit that includes every vertex of G. All\nthe vertices on the circuit must be distinct.\nHAMILTONIAN PATH\nInput: Graph G.\nQuestion: Does G have a Hamiltonian path?\nHAMILTONIAN CIRCUIT\nInput: Graph G.\nQuestion: Does G have a Hamiltonian circuit?",
+   "stem": "Prove that the HAMILTONIAN CIRCUIT problem is NP-complete, by reduction from\nHAMILTONIAN PATH. You may assume that HAMILTONIAN PATH is NP-complete.\nDefinitions:\nA Hamiltonian path in a graph G is a path that includes every vertex of G. All the\nvertices on the path must be distinct.\nA Hamiltonian circuit in a graph G is a circuit that includes every vertex of G. All\nthe vertices on the circuit must be distinct.\nHAMILTONIAN PATH\nInput: Graph G.\nQuestion: Does G have a Hamiltonian path?\nHAMILTONIAN CIRCUIT\nInput: Graph G.\nQuestion: Does G have a Hamiltonian circuit?",
+   "parts": [],
+   "solution": "",
+   "comments": "",
+   "topics": [
+    "np_completeness",
+    "mapping_reductions"
+   ],
+   "primary_topic": "np_completeness",
+   "answer_type": "proof",
+   "has_figure": false,
+   "figures": [],
+   "solution_figures": [],
+   "pages": [
+    23
+   ]
+  }
+ ]
+}

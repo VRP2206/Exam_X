@@ -1,0 +1,115 @@
+{
+ "papers": {
+  "sampleexam2013": {
+   "questions": 23,
+   "total_marks": 120.0
+  },
+  "exam-2013": {
+   "questions": 22,
+   "total_marks": 120.0
+  },
+  "exam-2014": {
+   "questions": 19,
+   "total_marks": 120.0
+  },
+  "exam-2015": {
+   "questions": 19,
+   "total_marks": 120.0
+  },
+  "exam-2017": {
+   "questions": 18,
+   "total_marks": 120.0
+  }
+ },
+ "mean_questions_per_paper": 20.2,
+ "marks_histogram": {
+  "1.0": 1,
+  "2.0": 4,
+  "3.0": 15,
+  "4.0": 22,
+  "5.0": 14,
+  "6.0": 16,
+  "7.0": 7,
+  "8.0": 6,
+  "9.0": 3,
+  "10.0": 3,
+  "11.0": 1,
+  "12.0": 4,
+  "13.0": 2,
+  "15.0": 1,
+  "17.0": 1,
+  "21.0": 1
+ },
+ "topic_question_count": {
+  "turing_machines": 17,
+  "cfg": 15,
+  "finite_automata": 11,
+  "np_completeness": 11,
+  "decidability": 10,
+  "regular_expressions": 9,
+  "propositional_logic": 5,
+  "predicate_logic": 5,
+  "regular_closure": 5,
+  "pumping_lemma_cfl": 3,
+  "pda": 3,
+  "induction": 2,
+  "complexity_p": 2,
+  "pumping_lemma_regular": 1,
+  "church_turing": 1,
+  "kleenes_theorem": 1
+ },
+ "topic_marks_share": {
+  "np_completeness": 0.2017,
+  "turing_machines": 0.1783,
+  "cfg": 0.1483,
+  "decidability": 0.1,
+  "finite_automata": 0.085,
+  "regular_expressions": 0.0567,
+  "pda": 0.04,
+  "predicate_logic": 0.035,
+  "regular_closure": 0.035,
+  "pumping_lemma_cfl": 0.0333,
+  "propositional_logic": 0.0317,
+  "induction": 0.02,
+  "pumping_lemma_regular": 0.01,
+  "complexity_p": 0.01,
+  "kleenes_theorem": 0.0083,
+  "church_turing": 0.0067
+ },
+ "answer_types": {
+  "proof": 29,
+  "short_answer": 16,
+  "prop_formula": 9,
+  "mcq": 6,
+  "predicate_formula": 5,
+  "regex": 5,
+  "language_classes": 5,
+  "derivation": 4,
+  "pda": 4,
+  "string_list": 3,
+  "fa_minimise": 3,
+  "cfg": 3,
+  "tm": 3,
+  "tm_trace": 3,
+  "fa": 2,
+  "fa_table": 1
+ },
+ "topic_position": {
+  "propositional_logic": 0.05,
+  "predicate_logic": 0.1,
+  "regular_expressions": 0.199,
+  "regular_closure": 0.305,
+  "finite_automata": 0.308,
+  "cfg": 0.501,
+  "pumping_lemma_cfl": 0.606,
+  "turing_machines": 0.727,
+  "decidability": 0.821,
+  "np_completeness": 0.958,
+  "pumping_lemma_regular": 0.318,
+  "induction": 0.288,
+  "church_turing": 0.636,
+  "complexity_p": 0.932,
+  "pda": 0.499,
+  "kleenes_theorem": 0.211
+ }
+}
