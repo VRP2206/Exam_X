@@ -247,10 +247,12 @@ def solve_with_llm(q: dict, index: Index, model: str | None) -> None:
 
 
 def generate_paper(seed: int | None = None, model: str | None = None, use_llm: bool = True,
-                   procedural_only: bool = False, variation: float = 0.35, prose: str = "llm",
-                   review: bool = True, log=print) -> dict:
-    """prose: how to fill slots with no procedural generator — "llm" (new questions written by the local
-    model, then self-reviewed if review=True) or "past" (real past questions with official solutions)."""
+                   procedural_only: bool = False, variation: float = 0.35, prose: str = "past",
+                   review: bool = False, log=print) -> dict:
+    """prose: how to fill slots with no procedural generator — "past" (real past questions with their
+    official solutions; the default) or "llm" (new questions written by the local model: experimental,
+    since qwen3:8b frequently produced false statements and wrong answers; review=True adds a self-review
+    pass, which in testing fixed some errors and introduced others)."""
     seed = seed if seed is not None else random.randrange(10**6)
     rng = random.Random(seed)
     corpus = load_corpus()

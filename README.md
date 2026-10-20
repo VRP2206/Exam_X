@@ -11,8 +11,11 @@ There are only five past papers (two with solutions), far too few to train a mod
 - **exact, code-based generation and marking** for everything that can be computed: regular expressions,
   finite automata (subset construction, minimisation, equivalence), context-free grammars, derivations,
   Turing machines, CNF formulas and decidability classifications;
-- a **local open LLM (via Ollama)**, prompted with past questions retrieved from the parsed papers, for
-  proofs and explanations (pumping lemmas, undecidability, NP-completeness, induction, ...).
+- **real past questions with their official solutions** for proof and explanation slots (undecidability,
+  NP-completeness, induction, ...), placed by a blueprint that follows the past papers' topic mix;
+- a **local open LLM (via Ollama)** to write pumping-lemma proofs and to mark proofs and explanations
+  against the model solution and rubric. LLM-invented questions are available but experimental: see
+  "Known limitations".
 
 ## Setup
 
@@ -36,8 +39,8 @@ Activate with `source .venv/bin/activate`, or call `.venv/bin/examx` directly.
 examx ingest                      # parse papers/ + solution/ PDFs into data/
 examx stats                       # topic / answer-type mix of the past papers
 examx generate --seed 42          # new paper + solutions in output/ (.md, .pdf, .json)
-examx generate --prose past       # proof/explanation slots use real past questions + official solutions
-examx generate --no-review        # skip the LLM self-review pass (about 2x faster)
+examx generate --prose llm        # EXPERIMENTAL: LLM writes new proof/explanation questions (see limitations)
+examx generate --prose llm --review   # ... plus an LLM self-review pass
 examx generate --no-llm           # procedural-only paper in about a second (no Ollama needed)
 examx generate --model qwen3:4b-instruct   # faster, lower-quality LLM
 examx grade output/practice-42.json my-attempt.md     # marks + feedback -> my-attempt.report.md/.json
@@ -101,8 +104,8 @@ examx/generate.py
   blueprint: a random past paper as template (topic order, 120 marks), ~35% of slots swapped for
              same-mark questions at a similar position in other papers
   each slot: procedural generator (examx/procedural.py) when one exists for the topic/answer type,
-             otherwise the LLM writes a new question + solution + rubric from retrieved exemplars
-             (examx/retrieval.py, BM25)
+             otherwise a past question with an official solution (default), or with --prose llm the LLM
+             writes a new question + solution + rubric from retrieved exemplars (examx/retrieval.py, BM25)
         ▼
 output/practice-<seed>.{md,pdf,json}  + -solutions.{md,pdf}
         ▼
@@ -158,10 +161,17 @@ a "prove that ..." of a false statement, wrong decidability and multiple-choice 
 graph in the NP question. In response:
 
 - decidability tables and Venn/language-class questions are now procedural;
-- near-duplicate drafts are rejected, and a self-review pass fixes what it can;
-- every LLM-written question carries a "check before relying on it" note in the solutions;
-- `--prose past` fills those slots with **real past questions and their official solutions** instead.
-  This is the most reliable mode, and `examples/practice-42*` was generated with it.
+- near-duplicate drafts are rejected, and an optional self-review pass (`--review`) is available;
+- every LLM-written question carries a "check before relying on it" note in the solutions.
+
+A second run with those controls (39 minutes) was **not better**. The self-review "fixed" one correct
+decidability answer into a wrong one. Several questions fixated on one grammar and claimed false properties
+of it. Topics also drifted (the Church–Turing slot produced a CFG question). The local 8B model cannot be
+trusted to invent exam content. So the **default is now `--prose past`**: slots with no procedural generator
+are filled with **real past questions and their official solutions** (preferring questions that have
+solutions and no diagram). The LLM is used only to write proofs for the procedurally worded pumping-lemma
+questions, and those are flagged too. `--prose llm` remains available as an experiment.
+`examples/practice-42*` was generated in the default mode.
 
 LLM marks for proofs are advisory. The exact marks (automata, grammars, TMs, logic, choices) are reliable.
 

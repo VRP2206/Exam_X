@@ -101,7 +101,8 @@ class Handler(BaseHTTPRequestHandler):
                             f"<a href='/solutions/{p.stem.split('-')[1]}'>solutions</a></li>" for p in papers())
             body = ("<h1>ExamX — FIT2014 practice papers</h1>"
                     "<form method='post' action='/generate'>Seed (optional): <input name='seed' size='8'> "
-                    "<label><input type='checkbox' name='llm' checked> use local LLM (slow, richer questions)</label><br>"
+                    "<label><input type='checkbox' name='llm' checked> use local LLM for pumping-lemma model proofs "
+                    "(a few minutes)</label><br>"
                     "<button class='btn'>Generate a new paper</button></form>"
                     f"<h2>Papers</h2><ul>{items or '<li>none yet</li>'}</ul>")
             return self.send(page("ExamX", body))
