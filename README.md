@@ -18,6 +18,37 @@ There are only five past papers (two with solutions), far too few to train a mod
   switchable in the web UI or with `--model`. AI-invented questions are available but experimental: see
   "Known limitations".
 
+## Project status: paused (October 2026)
+
+Paused until after the FIT2014 exam. Everything below works, and the code is tagged `v0.1-paused`.
+
+**Done**
+- Ingestion of all five past papers: 101 questions with marks, topics, answer types, official solutions and
+  figures. Every paper totals 120.
+- Exact checkers for regular expressions, FA/NFA (equivalence, minimality), CFGs, derivations, TMs, PDAs and
+  logic, plus procedural generators with verified solutions for most question types.
+- Paper generation (CLI and web) and grading: exact marks plus AI marking of proofs.
+- Three AI back ends: local Ollama, Gemini and Claude. The web UI has a model switcher and per-browser API
+  keys, plus a public mode with per-visitor privacy and rate limits.
+- Docker deployment with its own Cloudflare tunnel (`deploy/`), currently **switched off**.
+- 126 tests, none of which need an AI model.
+
+**What was learned**
+- Local models (qwen3:8b/14b on a GTX 1650) are too weak to write new exam questions reliably. Hence the
+  default `--prose past` mode, and AI marks for proofs are advisory.
+- Free Gemini allows about 20 requests per day per model on a new key, roughly one AI-written paper a day,
+  with frequent 503 overloads at peak times.
+- The Claude API is billed separately from a Claude Pro subscription.
+
+**Next steps when resuming**
+1. Evaluate a strong cloud model (Claude Sonnet, or paid Gemini) on an AI-written paper (`--prose llm`) and on
+   proof marking, compared with the local results above. If it is reliable, make AI-written questions the
+   default for cloud models.
+2. More procedural generators: PDA construction, TM traces, predicate logic, complexity MCQs.
+3. Re-deploy: `docker compose -f deploy/compose.yaml up -d --build` (needs `~/.examx-tunnel.env` and the
+   tunnel's public hostname in Cloudflare; see "Deploying the website"). Decide whether past-paper content
+   may be public first.
+
 ## Setup
 
 Requirements: Python ≥ 3.10, plus at least one AI back end: [Ollama](https://ollama.com) (free, local), a
