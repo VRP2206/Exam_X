@@ -1,7 +1,8 @@
 """Minimal client for a local Ollama server.
 
-The model is chosen with EXAMX_MODEL (default qwen3:4b, which fits in the
-GTX 1650's 4 GB) and the server with OLLAMA_HOST (default localhost:11434).
+The model is chosen with EXAMX_MODEL (default qwen3:8b: it runs split between
+the GTX 1650 and system RAM at ~8 tok/s but writes markedly better proofs than
+the 4B models, see README) and the server with OLLAMA_HOST (default localhost:11434).
 """
 from __future__ import annotations
 
@@ -12,7 +13,7 @@ import time
 
 import requests
 
-DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:4b")
+DEFAULT_MODEL = os.environ.get("EXAMX_MODEL", "qwen3:8b")
 HOST = os.environ.get("OLLAMA_HOST", "http://localhost:11434")
 if not HOST.startswith("http"):
     HOST = "http://" + HOST
